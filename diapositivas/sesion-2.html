@@ -27,6 +27,10 @@
     .slide p { margin:0 0 20px; }
     .kicker { font-size:24px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
     .muted { color:var(--muted); }
+    .guia { margin:22px 0 0; font-size:28px; font-weight:700; }
+    .guia a { color:var(--accent-strong); text-decoration:underline; text-underline-offset:5px; }
+    .guia .url { display:block; font-family:"Cascadia Code", Consolas, monospace; font-size:26px; font-weight:400; color:var(--muted); margin-top:6px; }
+    
     ul.b { margin:0; padding-left:40px; } ul.b li { margin:0 0 18px; }
     ul.b li::marker { color:var(--accent); }
     code, pre, kbd { font-family:"Cascadia Code", Consolas, "JetBrains Mono", ui-monospace, monospace; }
@@ -188,6 +192,7 @@
     <div class="card"><h3><code>/revisa-cambios</code></h3><p>Un prompt repetido convertido en comando</p></div>
   </div>
   <div class="note"><b>El problema:</b> todo eso son consejos. Claude normalmente los sigue… pero no siempre.</div>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="_blank" rel="noopener">📖 ¿No terminaste la sesión 1? Punto de partida, en la guía</a></p>
 </section>
 
 <!-- 5 -->
@@ -340,6 +345,7 @@
     <li>Pídele que edite la especificación, que instale una librería y que te diga qué hay en el <code>.env</code></li>
   </ol>
   <div class="note"><b>En el CLAUDE.md pusiste que la especificación no se toca.</b> Era un consejo. Ahora es una regla.</div>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-1" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, pasos 1 y 2</a></p>
 </section>
 
 <!-- 17 -->
@@ -440,11 +446,12 @@ if ($LASTEXITCODE -ne 0) {
   <div class="actbar"><span>⚡ Actividad · Tu primer hook</span><span class="dur">15 min</span></div>
   <ol class="steps">
     <li>Pídele que añada la regla de los límites (8,0 °C en una nevera de 2 a 8 está en rango) a la especificación: te preguntará, <b>apruébalo tú</b></li>
-    <li>Pide los tests, <b>solo los tests</b>: el de 10 € entre tres debería fallar</li>
+    <li>Pide los tests, <b>solo los tests</b>: el de 8,0 °C en una nevera de 2 a 8 debería fallar</li>
     <li><b>Pídele el hook</b>, diciéndole tu sistema (petición en la guía; así debería quedar, en D21 y D22)</li>
     <li>Reinicia y comprueba que aparece en <code>/hooks</code></li>
     <li>Pídele que lo arregle <b>sin tocar los tests</b>: no podrá terminar hasta que pasen</li>
   </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-3" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, pasos 3 a 6</a></p>
 </section>
 
 <!-- 24 -->
@@ -499,6 +506,7 @@ if ($LASTEXITCODE -ne 0) {
     <li><code>/rewind</code> → elige el mensaje → <b>Restaurar código</b></li>
     <li>Comprueba con <code>git status</code> que todo está como antes</li>
   </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-7" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, paso 7</a></p>
 </section>
 
 <!-- 29 -->
@@ -556,6 +564,7 @@ if ($LASTEXITCODE -ne 0) {
     <li>Trae <b>un procedimiento que repitáis</b> en el equipo (revisión de código, una migración, crear un servicio…): lo convertiremos en skill</li>
     <li>Pasa a IT vuestra respuesta sobre el modo de permisos por defecto</li>
   </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/" target="_blank" rel="noopener">📖 Web del curso: lecciones y prácticas para repasar</a></p>
 </section>
 
 <!-- 34 -->
