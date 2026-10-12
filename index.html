@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Curso interactivo de Claude Code: lecciones cortas con prácticas simuladas.">
+<title>Aprende Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+/* Layout: curso por módulos. Portada = mapa (anillo del arnés + módulos con sus lecciones). Lección = una pantalla cada vez, columna de lectura, con prácticas interactivas que hay que completar para avanzar. */
+:root {
+  --bg: #f3f6f6; --surface: #ffffff; --sunken: #e8efee; --text: #14211f; --muted: #4f5f5c; --line: #d3dedc;
+  --accent: #176b68; --accent-strong: #0d4f4d; --accent-soft: #dcf1ee;
+  --amber: #a85a0c; --amber-soft: #fbeedd; --ok: #1d7a3e; --ok-soft: #e1f4e7; --bad: #b3261e; --bad-soft: #fbe5e3;
+  --code-bg: #10201e; --code-fg: #d9efe9; --code-dim: #8fb3ab; --term-ok: #7fe0a4; --term-warn: #f3c37a;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "SF Mono", monospace;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1716; --surface: #152220; --sunken: #1b2b29; --text: #e6efed; --muted: #a3b6b2; --line: #2c403d;
+    --accent: #4fc2b8; --accent-strong: #8fded6; --accent-soft: #173a37;
+    --amber: #f0a65a; --amber-soft: #3a2a17; --ok: #6fd28f; --ok-soft: #173323; --bad: #ff8a80; --bad-soft: #3d1c1a;
+    --code-bg: #08110f; --code-fg: #d9efe9; --code-dim: #7fa39b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1716; --surface: #152220; --sunken: #1b2b29; --text: #e6efed; --muted: #a3b6b2; --line: #2c403d;
+  --accent: #4fc2b8; --accent-strong: #8fded6; --accent-soft: #173a37;
+  --amber: #f0a65a; --amber-soft: #3a2a17; --ok: #6fd28f; --ok-soft: #173323; --bad: #ff8a80; --bad-soft: #3d1c1a;
+  --code-bg: #08110f; --code-fg: #d9efe9; --code-dim: #7fa39b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 18px; line-height: 1.62; }
+a { color: var(--accent-strong); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 800; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 6px; border-radius: 5px; overflow-wrap: anywhere; }
+kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; background: var(--surface); color: var(--text); white-space: nowrap; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+ul.clean, ol.clean { margin: 0; padding-left: 24px; display: grid; gap: 6px; }
+
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 1080px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 16px; padding: 6px 11px; border-radius: 8px; white-space: nowrap; }
+.nav a:hover { background: var(--sunken); color: var(--text); }
+.nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-strong); }
+.pill { font-size: 15px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); padding: 5px 12px; border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+main { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; }
+.view { display: grid; gap: 34px; }
+.eyebrow { font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.18rem; color: var(--muted); max-width: 64ch; }
+
+/* Portada */
+.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.hero-text { display: grid; gap: 18px; min-width: 0; }
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.harness-wrap { display: grid; gap: 8px; justify-items: center; }
+.harness { width: 100%; max-width: 380px; height: auto; }
+.harness .seg { cursor: pointer; }
+.harness .seg:hover path { opacity: .85; }
+.harness-cap { font-size: 15px; color: var(--muted); text-align: center; max-width: 34ch; }
+.modules { display: grid; gap: 18px; }
+.module { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: grid; grid-template-columns: 220px minmax(0, 1fr); overflow: hidden; }
+.module-head { background: var(--accent-soft); padding: 22px; display: grid; gap: 8px; align-content: start; }
+.module-n { font-family: var(--font-display); font-weight: 800; font-size: 3rem; line-height: 1; color: var(--accent); }
+.module-head h3 { font-size: 1.25rem; }
+.module-head .piece { font-size: 15px; font-weight: 700; color: var(--accent-strong); }
+.module-meter { height: 8px; border-radius: 99px; background: var(--surface); overflow: hidden; }
+.module-meter div { height: 100%; background: var(--accent); }
+.module-meter-label { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lessons { list-style: none; margin: 0; padding: 10px 0; display: grid; }
+.lessons a { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 22px; text-decoration: none; color: var(--text); }
+.lessons a:hover { background: var(--sunken); }
+.l-mark { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 14px; font-weight: 700; color: var(--muted); }
+.lessons a.done .l-mark { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.lessons a.next .l-mark { border-color: var(--accent); color: var(--accent-strong); }
+.l-title { font-weight: 600; }
+.l-kind { font-size: 15px; color: var(--muted); white-space: nowrap; }
+.extras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; text-decoration: none; color: inherit; display: grid; gap: 6px; align-content: start; }
+a.card:hover { border-color: var(--accent); }
+.card h3 { color: var(--accent-strong); }
+.card p { color: var(--muted); }
+.foot { color: var(--muted); font-size: 15px; border-top: 1px solid var(--line); padding-top: 18px; display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+.linkbtn { font: inherit; font-size: 15px; background: none; border: 0; color: var(--accent-strong); text-decoration: underline; cursor: pointer; padding: 0; }
+
+/* Lección */
+.lesson { max-width: 780px; margin: 0 auto; width: 100%; display: grid; gap: 22px; }
+.lesson-top { display: grid; gap: 8px; }
+.crumbs { font-size: 15px; color: var(--muted); }
+.crumbs a { color: var(--muted); }
+.steps { display: flex; gap: 6px; }
+.steps button { flex: 1; height: 8px; border-radius: 99px; border: 0; background: var(--line); padding: 0; cursor: pointer; }
+.steps button.seen { background: var(--accent-soft); }
+.steps button.cur { background: var(--accent); }
+.steps button:disabled { cursor: default; }
+.stage { display: grid; gap: 18px; min-height: 280px; align-content: start; }
+.stage > * { min-width: 0; }
+.step-kind { font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--amber); }
+.step-kind.learn { color: var(--accent); }
+.stage .prose { display: grid; gap: 14px; }
+.idea { background: var(--accent-soft); border-radius: var(--radius); padding: 16px 20px; font-size: 1.12rem; font-weight: 600; color: var(--accent-strong); }
+.warn { background: var(--amber-soft); border-radius: var(--radius); padding: 14px 18px; }
+.warn strong { color: var(--amber); }
+.lesson-nav { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 18px; flex-wrap: wrap; align-items: center; }
+.hint-next { font-size: 15px; color: var(--muted); }
+.btn { font: inherit; font-weight: 700; font-size: 17px; border: 2px solid var(--accent); background: var(--accent); color: var(--surface); padding: 10px 18px; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; }
+.btn:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--accent-strong); }
+.btn.ghost:hover { background: var(--accent-soft); }
+.btn.small { font-size: 15px; padding: 6px 12px; }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 16.5px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--sunken); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.two > * { min-width: 0; }
+.mini { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 6px; align-content: start; }
+.mini.yes { border-color: var(--ok); } .mini.yes h3 { color: var(--ok); }
+.mini.no { border-color: var(--bad); } .mini.no h3 { color: var(--bad); }
+.cycle { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-weight: 700; }
+.cycle .s { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; }
+.cycle .a { color: var(--accent); }
+
+.code { background: var(--code-bg); color: var(--code-fg); border-radius: var(--radius); min-width: 0; }
+.code-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px 0 16px; }
+.code-file { font-family: var(--font-mono); font-size: 14px; color: var(--code-dim); overflow-wrap: anywhere; }
+.copy { font: inherit; font-size: 14px; font-weight: 700; background: transparent; color: var(--code-fg); border: 1px solid var(--code-dim); border-radius: 7px; padding: 3px 10px; cursor: pointer; flex: none; }
+.code pre { margin: 0; padding: 10px 16px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 15px; line-height: 1.55; white-space: pre; }
+.code .c { color: var(--code-dim); }
+
+/* Práctica: comunes */
+.task { font-size: 1.12rem; font-weight: 700; }
+.opts { display: grid; gap: 8px; }
+.opt { font: inherit; font-size: 17px; text-align: left; background: var(--surface); color: var(--text); border: 2px solid var(--line); border-radius: 10px; padding: 11px 15px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.meh { border-color: var(--amber); background: var(--amber-soft); }
+.fb { padding: 12px 16px; border-radius: 10px; background: var(--sunken); }
+.fb.good { background: var(--ok-soft); }
+.fb.bad { background: var(--bad-soft); }
+.fb.meh { background: var(--amber-soft); }
+.counter { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Terminal */
+.term { background: var(--code-bg); color: var(--code-fg); border-radius: var(--radius); font-family: var(--font-mono); font-size: 15.5px; overflow: hidden; }
+.term-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; color: var(--code-dim); font-size: 14px; border-bottom: 1px solid #ffffff1a; gap: 10px; }
+.term-out { padding: 12px 16px; height: 300px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.term-out .in { color: var(--code-fg); }
+.term-out .dim { color: var(--code-dim); }
+.term-out .okc { color: var(--term-ok); }
+.term-out .warnc { color: var(--term-warn); }
+.term-in { display: flex; gap: 8px; align-items: center; padding: 10px 16px; border-top: 1px solid #ffffff1a; }
+.term-in span { color: var(--term-ok); flex: none; }
+.term-in input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--code-fg); font: inherit; font-size: 16px; outline: none; }
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.tasks li { display: flex; gap: 10px; align-items: baseline; color: var(--muted); }
+.tasks li::before { content: "○"; color: var(--muted); }
+.tasks li.cur { color: var(--text); font-weight: 700; }
+.tasks li.cur::before { content: "●"; color: var(--accent); }
+.tasks li.ok { color: var(--ok); }
+.tasks li.ok::before { content: "✓"; color: var(--ok); }
+
+/* Petición de permiso */
+.perm { border: 2px solid var(--accent); border-radius: var(--radius); background: var(--surface); padding: 18px 20px; display: grid; gap: 12px; }
+.perm-tool { font-family: var(--font-mono); font-weight: 600; font-size: 16px; background: var(--sunken); padding: 8px 12px; border-radius: 8px; overflow-wrap: anywhere; }
+.perm-why { color: var(--muted); }
+
+/* Medidor */
+.meter { display: grid; gap: 6px; }
+.meter-bar { height: 22px; border-radius: 8px; background: var(--sunken); overflow: hidden; border: 1px solid var(--line); }
+.meter-bar div { height: 100%; background: var(--accent); transition: width .5s, background .3s; }
+.meter-bar div.hot { background: var(--amber); }
+.meter-label { display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Mantener / quitar */
+.keep { display: grid; gap: 8px; }
+.keep-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.keep-row code { font-size: 15px; }
+.keep-row .why { grid-column: 1 / -1; font-size: 16px; }
+.seg-btns { display: flex; gap: 4px; }
+.seg-btns button { font: inherit; font-size: 15px; font-weight: 700; padding: 5px 12px; border-radius: 8px; border: 2px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; }
+.seg-btns button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+.keep-row.right { border-color: var(--ok); }
+.keep-row.wrong { border-color: var(--bad); }
+
+/* Laboratorio de reglas */
+.lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.lab-col { display: grid; gap: 10px; min-width: 0; }
+.rule { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.rule code { font-size: 15px; }
+.rule select { font: inherit; font-size: 15px; font-weight: 700; padding: 4px 8px; border-radius: 8px; border: 2px solid var(--line); background: var(--bg); color: var(--text); }
+.rule select.deny { border-color: var(--bad); color: var(--bad); }
+.rule select.ask { border-color: var(--amber); color: var(--amber); }
+.rule select.allow { border-color: var(--ok); color: var(--ok); }
+.act { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.act code { font-size: 15px; }
+.badge { font-size: 14px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.badge.deny { background: var(--bad-soft); color: var(--bad); }
+.badge.ask { background: var(--amber-soft); color: var(--amber); }
+.badge.allow { background: var(--ok-soft); color: var(--ok); }
+.act-why { grid-column: 1 / -1; font-size: 15px; color: var(--muted); }
+.goals { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.goals li::before { content: "○ "; }
+.goals li.ok { color: var(--ok); }
+.goals li.ok::before { content: "✓ "; }
+
+/* Log (hooks) */
+.log { background: var(--code-bg); color: var(--code-fg); border-radius: var(--radius); padding: 14px 16px; font-family: var(--font-mono); font-size: 15px; min-height: 140px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.log .dim { color: var(--code-dim); }
+.log .okc { color: var(--term-ok); }
+.log .warnc { color: var(--term-warn); }
+
+/* Línea de tiempo */
+.timeline { display: grid; gap: 8px; }
+.tl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 10px 14px; cursor: pointer; text-align: left; font: inherit; color: var(--text); }
+.tl[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.tl .tln { font-family: var(--font-display); font-weight: 800; color: var(--accent); font-size: 1.2rem; }
+.tl small { color: var(--muted); font-size: 15px; display: block; }
+.statebox { display: grid; gap: 6px; }
+.st { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); }
+.st .badge { align-self: center; }
+
+/* Árbol de ficheros */
+.tree { font-family: var(--font-mono); font-size: 15.5px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: grid; gap: 2px; }
+.tree .dir { color: var(--muted); padding: 3px 8px; }
+.tree button { font: inherit; text-align: left; background: none; border: 0; padding: 4px 8px; border-radius: 6px; color: var(--accent-strong); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.tree button[aria-pressed="true"] { background: var(--accent-soft); text-decoration: none; font-weight: 600; }
+.tree .cfg { color: var(--muted); padding: 3px 8px; }
+.loaded { display: grid; gap: 6px; }
+
+/* Ordenar */
+.order-pool, .order-done { display: grid; gap: 8px; }
+.order-done .opt { cursor: default; }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.shake { animation: shake .25s 2; }
+
+/* Constructor */
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 700; }
+.field small { color: var(--muted); font-size: 15px; }
+.field textarea, .field input { font: inherit; font-size: 17px; color: var(--text); background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.field textarea { min-height: 72px; resize: vertical; }
+.field textarea:focus, .field input:focus { border-color: var(--accent); outline: none; }
+.lint { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 16px; }
+.lint li.ok { color: var(--ok); } .lint li.ok::before { content: "✓ "; }
+.lint li.miss { color: var(--amber); } .lint li.miss::before { content: "● "; }
+
+/* Código clicable */
+.clines { background: var(--code-bg); border-radius: var(--radius); padding: 10px 0; font-family: var(--font-mono); font-size: 15px; overflow-x: auto; }
+.clines button { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--code-fg); font: inherit; padding: 2px 16px; cursor: pointer; white-space: pre; }
+.clines button:hover { background: #ffffff14; }
+.clines button.hit { background: #e0525233; }
+.clines button.miss { background: #f3c37a22; }
+
+/* Fin de lección */
+.endcard { text-align: center; display: grid; gap: 14px; justify-items: center; padding: 30px 10px; }
+.endcard .big { font-family: var(--font-display); font-weight: 800; font-size: 3.4rem; color: var(--accent); line-height: 1; }
+
+/* Reto y referencia */
+.scenario { background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; }
+.scenario-text { font-size: 1.25rem; font-weight: 700; font-family: var(--font-display); }
+.places { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.place { font: inherit; font-size: 16px; font-weight: 600; text-align: left; background: var(--bg); color: var(--text); border: 2px solid var(--line); border-radius: 10px; padding: 10px 14px; cursor: pointer; display: grid; gap: 2px; }
+.place small { font-weight: 400; color: var(--muted); font-size: 15px; }
+.place:hover:not(:disabled) { border-color: var(--accent); }
+.place.right { border-color: var(--ok); background: var(--ok-soft); }
+.place.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.place:disabled { cursor: default; }
+.bar { height: 8px; border-radius: 99px; background: var(--sunken); overflow: hidden; }
+.bar > div { height: 100%; background: var(--accent); transition: width .3s; }
+.search { font: inherit; font-size: 17px; width: 100%; padding: 12px 16px; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--text); }
+.search:focus { border-color: var(--accent); outline: none; }
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter { font: inherit; font-size: 15px; font-weight: 600; border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+.filter[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.cheat td:first-child { white-space: nowrap; }
+
+@media (max-width: 860px) {
+  .hero, .lab { grid-template-columns: minmax(0, 1fr); }
+  .module { grid-template-columns: minmax(0, 1fr); }
+  .extras { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  body { font-size: 17px; }
+  .two { grid-template-columns: minmax(0, 1fr); }
+  .lessons a { padding: 10px 16px; grid-template-columns: 30px minmax(0, 1fr); }
+  .l-kind { grid-column: 2; }
+  .term-out { height: 260px; }
+  .nav a { padding: 6px 8px; }
+  .code pre, .term { font-size: 14.5px; }
+  .cheat td:first-child { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#inicio"><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="5" fill="var(--accent)"/><circle cx="14" cy="14" r="11" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="15 2.3"/></svg>Aprende Claude Code</a>
+    <nav class="nav" id="nav" aria-label="Secciones">
+      <a href="#inicio">Curso</a>
+      <a href="proyecto.html">Proyecto</a>
+      <a href="diapositivas/">Diapositivas</a>
+      <a href="#reto">Reto final</a>
+      <a href="#referencia">Referencia</a>
+    </nav>
+    <span class="pill" id="pill">0 lecciones</span>
+  </div>
+</header>
+
+<main>
+  <section class="view" data-view="inicio">
+    <div class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Curso práctico · 4 módulos · a tu ritmo</p>
+        <h1>Aprende a trabajar con Claude Code, paso a paso</h1>
+        <p class="lead">Lecciones cortas: una idea, y enseguida la practicas en una simulación. Escribes comandos en una terminal, decides qué permisos aceptar, escribes reglas y ves qué bloquean, rompes un hook y lo arreglas. Nada de lo que hagas aquí toca tu ordenador.</p>
+        <div class="hero-cta"><a class="btn" id="cta" href="#l1-1">Empezar el curso</a><a class="btn ghost" href="#referencia">Solo quiero consultar algo</a></div>
+      </div>
+      <div class="harness-wrap">
+        <svg class="harness" id="harness" viewBox="0 0 400 400" role="img" aria-label="El arnés: cuatro piezas alrededor del modelo"></svg>
+        <p class="harness-cap">El modelo es el motor; el arnés, todo lo que lo rodea. Cada pieza se completa al terminar su módulo.</p>
+      </div>
+    </div>
+    <div class="modules" id="modules"></div>
+    <div class="extras">
+      <a class="card" href="proyecto.html"><h3>El proyecto: Cadena de frío</h3><p>La app que construyes desde cero en las cuatro sesiones, paso a paso: las peticiones para Claude, los ficheros listos para copiar y cómo comprobar cada paso.</p></a>
+      <a class="card" href="#reto"><h3>Reto final: ¿dónde va esto?</h3><p>Doce situaciones reales. Para cada una, elige la pieza del arnés donde la pondrías. Es la decisión que más se repite al montar el entorno de un equipo.</p></a>
+      <a class="card" href="#referencia"><h3>Referencia</h3><p>Comandos, atajos y ficheros con buscador, para cuando ya sabes qué quieres hacer y no recuerdas cómo se escribía.</p></a>
+    </div>
+    <div class="foot"><span>Tu progreso se guarda solo en este navegador.</span><span><button class="linkbtn" id="reset" type="button">Empezar de cero</button></span></div>
+    <div class="warn" id="reset-confirm" hidden><p><strong>¿Borrar tu progreso?</strong> Se desmarcan todas las lecciones y el reto.</p><p style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" id="reset-yes" type="button">Sí, borrar</button><button class="btn ghost small" id="reset-no" type="button">Cancelar</button></p></div>
+  </section>
+
+  <section class="view" data-view="leccion" hidden>
+    <div class="lesson">
+      <div class="lesson-top">
+        <p class="crumbs" id="crumbs"></p>
+        <h1 id="l-title" style="font-size:clamp(1.7rem,4vw,2.3rem)"></h1>
+        <div class="steps" id="steps"></div>
+      </div>
+      <div class="stage" id="stage" aria-live="polite"></div>
+      <div class="lesson-nav">
+        <button class="btn ghost" id="prev" type="button">← Atrás</button>
+        <span class="hint-next" id="hint-next"></span>
+        <button class="btn" id="next" type="button">Continuar →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" data-view="reto" hidden>
+    <div style="display:grid;gap:12px;max-width:780px">
+      <p class="eyebrow">Reto final</p>
+      <h1>¿Dónde va esto?</h1>
+      <p class="lead">Lee cada situación y elige la pieza del arnés donde la pondrías. Hay una respuesta mejor que las demás y te explicamos por qué.</p>
+    </div>
+    <div id="game" style="display:grid;gap:16px;max-width:900px"></div>
+  </section>
+
+  <section class="view" data-view="referencia" hidden>
+    <div style="display:grid;gap:12px">
+      <p class="eyebrow">Referencia</p>
+      <h1>Comandos, atajos y ficheros</h1>
+    </div>
+    <div style="display:grid;gap:14px">
+      <label for="q" class="eyebrow" style="color:var(--muted)">Buscar</label>
+      <input class="search" id="q" type="search" placeholder="Prueba: contexto, hook, permisos, .env…" autocomplete="off">
+      <div class="filters" id="filters"></div>
+      <div class="tbl-wrap"><table class="cheat"><thead><tr><th>Qué</th><th>Para qué</th><th>Módulo</th></tr></thead><tbody id="cheat-body"></tbody></table></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+"use strict";
+
+/* ================= utilidades ================= */
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function el(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
+function code(file, text) {
+  return '<div class="code"><div class="code-head"><span class="code-file">' + esc(file) + '</span><button class="copy" type="button">Copiar</button></div><pre>' + esc(text) + '</pre></div>';
+}
+function pide(t) { return code("Pídeselo a Claude", t); }
+function tbl(head, rows) {
+  return '<div class="tbl-wrap"><table>' + (head ? '<thead><tr>' + head.map(function (h) { return '<th>' + h + '</th>'; }).join("") + '</tr></thead>' : "") +
+    '<tbody>' + rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>'; }).join("") + '</tr>'; }).join("") + '</tbody></table></div>';
+}
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+var KEY = "aprende-cc-v1";
+var state = { done: {}, game: {} };
+try { var raw = localStorage.getItem(KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+/* ================= widgets de práctica ================= */
+/* Cada widget: function (box, complete) — llama a complete() cuando la práctica está hecha. */
+var W = {};
+
+/* --- Pregunta de una respuesta --- */
+W.quiz = function (box, complete, s) {
+  box.appendChild(el("p", "task", esc(s.q)));
+  var opts = el("div", "opts"), fb = el("p", "fb"); fb.hidden = true;
+  var btns = s.o.map(function (o, i) {
+    var b = el("button", "opt", esc(o)); b.type = "button";
+    b.onclick = function () {
+      btns.forEach(function (x, j) { x.disabled = true; if (j === s.a) x.classList.add("right"); });
+      if (i !== s.a) b.classList.add("wrong");
+      fb.hidden = false; fb.className = "fb " + (i === s.a ? "good" : "bad");
+      fb.innerHTML = "<strong>" + (i === s.a ? "Correcto. " : "No exactamente. ") + "</strong>" + s.e;
+      complete();
+    };
+    opts.appendChild(b); return b;
+  });
+  box.appendChild(opts); box.appendChild(fb);
+};
+
+/* --- Varias preguntas con las mismas opciones --- */
+W.series = function (box, complete, s) {
+  if (s.intro) box.appendChild(el("p", null, s.intro));
+  var i = 0, ok = 0;
+  var head = el("p", "counter"), q = el("p", "task"), opts = el("div", "opts"), fb = el("p", "fb"), nx = el("button", "btn small", "Siguiente");
+  nx.type = "button"; fb.hidden = true; nx.hidden = true;
+  box.appendChild(head); box.appendChild(q); box.appendChild(opts); box.appendChild(fb); box.appendChild(el("div")).appendChild(nx);
+  function show() {
+    var it = s.items[i];
+    head.textContent = (i + 1) + " de " + s.items.length + (s.ctx ? " · " + s.ctx(it) : "");
+    q.innerHTML = it.q; opts.innerHTML = ""; fb.hidden = true; nx.hidden = true;
+    s.o.forEach(function (o, j) {
+      var b = el("button", "opt", esc(o)); b.type = "button";
+      b.onclick = function () {
+        [].forEach.call(opts.children, function (x, k) { x.disabled = true; if (k === it.a) x.classList.add("right"); });
+        if (j !== it.a) b.classList.add("wrong"); else ok++;
+        fb.hidden = false; fb.className = "fb " + (j === it.a ? "good" : "bad"); fb.innerHTML = it.e;
+        if (i < s.items.length - 1) { nx.hidden = false; nx.focus(); }
+        else { complete(); box.appendChild(el("p", "fb good", "<strong>" + ok + " de " + s.items.length + ".</strong> " + (ok === s.items.length ? "Perfecto." : "Repasa las que fallaste antes de seguir."))); }
+      };
+      opts.appendChild(b);
+    });
+  }
+  nx.onclick = function () { i++; show(); };
+  show();
+};
+
+/* --- Terminal simulada --- */
+W.terminal = function (box, complete) {
+  var tasks = [
+    { t: "Comprueba que Claude Code está instalado", ok: /^claude\s+(--version|-v)$/, hint: "claude --version" },
+    { t: "Pide un diagnóstico de la instalación", ok: /^claude\s+doctor$/, hint: "claude doctor" },
+    { t: "Arranca Claude Code en modo manual", ok: /^claude\s+--permission-mode\s+(manual|default)$/, hint: "claude --permission-mode manual" },
+    { t: "Comprueba con qué cuenta y organización has entrado", ok: /^\/status$/, hint: "/status" },
+    { t: "Mira qué está ocupando el contexto", ok: /^\/context$/, hint: "/context" },
+    { t: "Sal de Claude Code", ok: /^\/(exit|quit)$/, hint: "/exit" }
+  ];
+  var cur = 0, inClaude = false;
+  var ul = el("ul", "tasks"); box.appendChild(ul);
+  var term = el("div", "term");
+  term.innerHTML = '<div class="term-bar"><span>Terminal · simulación</span><button class="copy" type="button" data-hint>Pista</button></div><div class="term-out"></div><div class="term-in"><span>PS C:\\repo&gt;</span><input aria-label="Escribe un comando" autocomplete="off" spellcheck="false"></div>';
+  box.appendChild(term);
+  var out = term.querySelector(".term-out"), inp = term.querySelector("input"), ps = term.querySelector(".term-in span");
+  function paintTasks() { ul.innerHTML = tasks.map(function (t, i) { return '<li class="' + (i < cur ? "ok" : i === cur ? "cur" : "") + '">' + esc(t.t) + '</li>'; }).join(""); }
+  function print(html) { out.insertAdjacentHTML("beforeend", html + "\n"); out.scrollTop = out.scrollHeight; }
+  print('<span class="dim">Escribe los comandos de la lista de arriba y pulsa Enter. Si te atascas, «Pista».</span>');
+  paintTasks();
+  term.querySelector("[data-hint]").onclick = function () { if (cur < tasks.length) { inp.value = tasks[cur].hint; inp.focus(); } };
+  inp.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    var v = inp.value.trim().replace(/\s+/g, " "); inp.value = "";
+    if (!v) return;
+    print('<span class="in">' + esc(ps.textContent) + " " + esc(v) + "</span>");
+    var r = run(v);
+    if (r) print(r);
+    if (cur < tasks.length && tasks[cur].ok.test(v)) {
+      cur++; paintTasks();
+      if (cur === tasks.length) { print('<span class="okc">✓ Todo hecho. Así se arranca y se comprueba Claude Code.</span>'); complete(); }
+    }
+  });
+  function run(v) {
+    if (!inClaude) {
+      if (/^claude\s+(--version|-v)$/.test(v)) return "2.1.290 (Claude Code)";
+      if (/^claude\s+doctor$/.test(v)) return '<span class="okc">✓</span> Instalación nativa en ~/.local/bin/claude\n<span class="okc">✓</span> Actualizaciones automáticas activadas\n<span class="okc">✓</span> Ficheros de configuración válidos\n<span class="dim">Sin avisos.</span>';
+      if (/^claude(\s+--permission-mode\s+\w+)?$/.test(v)) {
+        inClaude = true; ps.textContent = ">";
+        var mode = /manual|default/.test(v) ? "manual" : /plan/.test(v) ? "plan" : /acceptEdits/.test(v) ? "aceptar ediciones" : "auto";
+        if (cur === 2 && mode !== "manual") { print('<span class="warnc">Has arrancado en modo ' + mode + '. Para esta tarea, sal con /exit y arranca con --permission-mode manual.</span>'); }
+        return '<span class="okc">✻ Claude Code</span>\n<span class="dim">  C:\\repo · modo: ' + mode + ' · Shift+Tab para cambiar</span>';
+      }
+      if (/^\//.test(v)) return '<span class="warnc">Los comandos con / se escriben dentro de Claude Code. Arráncalo primero con «claude».</span>';
+      if (/^(irm|curl)/.test(v)) return '<span class="dim">Ya está instalado en esta simulación.</span>';
+      return '<span class="warnc">Comando no reconocido en esta simulación.</span>';
+    }
+    if (/^\/status$/.test(v)) return "Cuenta:        ana@empresa.com\nOrganización:  Tu empresa\nLogin:         cuenta de Claude (organización)\nConfiguración: usuario · proyecto";
+    if (/^\/context$/.test(v)) return "Contexto usado: 9%\n<span class=\"okc\">■■</span><span class=\"dim\">■■■■■■■■■■■■■■■■■■</span>\n  Prompt del sistema  3%\n  Herramientas        3%\n  CLAUDE.md           1%\n  Conversación        2%";
+    if (/^\/help$/.test(v)) return "Comandos: /status /context /clear /resume /init /memory /permissions /hooks /rewind /exit …";
+    if (/^\/clear$/.test(v)) return '<span class="dim">Conversación vaciada.</span>';
+    if (/^\/(exit|quit)$/.test(v)) { inClaude = false; ps.textContent = "PS C:\\repo>"; return '<span class="dim">Hasta luego.</span>'; }
+    if (/^claude/.test(v)) return '<span class="warnc">Ya estás dentro de Claude Code. Para salir: /exit</span>';
+    return '<span class="dim">(En una sesión real, Claude respondería a esto. Aquí solo practicamos los comandos.)</span>';
+  }
+};
+
+/* --- Peticiones de permiso --- */
+W.perm = function (box, complete) {
+  var items = [
+    { tool: "Edit · src/auth/session.ts", why: "Renovar el token un minuto antes de que caduque (es lo que le pediste).",
+      fb: ["good|Bien. Es justo el cambio que pediste y lo has leído.", "meh|Vale si vas a revisar el diff al final, pero para el primer cambio de una tarea es mejor ir viendo cada uno.", "bad|Es exactamente lo que le pediste: decir que no solo le hace dar vueltas."] },
+    { tool: "Bash · npm test -- auth", why: "Ejecutar los tests del módulo para comprobar el cambio.",
+      fb: ["good|Bien, aunque te lo va a pedir varias veces más.", "good|Lo ideal: es un comando seguro que va a repetir. Así no te pregunta más en esta sesión.", "bad|Sin tests no puede verificar. Le estás quitando la forma de comprobar su trabajo."] },
+    { tool: "Bash · rm -rf src/auth/legacy/", why: "Borrar la carpeta legacy, que parece no usarse.",
+      fb: ["bad|No se lo pediste, y borrar no se deshace con /rewind: los checkpoints no cubren lo que hacen los comandos.", "bad|Peor aún: le das permiso para borrar sin preguntarte en toda la sesión.", "good|Bien. No lo pediste y es irreversible. Dile: «No borres nada; si crees que sobra, explícame por qué y lo decido yo»."] },
+    { tool: "Bash · npm run deploy:prod", why: "Publicar el arreglo en producción para que esté disponible cuanto antes.",
+      fb: ["bad|Desplegar sin que nadie lo revise se salta la revisión del equipo.", "bad|Nunca para producción: le dejas desplegar sin preguntarte en toda la sesión.", "good|Bien. Dile: «No despliegues; deja el cambio listo para que lo revise una persona». Y en el módulo 2 lo convertirás en una regla."] }
+  ];
+  var labels = ["Sí", "Sí, y no volver a preguntar en esta sesión", "No, y decirle qué hacer en su lugar"];
+  var i = 0;
+  box.appendChild(el("p", null, "Le has pedido: <em>«El login falla tras caducar la sesión. Arréglalo y comprueba que los tests de auth pasan.»</em> Claude va pidiendo permiso. Decide en cada caso."));
+  var wrap = el("div"); box.appendChild(wrap);
+  function show() {
+    var it = items[i];
+    wrap.innerHTML = "";
+    var card = el("div", "perm");
+    card.innerHTML = '<p class="counter">Petición ' + (i + 1) + ' de ' + items.length + '</p><p class="perm-tool">' + esc(it.tool) + '</p><p class="perm-why">' + esc(it.why) + '</p>';
+    var opts = el("div", "opts"), fb = el("p", "fb"); fb.hidden = true;
+    var nx = el("button", "btn small", i < items.length - 1 ? "Siguiente petición" : "Terminar"); nx.type = "button"; nx.hidden = true;
+    labels.forEach(function (l, j) {
+      var b = el("button", "opt", esc(l)); b.type = "button";
+      b.onclick = function () {
+        var f = it.fb[j].split("|");
+        [].forEach.call(opts.children, function (x) { x.disabled = true; });
+        b.classList.add(f[0] === "good" ? "right" : f[0] === "bad" ? "wrong" : "meh");
+        fb.hidden = false; fb.className = "fb " + f[0]; fb.textContent = f[1];
+        nx.hidden = false; nx.focus();
+      };
+      opts.appendChild(b);
+    });
+    nx.onclick = function () { if (i < items.length - 1) { i++; show(); } else { wrap.innerHTML = '<p class="fb good"><strong>Hecho.</strong> Lo que ha pedido dentro de la tarea, sí. Lo que no pediste o no se puede deshacer, no, y le dices qué hacer en su lugar.</p>'; complete(); } };
+    card.appendChild(opts); card.appendChild(fb); card.appendChild(nx);
+    wrap.appendChild(card);
+  }
+  show();
+};
+
+/* --- Medidor de contexto --- */
+W.context = function (box, complete) {
+  var steps = [
+    { p: 6, t: "Abres Claude Code en el repo. El contexto ya tiene el prompt del sistema, las herramientas y tu CLAUDE.md." },
+    { p: 28, t: "Le pides que te explique cómo está organizado el módulo de pedidos. Lee 15 ficheros." },
+    { p: 61, t: "Arregláis juntos un fallo en el cálculo de descuentos: lee más código, ejecuta tests, corrige dos veces." },
+    { p: 61, t: "Ahora quieres empezar algo que no tiene nada que ver: exportar informes a CSV. ¿Qué haces?",
+      o: ["Sigo en la misma conversación, ya conoce el repo", "/clear y pido la nueva tarea con contexto, alcance y cómo comprobarla", "Abro otra terminal sin cerrar esta"], a: 1,
+      e: ["Todo lo de pedidos y descuentos sigue ocupando sitio y despistándole en una tarea que no tiene nada que ver.", "Eso es. Lo que necesite del repo ya está en CLAUDE.md, y el resto lo leerá cuando haga falta.", "Funciona, pero lo sencillo es /clear: la conversación anterior la puedes recuperar con /resume."] },
+    { p: 9, t: "Contexto limpio. Trabajáis en la exportación. Le corriges una vez el separador de columnas… y otra vez lo mismo." },
+    { p: 34, t: "Tercer intento y sigue igual. ¿Qué haces?",
+      o: ["Se lo repito en mayúsculas: ¡USA PUNTO Y COMA!", "/clear y un prompt mejor que incluya lo que he aprendido", "Le pido que lo vuelva a intentar"], a: 1,
+      e: ["Las mayúsculas no arreglan un contexto lleno de intentos fallidos. Al revés: le hacen exagerar.", "Eso es. Si le has corregido dos veces lo mismo, el contexto está contaminado: empieza limpio con una petición mejor.", "Con el contexto lleno de intentos fallidos, lo más probable es un cuarto intento parecido."] }
+  ];
+  var i = 0;
+  var meter = el("div", "meter");
+  meter.innerHTML = '<div class="meter-label"><span>Ventana de contexto</span><span class="pct"></span></div><div class="meter-bar"><div></div></div>';
+  box.appendChild(meter);
+  var txt = el("p", "task"), opts = el("div", "opts"), fb = el("p", "fb"), nx = el("button", "btn small", "Siguiente"); nx.type = "button";
+  box.appendChild(txt); box.appendChild(opts); box.appendChild(fb); box.appendChild(el("div")).appendChild(nx);
+  function setP(p) { var b = meter.querySelector(".meter-bar div"); b.style.width = p + "%"; b.classList.toggle("hot", p > 50); meter.querySelector(".pct").textContent = p + "%"; }
+  function show() {
+    var s = steps[i]; setP(s.p); txt.textContent = s.t; opts.innerHTML = ""; fb.hidden = true;
+    if (!s.o) { nx.hidden = false; return; }
+    nx.hidden = true;
+    s.o.forEach(function (o, j) {
+      var b = el("button", "opt", esc(o)); b.type = "button";
+      b.onclick = function () {
+        [].forEach.call(opts.children, function (x, k) { x.disabled = true; if (k === s.a) x.classList.add("right"); });
+        if (j !== s.a) b.classList.add("wrong");
+        fb.hidden = false; fb.className = "fb " + (j === s.a ? "good" : "bad"); fb.textContent = s.e[j];
+        if (j === s.a) { if (i < steps.length - 1) nx.hidden = false; else complete(); }
+        else { setTimeout(function () { [].forEach.call(opts.children, function (x) { x.disabled = false; x.classList.remove("right", "wrong"); }); }, 2600); }
+      };
+      opts.appendChild(b);
+    });
+  }
+  nx.onclick = function () { i++; show(); };
+  show();
+};
+
+/* --- Mantener o quitar --- */
+W.keep = function (box, complete, s) {
+  box.appendChild(el("p", null, s.intro));
+  var list = el("div", "keep"), picks = {};
+  s.items.forEach(function (it, i) {
+    var row = el("div", "keep-row");
+    row.innerHTML = '<span>' + it.t + '</span>';
+    var seg = el("div", "seg-btns");
+    [[true, s.yes || "Mantener"], [false, s.no || "Quitar"]].forEach(function (p) {
+      var b = el("button", null, p[1]); b.type = "button"; b.setAttribute("aria-pressed", "false");
+      b.onclick = function () { picks[i] = p[0]; [].forEach.call(seg.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); check.disabled = Object.keys(picks).length < s.items.length; };
+      seg.appendChild(b);
+    });
+    row.appendChild(seg); list.appendChild(row);
+  });
+  box.appendChild(list);
+  var check = el("button", "btn", "Comprobar"); check.type = "button"; check.disabled = true;
+  var res = el("p", "fb"); res.hidden = true;
+  box.appendChild(el("div")).appendChild(check); box.appendChild(res);
+  check.onclick = function () {
+    var ok = 0;
+    s.items.forEach(function (it, i) {
+      var row = list.children[i], good = picks[i] === it.k;
+      if (good) ok++;
+      row.classList.remove("right", "wrong"); row.classList.add(good ? "right" : "wrong");
+      var w = row.querySelector(".why") || row.appendChild(el("p", "why"));
+      w.innerHTML = (good ? "✓ " : "✗ ") + it.w;
+    });
+    res.hidden = false; res.className = "fb " + (ok === s.items.length ? "good" : "meh");
+    res.innerHTML = "<strong>" + ok + " de " + s.items.length + ".</strong> " + (ok === s.items.length ? "Perfecto." : "Lee la explicación de las marcadas en rojo.");
+    complete();
+  };
+};
+
+/* --- Expansión de un comando --- */
+W.expand = function (box, complete) {
+  box.appendChild(el("p", null, "Escribe lo que pondrías detrás de <code>/revisa-cambios</code> y mira el prompt que recibe Claude de verdad."));
+  var f = el("div", "field");
+  f.innerHTML = '<label for="exp-arg">/revisa-cambios …</label><input id="exp-arg" value="céntrate en seguridad" autocomplete="off">';
+  box.appendChild(f);
+  var pre = el("div", "code"); box.appendChild(pre);
+  var inp = f.querySelector("input");
+  function render() {
+    var a = inp.value.trim();
+    pre.innerHTML = '<div class="code-head"><span class="code-file">Lo que recibe Claude</span></div><pre>' +
+      'Estos son los cambios sin commitear del repo:\n\n<span class="c">diff --git a/src/export/csv.ts b/src/export/csv.ts\n-  const sep = ",";\n+  const sep = ";";\n+  const token = "sk-live-…";</span>\n\n' +
+      'Revísalos contra las reglas de CLAUDE.md. Para cada problema:\narchivo, qué regla incumple y cómo arreglarlo. No cambies nada.\n\nFoco adicional: <strong>' + esc(a || "(vacío)") + '</strong></pre>';
+  }
+  inp.addEventListener("input", render); render();
+  box.appendChild(el("p", "fb", "La línea <code>!`git diff HEAD`</code> se ha sustituido por el diff real antes de enviar nada, y <code>$ARGUMENTS</code> por lo que has escrito."));
+  complete();
+};
+
+/* --- Laboratorio de reglas de permisos --- */
+W.rules = function (box, complete) {
+  var RULES = ["Read(./.env)", "Read(./.env.*)", "Edit(./src/generated/**)", "Bash(git push *)", "Bash(npm test *)", "Bash(rm *)"];
+  var ACTIONS = [
+    { tool: "Read", arg: ".env", label: "Read · .env" },
+    { tool: "Bash", arg: "cat .env", label: "Bash · cat .env", reads: ".env" },
+    { tool: "Read", arg: ".env.local", label: "Read · .env.local" },
+    { tool: "Edit", arg: "src/generated/api.ts", label: "Edit · src/generated/api.ts" },
+    { tool: "Edit", arg: "src/export/csv.ts", label: "Edit · src/export/csv.ts" },
+    { tool: "Bash", arg: "git push origin main", label: "Bash · git push origin main" },
+    { tool: "Bash", arg: "npm test -- auth", label: "Bash · npm test -- auth" },
+    { tool: "Bash", arg: "git -C . push", label: "Bash · git -C . push" }
+  ];
+  var GOALS = [
+    { t: "Claude no puede leer .env ni .env.local, tampoco con cat", ok: function (r) { return r[0].v === "deny" && r[1].v === "deny" && r[2].v === "deny"; } },
+    { t: "No puede editar el código generado", ok: function (r) { return r[3].v === "deny"; } },
+    { t: "Puede editar el resto del código (te pregunta)", ok: function (r) { return r[4].v !== "deny"; } },
+    { t: "Un git push siempre te pregunta", ok: function (r) { return r[5].v === "ask"; } },
+    { t: "Los tests se ejecutan sin preguntar", ok: function (r) { return r[6].v === "allow"; } }
+  ];
+  var sel = {};
+  box.appendChild(el("p", null, "Estás en modo manual: leer no pregunta y el resto sí. Asigna a cada regla <strong>deny</strong>, <strong>ask</strong> o <strong>allow</strong> (o déjala sin usar) hasta cumplir los objetivos. A la derecha ves qué pasaría con cada acción de Claude."));
+  var goals = el("ul", "goals"); box.appendChild(goals);
+  var lab = el("div", "lab"); box.appendChild(lab);
+  var left = el("div", "lab-col"), right = el("div", "lab-col");
+  lab.appendChild(left); lab.appendChild(right);
+  left.appendChild(el("p", "eyebrow", ".claude/settings.json"));
+  RULES.forEach(function (r) {
+    var row = el("div", "rule");
+    row.innerHTML = '<code>' + esc(r) + '</code><select aria-label="Lista para ' + esc(r) + '"><option value="">sin usar</option><option value="deny">deny</option><option value="ask">ask</option><option value="allow">allow</option></select>';
+    var s = row.querySelector("select");
+    s.onchange = function () { sel[r] = s.value; s.className = s.value; paint(); };
+    left.appendChild(row);
+  });
+  var json = el("div"); left.appendChild(json);
+  right.appendChild(el("p", "eyebrow", "Lo que pasaría"));
+  var acts = el("div", "lab-col"); right.appendChild(acts);
+  var done = false;
+  function glob(p, path) {
+    var rx = "^" + p.replace(/^\.\//, "").replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*\*/g, "\u0000").replace(/\*/g, "[^/]*").replace(/\u0000/g, ".*") + "$";
+    return new RegExp(rx).test(path);
+  }
+  function matches(rule, a) {
+    var m = /^(\w+)\((.*)\)$/.exec(rule); var t = m[1], p = m[2];
+    if (t === "Bash") { if (a.tool !== "Bash") return false; var pre = p.replace(/ \*$/, ""); return a.arg === pre || a.arg.indexOf(pre + " ") === 0; }
+    if (t === "Read") { if (a.tool === "Read" || a.tool === "Edit") return glob(p, a.arg); if (a.reads) return glob(p, a.reads); return false; }
+    if (t === "Edit") return a.tool === "Edit" && glob(p, a.arg);
+    return false;
+  }
+  function evalA(a) {
+    var order = ["deny", "ask", "allow"];
+    for (var k = 0; k < 3; k++) for (var r in sel) if (sel[r] === order[k] && matches(r, a)) return { v: order[k], by: r };
+    return { v: a.tool === "Read" || (a.tool === "Bash" && a.reads) ? "allow" : "ask", by: null };
+  }
+  function paint() {
+    var res = ACTIONS.map(evalA);
+    acts.innerHTML = "";
+    ACTIONS.forEach(function (a, i) {
+      var r = res[i], row = el("div", "act");
+      var lbl = { deny: "Bloqueado", ask: "Te pregunta", allow: "Sin preguntar" }[r.v];
+      var why = r.by ? "Por tu regla " + r.by : "Sin regla: decide el modo manual";
+      if (a.arg === "git -C . push" && !r.by) why += ". Ojo: Bash(git push *) no coincide con este texto";
+      row.innerHTML = '<code>' + esc(a.label) + '</code><span class="badge ' + r.v + '">' + lbl + '</span><span class="act-why">' + esc(why) + '</span>';
+      acts.appendChild(row);
+    });
+    var g = GOALS.map(function (x) { return x.ok(res); });
+    goals.innerHTML = GOALS.map(function (x, i) { return '<li class="' + (g[i] ? "ok" : "") + '">' + esc(x.t) + '</li>'; }).join("");
+    var lists = { deny: [], ask: [], allow: [] };
+    RULES.forEach(function (r) { if (sel[r]) lists[sel[r]].push(r); });
+    json.innerHTML = '<div class="code"><div class="code-head"><span class="code-file">Tu fichero</span><button class="copy" type="button">Copiar</button></div><pre>' + esc(JSON.stringify({ permissions: lists }, null, 2)) + '</pre></div>';
+    if (!done && g.every(Boolean)) {
+      done = true;
+      box.appendChild(el("p", "fb good", "<strong>Objetivos cumplidos.</strong> Fíjate en dos cosas: <code>Read(./.env)</code> también frena <code>cat .env</code>, y <code>git -C . push</code> se escapa de tu regla porque las reglas de Bash miran el texto del comando. Para eso está el sandbox o la configuración de IT."));
+      complete();
+    }
+  }
+  paint();
+};
+
+/* --- Hook Stop y códigos de salida --- */
+W.hook = function (box, complete) {
+  box.appendChild(el("p", null, "Tu hook <code>Stop</code> ejecuta los tests cuando Claude va a terminar. Los tests fallan. ¿Con qué código sale tu script? Prueba los tres."));
+  var opts = el("div", "opts"); box.appendChild(opts);
+  var log = el("div", "log"); log.innerHTML = '<span class="dim">Elige un código de salida…</span>'; box.appendChild(log);
+  var tried = {};
+  var C = {
+    0: '<span class="dim">Claude:</span> He terminado el cambio en src/export/csv.ts.\n<span class="dim">Hook Stop:</span> npm test → 2 tests fallan\n<span class="dim">Hook Stop:</span> exit 0\n<span class="warnc">→ Claude termina. Para Claude Code, todo fue bien: tu hook no ha frenado nada.</span>',
+    1: '<span class="dim">Claude:</span> He terminado el cambio en src/export/csv.ts.\n<span class="dim">Hook Stop:</span> npm test → 2 tests fallan\n<span class="dim">Hook Stop:</span> exit 1\n<span class="warnc">→ Aviso de error del hook… y Claude termina igualmente. El código 1 no bloquea.</span>',
+    2: '<span class="dim">Claude:</span> He terminado el cambio en src/export/csv.ts.\n<span class="dim">Hook Stop:</span> npm test → 2 tests fallan\n<span class="dim">Hook Stop:</span> exit 2 · stderr: "Los tests fallan. Corrígelos antes de terminar: …"\n<span class="okc">→ Claude no puede terminar. Recibe el mensaje y sigue:</span>\n<span class="dim">Claude:</span> Los tests de csv.test.ts esperan coma como separador. Actualizo el test al nuevo formato y…\n<span class="dim">Hook Stop:</span> npm test → todo en verde · exit 0\n<span class="okc">→ Ahora sí termina.</span>'
+  };
+  [0, 1, 2].forEach(function (c) {
+    var b = el("button", "opt", "exit " + c); b.type = "button";
+    b.onclick = function () {
+      tried[c] = true; log.innerHTML = C[c];
+      [].forEach.call(opts.children, function (x) { x.classList.remove("right", "wrong"); });
+      b.classList.add(c === 2 ? "right" : "wrong");
+      if (tried[2] && Object.keys(tried).length >= 2) complete();
+      else if (c === 2 && Object.keys(tried).length < 2) log.innerHTML += '\n\n<span class="dim">Prueba también otro código para ver la diferencia.</span>';
+    };
+    opts.appendChild(b);
+  });
+};
+
+/* --- /rewind en una línea de tiempo --- */
+W.rewind = function (box, complete) {
+  var msgs = [
+    { t: "«Refactoriza el cálculo de descuentos»", s: "Claude edita descuentos.ts y precios.ts" },
+    { t: "«Aplica la migración de la tabla de clientes»", s: "Claude ejecuta npm run migrate (cambia la base de datos local)" },
+    { t: "«Renombra las funciones a español»", s: "Claude edita descuentos.ts, precios.ts y clientes.ts" }
+  ];
+  var MODES = ["Código y conversación", "Solo conversación", "Solo código"];
+  var point = null, mode = null, tries = 0;
+  box.appendChild(el("p", null, "Llevas tres mensajes. El último no te convence. Elige a qué mensaje volver y qué restaurar."));
+  var tl = el("div", "timeline"); box.appendChild(tl);
+  msgs.forEach(function (m, i) {
+    var b = el("button", "tl", '<span class="tln">' + (i + 1) + '</span><span>' + esc(m.t) + '<small>' + esc(m.s) + '</small></span>'); b.type = "button"; b.setAttribute("aria-pressed", "false");
+    b.onclick = function () { point = i; [].forEach.call(tl.children, function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); }); paint(); };
+    tl.appendChild(b);
+  });
+  var mrow = el("div", "seg-btns"); mrow.style.flexWrap = "wrap"; box.appendChild(el("p", "counter", "Qué restaurar")); box.appendChild(mrow);
+  MODES.forEach(function (m, i) {
+    var b = el("button", null, m); b.type = "button"; b.setAttribute("aria-pressed", "false");
+    b.onclick = function () { mode = i; [].forEach.call(mrow.children, function (x, k) { x.setAttribute("aria-pressed", k === i ? "true" : "false"); }); paint(); };
+    mrow.appendChild(b);
+  });
+  var out = el("div", "statebox"); box.appendChild(out);
+  function paint() {
+    if (point == null || mode == null) { out.innerHTML = '<p class="counter">Elige un mensaje y un modo.</p>'; return; }
+    var code = mode !== 1, conv = mode !== 2;
+    var rows = [
+      ["Ediciones del mensaje 1", point <= 0 && code], ["Migración del mensaje 2", false], ["Ediciones del mensaje 3", point <= 2 && code], ["Conversación desde el mensaje " + (point + 1), conv]
+    ];
+    if (point === 1 || point === 0) rows[1] = ["Migración del mensaje 2", "nunca"];
+    out.innerHTML = '<p class="counter">Volviendo al mensaje ' + (point + 1) + ' · ' + MODES[mode] + '</p>' + rows.map(function (r) {
+      var v = r[1] === "nunca" ? '<span class="badge deny">No se deshace: fue un comando</span>' : r[1] ? '<span class="badge allow">Se deshace</span>' : '<span class="badge ask">Se queda</span>';
+      return '<div class="st"><span>' + esc(r[0]) + '</span>' + v + '</div>';
+    }).join("");
+    tries++;
+    if (tries >= 1 && point <= 1) { out.innerHTML += '<p class="fb meh">La migración cambió la base de datos con un comando: ningún checkpoint la deshace. Para eso necesitas otra migración o tu copia de la base de datos.</p>'; complete(); }
+    else if (point === 2) out.innerHTML += '<p class="fb">Prueba también a volver al mensaje 1 o 2: mira qué pasa con la migración.</p>';
+  }
+  paint();
+};
+
+/* --- Subagente: contexto --- */
+W.subagent = function (box, complete) {
+  box.appendChild(el("p", null, "Tarea: «averigua cómo se usa <code>calcularIVA</code> en todo el repo». Hay que leer 40 ficheros. Compara las dos formas."));
+  var two = el("div", "two"); box.appendChild(two);
+  function col(title) {
+    var c = el("div", "mini"); c.innerHTML = '<h3>' + title + '</h3><div class="meter"><div class="meter-label"><span>Tu conversación</span><span class="pct">12%</span></div><div class="meter-bar"><div style="width:12%"></div></div></div><p class="note counter"></p>';
+    two.appendChild(c); return c;
+  }
+  var a = col("En tu conversación"), b = col("Con un subagente");
+  var go = el("button", "btn", "Lanzar la tarea"); go.type = "button"; box.appendChild(el("div")).appendChild(go);
+  function set(c, p, note) { var bar = c.querySelector(".meter-bar div"); bar.style.width = p + "%"; bar.classList.toggle("hot", p > 50); c.querySelector(".pct").textContent = p + "%"; c.querySelector(".note").textContent = note; }
+  go.onclick = function () {
+    go.disabled = true;
+    set(a, 74, "40 ficheros leídos, todos dentro de tu conversación.");
+    set(b, 15, "El subagente leyó los 40 en su propio contexto. A ti solo te llega un resumen de 15 líneas.");
+    box.appendChild(el("p", "fb good", "Mismo resultado, pero tu conversación sigue limpia para la tarea de verdad. Si de una tarea solo necesitas la conclusión, delega la exploración."));
+    complete();
+  };
+};
+
+/* --- Encuentra el error en un fichero --- */
+W.findbug = function (box, complete, s) {
+  box.appendChild(el("p", null, s.intro));
+  var c = el("div", "clines"); box.appendChild(c);
+  var fb = el("p", "fb"); fb.hidden = true; box.appendChild(fb);
+  s.lines.forEach(function (l, i) {
+    var b = el("button", null, esc(l || " ")); b.type = "button";
+    b.onclick = function () {
+      fb.hidden = false;
+      if (i === s.bad) { b.classList.add("hit"); fb.className = "fb good"; fb.innerHTML = s.ok; complete(); [].forEach.call(c.children, function (x) { x.disabled = true; }); }
+      else { b.classList.add("miss"); fb.className = "fb bad"; fb.textContent = "Esa línea está bien. Sigue buscando."; }
+    };
+    c.appendChild(b);
+  });
+};
+
+/* --- Árbol: qué se carga --- */
+W.tree = function (box, complete) {
+  var FILES = [
+    { p: "src/web/Boton.tsx", load: ["CLAUDE.md", ".claude/rules/general.md", ".claude/rules/interfaz.md"] },
+    { p: "src/web/estilos.css", load: ["CLAUDE.md", ".claude/rules/general.md"] },
+    { p: "src/api/pedidos.ts", load: ["CLAUDE.md", ".claude/rules/general.md", ".claude/rules/api.md"] },
+    { p: "src/facturacion/calculo.ts", load: ["CLAUDE.md", ".claude/rules/general.md", "src/facturacion/CLAUDE.md"] }
+  ];
+  var WHY = {
+    "CLAUDE.md": "siempre, al arrancar", ".claude/rules/general.md": "no tiene paths: siempre",
+    ".claude/rules/interfaz.md": "paths: src/web/**/*.tsx", ".claude/rules/api.md": "paths: src/api/**",
+    "src/facturacion/CLAUDE.md": "al trabajar dentro de esa carpeta"
+  };
+  box.appendChild(el("p", null, "Pulsa cada fichero de código para ver qué instrucciones tiene Claude cargadas mientras trabaja en él."));
+  var two = el("div", "two"); box.appendChild(two);
+  var tree = el("div", "tree"); two.appendChild(tree);
+  var out = el("div", "loaded"); two.appendChild(out);
+  out.innerHTML = '<p class="counter">Elige un fichero.</p>';
+  tree.innerHTML = '<span class="cfg">CLAUDE.md</span><span class="cfg">.claude/rules/general.md</span><span class="cfg">.claude/rules/interfaz.md</span><span class="cfg">.claude/rules/api.md</span><span class="dir">src/</span>';
+  var seen = {};
+  FILES.forEach(function (f) {
+    if (f.p === "src/facturacion/calculo.ts") tree.appendChild(el("span", "cfg", "&nbsp;&nbsp;facturacion/CLAUDE.md"));
+    var b = el("button", null, "&nbsp;&nbsp;" + esc(f.p.replace("src/", ""))); b.type = "button"; b.setAttribute("aria-pressed", "false");
+    b.onclick = function () {
+      [].forEach.call(tree.querySelectorAll("button"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      seen[f.p] = 1;
+      out.innerHTML = '<p class="counter">Trabajando en <code>' + esc(f.p) + '</code>, Claude tiene cargado:</p>' + f.load.map(function (l) { return '<div class="st"><code>' + esc(l) + '</code><span class="counter">' + esc(WHY[l]) + '</span></div>'; }).join("");
+      if (Object.keys(seen).length >= 3) { complete(); }
+    };
+    tree.appendChild(b);
+  });
+};
+
+/* --- Ordenar pasos --- */
+W.order = function (box, complete, s) {
+  box.appendChild(el("p", null, s.intro));
+  var doneBox = el("div", "order-done"), pool = el("div", "order-pool");
+  box.appendChild(doneBox); box.appendChild(el("p", "counter", "Pulsa el siguiente paso:")); box.appendChild(pool);
+  var n = 0;
+  shuffle(s.items.map(function (t, i) { return { t: t, i: i }; })).forEach(function (it) {
+    var b = el("button", "opt", esc(it.t)); b.type = "button";
+    b.onclick = function () {
+      if (it.i === n) {
+        n++; b.remove(); var d = el("div", "opt right", n + ". " + esc(it.t)); doneBox.appendChild(d);
+        if (n === s.items.length) { pool.previousSibling.remove(); box.appendChild(el("p", "fb good", s.ok)); complete(); }
+      } else { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); }
+    };
+    pool.appendChild(b);
+  });
+};
+
+/* --- Constructor de peticiones --- */
+W.builder = function (box, complete) {
+  var F = [["tarea", "Tarea", "Qué quieres, como una orden"], ["contexto", "Contexto", "Qué pasa y por qué importa"], ["alcance", "Alcance", "Dónde trabajar y qué NO tocar"], ["hecho", "Hecho cuando", "Cómo comprobamos que está bien"], ["entrega", "Entrega", "Qué quieres ver al final"]];
+  var start = { tarea: "¿Puedes mirar lo de la exportación a CSV?", contexto: "", alcance: "", hecho: "", entrega: "" };
+  box.appendChild(el("p", null, "Esta petición está a medias. Complétala hasta que la revisión quede en verde. Puedes inventarte los detalles."));
+  var form = el("div", "field"); form.style.gap = "14px"; box.appendChild(form);
+  F.forEach(function (f) {
+    var d = el("div", "field");
+    d.innerHTML = '<label for="pb-' + f[0] + '">' + f[1] + '</label><small>' + f[2] + '</small><textarea id="pb-' + f[0] + '">' + esc(start[f[0]]) + '</textarea>';
+    form.appendChild(d);
+  });
+  var lint = el("ul", "lint"); box.appendChild(lint);
+  var out = el("div", "code"); box.appendChild(out);
+  var done = false;
+  function render() {
+    var v = {}; F.forEach(function (f) { v[f[0]] = document.getElementById("pb-" + f[0]).value.trim(); });
+    var checks = [
+      [v.tarea && !/^¿|^(puedes|podrías|podrias)/i.test(v.tarea) && v.tarea.length > 15, "La tarea es una orden concreta", "La tarea es una pregunta o es vaga: Claude sugerirá en vez de hacer"],
+      [v.contexto.length > 25, "Hay contexto y motivo", "Falta contexto: qué pasa y por qué importa"],
+      [/\bno\b|\bsin\b|\bsolo\b/i.test(v.alcance), "El alcance dice qué no tocar", "El alcance no dice qué NO tocar"],
+      [/test|build|lint|comando|ejecuta|pasa|comprob/i.test(v.hecho), "Se puede verificar", "«Hecho cuando» no dice cómo comprobarlo"],
+      [v.entrega.length > 10, "Dice qué entregar", "Falta qué quieres ver al final"]
+    ];
+    lint.innerHTML = checks.map(function (c) { return '<li class="' + (c[0] ? "ok" : "miss") + '">' + esc(c[0] ? c[1] : c[2]) + '</li>'; }).join("");
+    var t = [v.tarea, v.contexto && "\nContexto: " + v.contexto, v.alcance && "\nAlcance: " + v.alcance, v.hecho && "\nHecho cuando: " + v.hecho, v.entrega && "\nEntrega: " + v.entrega].filter(Boolean).join("\n");
+    out.innerHTML = '<div class="code-head"><span class="code-file">Tu petición</span><button class="copy" type="button">Copiar</button></div><pre>' + esc(t) + '</pre>';
+    if (!done && checks.every(function (c) { return c[0]; })) { done = true; box.appendChild(el("p", "fb good", "<strong>Lista.</strong> Contexto, alcance y cómo comprobarlo: si falta uno de los tres, Claude lo rellena adivinando.")); complete(); }
+  }
+  form.addEventListener("input", render); render();
+};
+
+/* ================= contenido del curso ================= */
+/* paso: { k: "learn", h: html }  |  { k: "do", w: "widget", ...datos } */
+var MODULES = [
+{ n: 1, title: "Fundamentos y memoria de proyecto", piece: "Instrucciones de proyecto", short: "Instrucciones",
+  lessons: [
+  { id: "1-1", title: "Qué es Claude Code", idea: "El modelo no lo controláis. El arnés, sí.", steps: [
+    { k: "learn", h: '<p>Seguramente ya has usado Claude o ChatGPT en el navegador: copias código, lo pegas, te responde y aplicas tú los cambios. Claude Code es otra cosa.</p><div class="two"><div class="mini no"><h3>Chat en el navegador</h3><ul class="clean"><li>Copias y pegas código</li><li>No ve tu proyecto</li><li>Aplicas tú los cambios</li><li>Olvida al cerrar</li></ul></div><div class="mini yes"><h3>Claude Code</h3><ul class="clean"><li>Vive en tu repositorio</li><li>Lee, ejecuta y edita</li><li>Pide permiso antes de actuar</li><li>Recuerda las reglas del proyecto</li></ul></div></div><p>Es un <strong>agente</strong>: le das un objetivo y él decide qué ficheros leer, qué comandos ejecutar y qué cambiar, pidiéndote permiso por el camino.</p>' },
+    { k: "learn", h: '<p>Si un agente puede actuar en tu repo, la pregunta importante ya no es solo «¿qué modelo uso?», sino <strong>«¿en qué entorno trabaja?»</strong>.</p><p>A ese entorno se le llama <em>harness</em> (arnés): todo lo que rodea al modelo y decide cómo trabaja.</p><div class="cycle"><span class="s">Instrucciones</span><span class="s">Permisos</span><span class="s">Validaciones</span><span class="s">Herramientas</span><span class="s">Reparto de tareas</span><span class="s">Revisión humana</span></div><p>Cada módulo de este curso monta una parte de ese arnés en vuestro repositorio.</p><div class="idea">El modelo es el motor. El arnés es todo lo que lo rodea.</div>' },
+    { k: "do", w: "quiz", q: "Un compañero dice: «Claude Code desplegó a producción sin que nadie lo revisara». ¿Qué falló?", o: ["El modelo, que no es lo bastante bueno", "El arnés: no había nada que impidiera o revisara ese despliegue", "Nada, es lo normal en un agente"], a: 1, e: "No se puede garantizar que un modelo no se equivoque. Sí se puede montar un entorno donde desplegar a producción pida permiso o esté prohibido. Eso es el arnés, y lo montarás en el módulo 2." }
+  ]},
+  { id: "1-2", title: "Instalar y arrancar", idea: "Antes de empezar: claude --version, claude doctor y /status.", steps: [
+    { k: "learn", h: '<p>Se instala con un comando, sin permisos de administrador. Fíjate en qué terminal usas: si la línea empieza por <code>PS</code>, es PowerShell.</p>' + code("Instalación", "# Windows · PowerShell\nirm https://claude.ai/install.ps1 | iex\n\n# Windows · CMD\ncurl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd\n\n# macOS\ncurl -fsSL https://claude.ai/install.sh | bash") + '<p>Después, <strong>cierra la terminal y abre una nueva</strong>: la que ya estaba abierta no sabe dónde está el programa.</p>' },
+    { k: "learn", h: '<p>Hay dos tipos de comandos y conviene no mezclarlos:</p>' + tbl(["Dónde", "Ejemplos", "Para qué"], [["En la terminal", "<code>claude --version</code><br><code>claude doctor</code><br><code>claude</code>", "Comprobar la instalación y arrancar"], ["Dentro de Claude Code", "<code>/status</code><br><code>/context</code><br><code>/exit</code>", "Los que empiezan por <code>/</code> son comandos de Claude Code"]]) + '<p><code>claude --permission-mode manual</code> arranca en modo manual: lee sin preguntar, y para todo lo demás te pide permiso. Es el mejor modo para aprender.</p>' },
+    { k: "do", w: "terminal" },
+    { k: "do", w: "quiz", q: "Pegas el comando de instalación y ves: 'irm' is not recognized as an internal or external command. ¿Qué pasa?", o: ["Te faltan permisos de administrador", "Estás en CMD, no en PowerShell: usa el comando de CMD", "No tienes conexión"], a: 1, e: "<code>irm</code> es un comando de PowerShell. En CMD hay que usar la versión con <code>curl</code>." }
+  ]},
+  { id: "1-3", title: "Cómo trabaja y cuándo te pide permiso", idea: "Lee antes de aceptar. Lo que no pediste o no se puede deshacer: no, y dile qué hacer.", steps: [
+    { k: "learn", h: '<p>Claude Code trabaja en un ciclo:</p><div class="cycle"><span class="s">Lee</span><span class="a">→</span><span class="s">Propone</span><span class="a">→</span><span class="s">Pide permiso</span><span class="a">→</span><span class="s">Actúa</span><span class="a">→</span><span class="s">Verifica</span></div><p>Cuando te pide permiso tienes tres respuestas:</p><ul class="clean"><li><strong>Sí</strong>, esta vez.</li><li><strong>Sí, y no volver a preguntar</strong> por esto en la sesión.</li><li><strong>No</strong>, y le escribes qué hacer en su lugar.</li></ul><p><kbd>Esc</kbd> le interrumpe en cualquier momento.</p>' },
+    { k: "learn", h: tbl(["Modo", "Qué hace sin preguntarte"], [["Auto (por defecto)", "Casi todo: un segundo modelo revisa cada acción por ti"], ["Manual", "Solo leer. Para editar o ejecutar, te pregunta"], ["Plan", "Explora y propone un plan. No cambia nada"]]) + '<p><kbd>Shift</kbd>+<kbd>Tab</kbd> cambia de modo; lo ves en la barra de abajo. En el módulo 2 veremos los modos a fondo.</p>' },
+    { k: "do", w: "perm" }
+  ]},
+  { id: "1-4", title: "El contexto", idea: "/clear al cambiar de tarea. Si le has corregido dos veces lo mismo, /clear y un prompt mejor.", steps: [
+    { k: "learn", h: '<p>Todo lo que Claude ve en una conversación ocupa su <strong>ventana de contexto</strong>: tus mensajes, los ficheros que lee, la salida de los comandos, el CLAUDE.md…</p><blockquote class="idea">«La ventana de contexto se llena rápido, y el rendimiento empeora a medida que se llena.» <br><small style="font-weight:400">Anthropic, Best practices for Claude Code</small></blockquote><p>Gestionar el contexto es la habilidad número uno. <code>/context</code> te enseña qué lo ocupa; <code>/clear</code> lo vacía.</p>' },
+    { k: "do", w: "context" }
+  ]},
+  { id: "1-5", title: "Cómo pedir trabajo", idea: "Contexto, alcance y cómo comprobarlo. Si falta uno, Claude lo rellena adivinando.", steps: [
+    { k: "learn", h: '<p>Piensa en Claude como en <strong>un empleado brillante y recién llegado</strong>: muy capaz, pero no conoce vuestras normas ni vuestro código.</p><p>Una prueba útil: enseña tu petición a un compañero que no sepa nada de la tarea. Si él se confundiría, Claude también.</p><p>Las guías de Anthropic lo resumen en unos principios:</p><ul class="clean"><li><strong>Explica el porqué.</strong> Con el motivo, acierta en casos que no habías previsto.</li><li><strong>Sé específico</strong>: dónde mirar, qué caso, qué no hacer.</li><li><strong>Pide la acción.</strong> «¿Puedes sugerir…?» sugiere; «Cambia…» cambia.</li><li><strong>Dale cómo comprobarlo</strong>: tests, un build. Pide evidencia, no afirmaciones.</li><li><strong>Tono normal.</strong> «CRÍTICO: SIEMPRE» le hace exagerar.</li></ul>' },
+    { k: "do", w: "series", intro: "¿Cuál de las dos peticiones es mejor?", o: ["La A", "La B"], items: [
+      { q: "<strong>A:</strong> «Añade tests para foo.py»<br><strong>B:</strong> «Escribe un test para foo.py para el caso en que el usuario no ha iniciado sesión. Sin mocks.»", a: 1, e: "La B dice qué caso cubrir y cómo. Con la A, Claude elegirá los casos por su cuenta." },
+      { q: "<strong>A:</strong> «No uses console.log.»<br><strong>B:</strong> «Los logs de producción se revisan en auditorías, así que no escribas datos personales en ellos. Usa el logger del proyecto.»", a: 1, e: "Con el motivo, Claude también evitará datos personales en sitios que no habías previsto." },
+      { q: "<strong>A:</strong> «El build falla, arréglalo y comprueba que pasa. Ataca la causa, no silencies el error.»<br><strong>B:</strong> «El build falla, ¿lo miras?»", a: 0, e: "La A pide la acción, dice cómo comprobarla y cierra la salida fácil (silenciar el error)." },
+      { q: "<strong>A:</strong> «IMPORTANTE: NUNCA JAMÁS uses var.»<br><strong>B:</strong> «Usa const o let; el proyecto no usa var.»", a: 1, e: "Los modelos actuales siguen muy bien las instrucciones. Las mayúsculas les hacen pasarse de frenada." }
+    ]},
+    { k: "learn", h: '<p>Una plantilla que funciona para casi todo:</p>' + code("Plantilla de petición", "Contexto:     qué pasa y por qué importa\nAlcance:      dónde trabajar y qué NO tocar\nHecho cuando: cómo comprobamos que está bien\nEntrega:      qué quiero ver al final") + '<p>Para cambios grandes, primero el plan: pasa a plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd>) o empieza con <code>/plan</code>. Si el cambio se puede describir en una frase, no hace falta plan.</p>' },
+    { k: "do", w: "builder" }
+  ]},
+  { id: "1-6", title: "CLAUDE.md: la memoria del proyecto", idea: "/init arranca tu CLAUDE.md. Tú lo terminas.", steps: [
+    { k: "learn", h: '<p>Cada vez que arranca, Claude lee <code>CLAUDE.md</code>: las reglas de vuestro proyecto en un fichero. Es lo que evita repetir lo mismo en cada conversación.</p>' + tbl(["Fichero", "Para quién"], [["<code>./CLAUDE.md</code>", "Todo el equipo · va en el repositorio"], ["<code>./CLAUDE.local.md</code>", "Solo tú, en este proyecto · no se comparte"], ["<code>~/.claude/CLAUDE.md</code>", "Solo tú, en todos tus proyectos"], ["<code>subcarpeta/CLAUDE.md</code>", "Se carga al trabajar en esa carpeta"]]) + '<p><code>/init</code> lee el repo y genera un primer borrador. Es un punto de partida: lo que aporta valor es lo que añades tú.</p>' },
+    { k: "learn", h: '<p>Va lo que Claude <strong>no puede deducir</strong> leyendo el código y sigue siendo cierto mañana. Y poco: menos de 200 líneas. Para cada línea, pregúntate: <em>si la quito, ¿Claude se equivocaría?</em></p>' + code("CLAUDE.md · secciones clave", "## No tocar\n- src/generated/ — se genera solo; cambia el origen, no el resultado.\n- .env* — configuración local; no lo leas ni lo edites.\n\n## Verificación antes de dar algo por terminado\n1. Ejecuta: <comando de lint> y <comando de tests>.\n2. Enseña la salida; no digas \"funciona\" sin ella.\n3. Di qué no has podido verificar.\n\n## Convenciones del equipo\n- <una o dos reglas que hoy solo están en la cabeza de alguien>") + '<p>No hace falta escribirlo a mano: también se le puede pedir a Claude. Lo importante es que el contenido lo decides tú.</p>' + pide("Añade a CLAUDE.md una sección «No tocar» con src/generated/ (se genera solo:\ncambia el origen) y .env*, y otra «Verificación antes de dar algo por terminado»:\nlint y tests, enseñar la salida y decir qué no se ha podido verificar.") },
+    { k: "do", w: "keep", intro: "Este es un borrador de CLAUDE.md. Decide qué líneas mantener y cuáles quitar.", items: [
+      { t: "Tests: <code>make test-unit</code> (no <code>npm test</code>)", k: true, w: "Un dato que Claude no puede adivinar y que necesita para verificar." },
+      { t: "Contraseña de la BD de pruebas: <code>Pruebas2024!</code>", k: false, w: "Nunca secretos: CLAUDE.md se comparte con el código y se carga en cada sesión." },
+      { t: "El proyecto usa TypeScript", k: false, w: "Se ve en cuanto abre un fichero. Ocupa sitio sin aportar." },
+      { t: "<code>src/generated/</code> se genera: cambia el esquema, no el resultado", k: true, w: "Una zona prohibida con su porqué. Sin esto, editaría el código generado." },
+      { t: "Esta semana: terminar la exportación a CSV", k: false, w: "Es temporal. Mañana será falso y seguirá leyéndolo." },
+      { t: "Antes de terminar, ejecuta lint y tests y enseña la salida", k: true, w: "El criterio de verificación: lo que más mejora el resultado." },
+      { t: "Las 40 páginas de la guía de arquitectura, pegadas", k: false, w: "Demasiado largo. Si hace falta, un resumen o una referencia con @docs/arquitectura.md." }
+    ]},
+    { k: "learn", h: '<p>Hay una segunda capa de memoria que no conviene confundir con CLAUDE.md:</p>' + tbl(["", "CLAUDE.md", "MEMORY.md"], [["Lo escribe", "El equipo", "Claude"], ["Vive en", "El repositorio, junto al código", "Tu equipo, fuera del repo"], ["Se comparte", "Sí", "No, es personal"], ["Se revisa con", "Tu editor", "<code>/memory</code>"]]) + '<p>Claude guarda ahí lo que aprende de ti: quién eres, correcciones que le haces, en qué estás trabajando. Se lo pides en lenguaje normal: «recuerda que en este proyecto usamos pnpm».</p><div class="idea">CLAUDE.md es lo que tú le cuentas a Claude. MEMORY.md es lo que Claude recuerda de ti.</div>' },
+    { k: "do", w: "quiz", q: "Todo el equipo debe saber que las fechas se guardan siempre en UTC. ¿Dónde va?", o: ["En MEMORY.md, pidiéndoselo a Claude", "En el CLAUDE.md del repo", "En ~/.claude/CLAUDE.md"], a: 1, e: "Es una regla del equipo: va en el CLAUDE.md del repo, que se comparte con el código y lo leen todos. MEMORY.md y ~/.claude/CLAUDE.md son solo tuyos." }
+  ]},
+  { id: "1-7", title: "Tu primer comando", idea: "Si escribes el mismo prompt por tercera vez, merece ser un comando.", steps: [
+    { k: "learn", h: '<p>Un comando propio es un fichero Markdown en <code>.claude/commands/</code>. El nombre del fichero es el nombre del comando, y el contenido es el prompt.</p><p><code>.claude/commands/revisa-cambios.md</code> → <code>/revisa-cambios</code></p>' + code(".claude/commands/revisa-cambios.md", "---\ndescription: Revisa los cambios sin commitear contra CLAUDE.md\ndisable-model-invocation: true\n---\nEstos son los cambios sin commitear del repo:\n\n!`git diff HEAD`\n\nRevísalos contra las reglas de CLAUDE.md. Para cada problema:\narchivo, qué regla incumple y cómo arreglarlo. No cambies nada.\n\nFoco adicional: $ARGUMENTS") + tbl(null, [["<code>!`git diff HEAD`</code>", "Se ejecuta antes de enviar el prompt: Claude recibe el diff real"], ["<code>$ARGUMENTS</code>", "Lo que escribes detrás del comando"], ["<code>disable-model-invocation</code>", "Solo lo lanzas tú, no Claude por su cuenta"]]) + '<p>Va en el repo, así que todo el equipo tiene el mismo comando. En Windows sin Git Bash, añade <code>shell: powershell</code> a la cabecera.</p>' + '<p>Tampoco hace falta crear el fichero a mano:</p>' + pide("Crea un comando /revisa-cambios que reciba los cambios sin commitear con\n!`git diff HEAD`, los revise contra CLAUDE.md, diga para cada problema el archivo,\nla regla y cómo arreglarlo, no cambie nada, acepte un foco con $ARGUMENTS y que\nsolo lo pueda lanzar yo.") },
+    { k: "do", w: "expand" },
+    { k: "do", w: "quiz", q: "Fíjate en el diff de la práctica anterior: alguien ha dejado un token en el código. ¿Por qué /revisa-cambios tiene más opciones de verlo que si le pides «revisa mis cambios» a secas?", o: ["Porque usa un modelo mejor", "Porque recibe el diff real y una instrucción concreta de contrastarlo con CLAUDE.md", "No hay diferencia"], a: 1, e: "El comando le da a Claude el material exacto (el diff) y el criterio (CLAUDE.md), siempre igual, lo lance quien lo lance." }
+  ]}
+  ]},
+{ n: 2, title: "Uso seguro y gobierno", piece: "Permisos y validaciones", short: "Permisos",
+  lessons: [
+  { id: "2-1", title: "De consejo a regla", idea: "Un consejo se puede olvidar. Una regla, no.", steps: [
+    { k: "learn", h: '<p>Lo que pones en CLAUDE.md es un <strong>consejo</strong>: Claude normalmente lo sigue… pero no siempre. Para lo que no puede pasar nunca, hacen falta capas que aplica Claude Code, no el modelo.</p>' + tbl(["Capa", "Qué hace", "Se cumple"], [["CLAUDE.md", "Instrucciones del proyecto", "Normalmente"], ["Modo de permisos", "Cuánto puede hacer sin preguntar", "Siempre"], ["Reglas de permisos", "Permitir, preguntar o prohibir acciones concretas", "Siempre"], ["Hooks", "Comprobaciones automáticas en momentos clave", "Siempre"], ["Configuración gestionada", "Lo que impone IT y nadie puede cambiar", "Siempre"]]) },
+    { k: "do", w: "series", intro: "¿Basta con CLAUDE.md o necesita una regla?", o: ["Basta con CLAUDE.md", "Necesita una regla o un hook"], items: [
+      { q: "«Preferimos nombres de variables en inglés.»", a: 0, e: "Si alguna vez falla, no pasa nada grave: un consejo es suficiente." },
+      { q: "«Nunca leas el fichero .env.»", a: 1, e: "Si falla una vez, se filtran credenciales. Necesita una regla deny." },
+      { q: "«No des una tarea por terminada con los tests en rojo.»", a: 1, e: "Es una comprobación: un hook Stop que ejecuta los tests." },
+      { q: "«Los componentes nuevos van en src/web/ui/.»", a: 0, e: "Una convención: si falla, se corrige en la revisión." }
+    ]}
+  ]},
+  { id: "2-2", title: "Modos de permisos", idea: "Auto mode es un filtro, no una garantía.", steps: [
+    { k: "learn", h: tbl(["Modo", "Sin preguntarte puede…", "Para"], [["Manual", "Leer (y comandos de solo lectura)", "Trabajo sensible, código desconocido"], ["Aceptar ediciones", "Leer y editar ficheros", "Iterar sobre código que revisas"], ["Plan", "Leer y proponer; no cambia nada", "Pensar antes de tocar"], ["Auto (por defecto)", "Casi todo; otro modelo revisa cada acción", "Trabajo habitual con menos interrupciones"]]) + '<p><kbd>Shift</kbd>+<kbd>Tab</kbd> para cambiar. En plan mode, <kbd>Ctrl</kbd>+<kbd>G</kbd> abre el plan en tu editor para cambiarlo antes de aprobarlo.</p><div class="warn"><strong>Auto mode bloquea por defecto</strong> cosas como <code>curl | bash</code>, despliegues a producción, <code>git push --force</code> o borrar ficheros existentes. Pero es un filtro: lo que no puede pasar nunca necesita una regla.</div>' },
+    { k: "do", w: "series", intro: "Predice qué hará Claude.", o: ["Lo hace sin preguntar", "Te pregunta", "No lo hace: solo propone"], items: [
+      { q: "Modo <strong>manual</strong>. Claude quiere leer <code>src/app.ts</code>.", a: 0, e: "En manual, leer no pregunta." },
+      { q: "Modo <strong>manual</strong>. Claude quiere editar <code>src/app.ts</code>.", a: 1, e: "Editar siempre pregunta en manual." },
+      { q: "Modo <strong>aceptar ediciones</strong>. Claude quiere editar <code>src/app.ts</code>.", a: 0, e: "Es justo lo que permite este modo." },
+      { q: "Modo <strong>aceptar ediciones</strong>. Claude quiere ejecutar <code>npm test</code>.", a: 1, e: "Este modo acepta ediciones y comandos de ficheros sencillos (mkdir, mv…). Otros comandos preguntan." },
+      { q: "Modo <strong>plan</strong>. Claude quiere editar <code>src/app.ts</code>.", a: 2, e: "En plan mode explora y propone. Edita solo cuando apruebas el plan." }
+    ]}
+  ]},
+  { id: "2-3", title: "Reglas de permisos", idea: "Orden fijo: deny, luego ask, luego allow. Un allow no abre excepciones en un deny.", steps: [
+    { k: "learn", h: '<p>Las reglas se escriben en un fichero <code>settings.json</code>, en tres listas:</p>' + code(".claude/settings.json", '{\n  "permissions": {\n    "deny":  ["Read(./.env)"],\n    "ask":   ["Bash(git push *)"],\n    "allow": ["Bash(npm test *)"]\n  }\n}') + '<ul class="clean"><li><strong>deny</strong>: prohibido. <strong>ask</strong>: pregunta siempre. <strong>allow</strong>: sin preguntar.</li><li><code>Read(./secrets/**)</code>: nada dentro de secrets/. <code>Bash(git push *)</code>: cualquier comando que empiece por git push.</li></ul>' + tbl(["Fichero", "Para quién"], [["Configuración gestionada", "Toda la organización · la pone IT · manda sobre todo"], ["<code>.claude/settings.local.json</code>", "Solo tú en este proyecto · fuera de Git"], ["<code>.claude/settings.json</code>", "Todo el equipo · va en el repositorio"], ["<code>~/.claude/settings.json</code>", "Solo tú, en todos tus proyectos"]]) + '<p><code>/permissions</code> muestra todas las reglas activas y de qué fichero viene cada una.</p>' + '<p><strong>¿Qué es un <code>.env</code>?</strong> El fichero donde un proyecto guarda sus secretos: claves de API, contraseñas de bases de datos. No se comparte con el código, pero está en la carpeta, al alcance de Claude, y lo que Claude lee entra en su contexto. Por eso la primera regla de casi cualquier equipo es <code>Read(./.env)</code> en <code>deny</code>. Y por eso el <code>.env</code> lo escribe una persona: si le dictas la clave a Claude, la clave entra en su contexto igual.</p><p>Las reglas, en cambio, sí se le pueden pedir:</p>' + pide("Crea .claude/settings.json con estas reglas: prohibido leer .env y .env.*,\npreguntar antes de git push y permitido sin preguntar npm test.") },
+    { k: "do", w: "rules" },
+    { k: "do", w: "quiz", q: "Tienes Bash(git push *) en allow y también en deny. ¿Qué pasa con git push?", o: ["Se permite", "Se bloquea", "Te pregunta"], a: 1, e: "deny se evalúa primero, y un allow no puede abrir una excepción en un deny." }
+  ]},
+  { id: "2-4", title: "Hooks", idea: "Para prohibir, reglas de permisos. Para automatizar comprobaciones, hooks.", steps: [
+    { k: "learn", h: '<p>Un hook es <strong>un comando tuyo</strong> (tus tests, tu lint, un script) que Claude Code ejecuta en un momento concreto:</p>' + tbl(["Evento", "Cuándo", "Ejemplo"], [["<code>PreToolUse</code>", "Antes de una acción", "Frenarla con un mensaje propio"], ["<code>PostToolUse</code>", "Después de una acción", "Pasar el lint al editar"], ["<code>Stop</code>", "Cuando Claude va a terminar", "No dejarle acabar con los tests en rojo"], ["<code>Notification</code>", "Cuando te necesita", "Avisarte en el escritorio"]]) + '<p>Lo que importa es <strong>con qué código sale</strong> tu comando. Pruébalo en la siguiente pantalla.</p>' },
+    { k: "do", w: "hook" },
+    { k: "learn", h: '<p>Así se configura. El hook va en <code>.claude/settings.json</code> y el script en <code>.claude/hooks/</code>, los dos en el repositorio:</p>' + code(".claude/settings.json · macOS y Windows con Git Bash", '"hooks": {\n  "Stop": [\n    { "hooks": [ { "type": "command",\n        "command": "bash \\"$CLAUDE_PROJECT_DIR/.claude/hooks/verifica.sh\\"" } ] }\n  ]\n}') + code(".claude/hooks/verifica.sh", 'out=$(npm test 2>&1) || {\n  echo "Los tests fallan. Corrigelos antes de terminar:" >&2\n  echo "$out" | tail -n 40 >&2\n  exit 2\n}') + code(".claude/hooks/verifica.ps1 · Windows sin Git Bash", '$out = npm test 2>&1 | Out-String\nif ($LASTEXITCODE -ne 0) {\n  [Console]::Error.WriteLine("Los tests fallan. Corrigelos antes de terminar:")\n  [Console]::Error.WriteLine($out)\n  exit 2\n}') + '<p>En Windows sin Git Bash, el hook se lanza con <code>"command": "powershell.exe"</code> y <code>"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/verifica.ps1"]</code>.</p><div class="warn"><strong>Con cuidado.</strong> Un hook ejecuta código en tu máquina: revisa los de un repo antes de confiar en él. Que sea rápido. Si nunca se cumple, Claude lo intenta hasta 8 veces y para. <code>/hooks</code> lista los activos.</div>' + '<p>Y también se le puede pedir. Lee el script antes de aprobarlo: se ejecutará en tu máquina.</p>' + pide("Crea un hook Stop que ejecute .claude/hooks/verifica.sh: npm test y, si falla,\nla salida en stderr y código 2. Estoy en Windows con Git Bash.") }
+  ]},
+  { id: "2-5", title: "Checkpoints y /rewind", idea: "Checkpoints para probar. El control de versiones para decidir.", steps: [
+    { k: "learn", h: '<p>Cada mensaje que envías crea un punto de control. Con <code>/rewind</code> (o <kbd>Esc</kbd> <kbd>Esc</kbd>) vuelves a uno:</p>' + tbl(null, [["Código y conversación", "Todo como estaba en ese punto"], ["Solo conversación", "Vuelves a ese mensaje y conservas el código"], ["Solo código", "Deshaces los cambios y conservas la conversación"], ["Resumir desde aquí", "Comprime la conversación para liberar contexto"]]) + '<p>Sirven para experimentar sin miedo: prueba un enfoque y, si no convence, vuelve atrás.</p>' },
+    { k: "do", w: "rewind" }
+  ]},
+  { id: "2-6", title: "Gobierno del equipo", idea: "Lo que no se negocia, en la configuración gestionada.", steps: [
+    { k: "learn", h: '<p>IT puede desplegar una <strong>configuración gestionada</strong> (fichero, registro o GPO, o el panel de administración de Claude) que manda sobre cualquier otra:</p><ul class="clean"><li>Reglas deny que nadie puede saltarse</li><li>Que solo se pueda entrar con la cuenta de la organización</li><li>Desactivar el auto mode o el modo sin permisos</li><li>Modelos permitidos y canal de actualizaciones</li><li>Obligar a usar el sandbox (macOS, Linux, WSL2)</li></ul>' + tbl(["Decisión", "Dónde vive"], [["Reglas comunes del equipo", "<code>.claude/settings.json</code> en el repositorio"], ["Hooks comunes del equipo", "<code>.claude/settings.json</code> + <code>.claude/hooks/</code>"], ["Tus preferencias", "<code>.claude/settings.local.json</code> o <code>~/.claude/</code>"], ["Lo que no se negocia", "Configuración gestionada (IT)"]]) },
+    { k: "do", w: "series", intro: "¿Dónde va cada decisión?", o: [".claude/settings.json del repo", "Configuración gestionada (IT)", "Mi configuración personal"], items: [
+      { q: "Nadie de la organización puede activar el modo sin permisos.", a: 1, e: "Nadie debe poder cambiarlo: configuración gestionada." },
+      { q: "En este repo, los tests se ejecutan sin preguntar.", a: 0, e: "Una regla del equipo para este proyecto, en el repositorio." },
+      { q: "A mí me gusta que no me pregunte por <code>npm run lint</code>.", a: 2, e: "Es tuyo: <code>.claude/settings.local.json</code> o <code>~/.claude/settings.json</code>." },
+      { q: "Solo se puede entrar con la cuenta de la empresa.", a: 1, e: "Política de la organización: la configura IT." }
+    ]}
+  ]}
+  ]},
+{ n: 3, title: "Skills, subagentes y MCP", piece: "Herramientas y reparto de tareas", short: "Herramientas",
+  lessons: [
+  { id: "3-1", title: "De comando a skill", idea: "Una skill es conocimiento empaquetado: instrucciones más sus ficheros de apoyo.", steps: [
+    { k: "learn", h: '<p>Un comando es un prompt en un fichero. Una <strong>skill</strong> es una carpeta: instrucciones más los ficheros que necesita (un checklist, plantillas, scripts). Además, Claude puede cargarla <strong>sola</strong> cuando la tarea encaja.</p>' + code("Estructura", ".claude/skills/revision-codigo/\n├── SKILL.md          # instrucciones + cabecera\n├── checklist.md      # se lee solo cuando hace falta\n└── scripts/\n    └── cambios.sh    # Claude lo ejecuta") + code(".claude/skills/revision-codigo/SKILL.md", "---\nname: revision-codigo\ndescription: Revisa código con el checklist del equipo. Úsala cuando\n  pidan revisar cambios antes de integrarlos.\n---\nRevisa los cambios usando el checklist de [checklist.md](checklist.md).\n\nPara cada problema: archivo y línea, qué punto incumple y cómo\narreglarlo. Termina con un veredicto: \"lista para integrar\" o\n\"necesita cambios\". No modifiques nada.") + '<p>El <code>/revisa-cambios</code> del módulo 1 pasa a ser skill moviéndolo a <code>.claude/skills/revisa-cambios/SKILL.md</code>.</p>' + pide("Convierte el comando revisa-cambios en una skill, con su carpeta y una\ndescripción que diga qué hace y cuándo usarla.") },
+    { k: "learn", h: '<p>Lo más importante de una skill es su <code>description</code>. Al arrancar, Claude solo ve el nombre y la descripción de cada skill; con eso decide si cargarla. <strong>La descripción es el disparador</strong>: di qué hace y cuándo usarla.</p>' + tbl(["Campo", "Para qué"], [["<code>name</code>", "El nombre del comando: <code>/revision-codigo</code>"], ["<code>description</code>", "Qué hace y cuándo usarla"], ["<code>disable-model-invocation: true</code>", "Solo la lanzas tú. Para skills con efectos: commit, deploy, migraciones"], ["<code>allowed-tools</code>", "Herramientas que puede usar sin pedir permiso mientras está activa"]]) },
+    { k: "do", w: "quiz", q: "¿Qué descripción hará que Claude use la skill cuando toca?", o: ["«Utilidades del equipo»", "«Skill de migraciones»", "«Crea una migración de base de datos con nuestra plantilla. Úsala cuando haya que cambiar el esquema: añadir tablas, columnas o índices.»"], a: 2, e: "Dice qué hace y en qué situaciones. Con las otras dos, Claude no sabe cuándo cargarla." },
+    { k: "do", w: "quiz", q: "Tienes una skill que despliega a preproducción. ¿Qué le añades?", o: ["disable-model-invocation: true", "Una descripción muy detallada para que la use a menudo", "Nada"], a: 0, e: "Todo lo que tenga efectos se lanza a mano: así Claude no la carga por su cuenta." }
+  ]},
+  { id: "3-2", title: "Subagentes", idea: "Si de una tarea solo necesitas la conclusión, delega la exploración.", steps: [
+    { k: "learn", h: '<p>Un <strong>subagente</strong> es un Claude que trabaja aparte: con su propia conversación, sus instrucciones y sus herramientas. Hace la tarea y te devuelve solo el resultado.</p><p>Sirve para investigar, revisar, escribir tests o buscar la causa de un fallo sin llenar tu conversación principal.</p>' },
+    { k: "do", w: "subagent" },
+    { k: "learn", h: code(".claude/agents/revisor.md", "---\nname: revisor\ndescription: Revisor de código. Úsalo al terminar un cambio y antes\n  de integrarlo.\ntools: Read, Grep, Glob, Bash\n---\nEres un revisor de código exigente y concreto. Revisa los cambios\ncontra CLAUDE.md y el checklist del equipo.\n\nNo edites nada. Devuelve los hallazgos ordenados por gravedad\n(crítico, a corregir, sugerencia), cada uno con archivo y línea.\nSi algo no lo has podido comprobar, dilo.") + '<ul class="clean"><li><code>/agents</code> crea y gestiona subagentes. En <code>.claude/agents/</code> van al repo; en <code>~/.claude/agents/</code>, solo para ti.</li><li><code>tools</code> limita lo que puede hacer: este revisor no tiene <code>Edit</code>, así que no puede cambiar código.</li><li>Para lanzarlo: «usa el subagente revisor con los cambios que acabo de hacer».</li></ul>' + pide("Crea un subagente revisor de solo lectura (Read, Grep, Glob, Bash) que revise\nlos cambios contra CLAUDE.md y devuelva los hallazgos por gravedad, sin editar nada.") },
+    { k: "do", w: "quiz", q: "¿Por qué el revisor no tiene la herramienta Edit?", o: ["Porque los subagentes no pueden editar", "Para que no pueda cambiar código: el que revisa no corrige", "Para que vaya más rápido"], a: 1, e: "Limitar las herramientas separa papeles. Revisar y corregir son pasos distintos, y tú decides qué se corrige." }
+  ]},
+  { id: "3-3", title: "MCP: conectar con otros sistemas", idea: "Si la información cambia o vive en otro sistema, MCP. Si es estable, CLAUDE.md.", steps: [
+    { k: "learn", h: '<p><strong>MCP</strong> (Model Context Protocol) conecta Claude con datos vivos que no están en el repo: GitHub, una base de datos, el gestor de incidencias.</p>' + code("Añadir un servidor", "# Solo para ti, en este proyecto (por defecto)\nclaude mcp add --transport http github https://api.githubcopilot.com/mcp/\n\n# Para el equipo: se guarda en .mcp.json, que va en el repositorio\nclaude mcp add --transport http github https://api.githubcopilot.com/mcp/ --scope project\n\nclaude mcp list    # qué servidores hay\n/mcp               # dentro de Claude: estado y autenticación") + '<ul class="clean"><li>Permisos mínimos: un token de solo lectura si solo vas a consultar.</li><li>Las herramientas de MCP también admiten reglas: <code>"deny": ["mcp__github__merge_pull_request"]</code>.</li><li>Cada servidor ocupa contexto. Conecta lo que uses.</li></ul>' + '<p>El token, en cambio, lo pones tú en una variable de entorno: es un secreto. En <code>.mcp.json</code> solo va la referencia <code>${GITHUB_TOKEN}</code>.</p>' },
+    { k: "do", w: "findbug", intro: "Un compañero ha preparado el <code>.mcp.json</code> del equipo para subirlo al repositorio. Hay una línea que no puede ir así. Púlsala.", lines: ['{', '  "mcpServers": {', '    "github": {', '      "type": "http",', '      "url": "https://api.githubcopilot.com/mcp/",', '      "headers": { "Authorization": "Bearer ghp_8fK2xQ9mZ3vL7nR1" }', '    }', '  }', '}'], bad: 5,
+      ok: '<strong>Eso es.</strong> El token quedaría en el historial del repositorio para siempre. Las credenciales van en variables de entorno: <code>"Bearer ${GITHUB_TOKEN}"</code>. Y ese token habría que revocarlo.' },
+    { k: "do", w: "series", intro: "¿MCP o CLAUDE.md?", o: ["MCP", "CLAUDE.md"], items: [
+      { q: "El estado de las incidencias abiertas", a: 0, e: "Cambia cada día y vive en otro sistema." },
+      { q: "El comando para lanzar los tests", a: 1, e: "Es estable y del proyecto." },
+      { q: "Los avisos de la monitorización de producción", a: 0, e: "Datos vivos de otro sistema." },
+      { q: "Las carpetas que no se tocan", a: 1, e: "Una regla estable del proyecto." }
+    ]}
+  ]},
+  { id: "3-4", title: "Plugins: repartirlo al equipo", idea: "Un plugin es un flujo de trabajo del equipo empaquetado para instalarse de una vez.", steps: [
+    { k: "learn", h: '<p>Cuando tenéis comandos, skills, subagentes, hooks y conexiones MCP que funcionan, un <strong>plugin</strong> los empaqueta para que cualquiera los instale de una vez.</p><ul class="clean"><li>Lleva un <code>.claude-plugin/plugin.json</code> y sus carpetas (<code>skills/</code>, <code>agents/</code>, <code>hooks/</code>…).</li><li>Se distribuye desde un «marketplace», que puede ser un repositorio interno.</li></ul>' + code("Dentro de Claude Code", "/plugin                                     # explorar e instalar\n/plugin marketplace add organizacion/plugins-equipo\n/plugin install herramientas-equipo@plugins-equipo") + '<p>Primero entiende cada pieza por separado; el plugin es solo la caja en la que se reparten.</p>' },
+    { k: "do", w: "quiz", q: "Tu equipo tiene una skill de revisión, un subagente revisor y un hook de tests, y quiere usarlos en cinco repositorios. ¿Qué haces?", o: ["Copiar los ficheros a mano en cada repo", "Empaquetarlos en un plugin e instalarlo en cada repo", "Ponerlos todos en CLAUDE.md"], a: 1, e: "El plugin evita copias que se desincronizan: se actualiza en un sitio y todos reciben la nueva versión." }
+  ]}
+  ]},
+{ n: 4, title: "Trabajar fuera de tu especialidad", piece: "Revisión antes de integrar", short: "Revisión",
+  lessons: [
+  { id: "4-1", title: "Explorar antes de tocar", idea: "En código que no conoces, primero que te lo explique. Luego el plan.", steps: [
+    { k: "learn", h: '<p>Cuando tienes que tocar una parte del sistema que no dominas, el primer paso no es pedir el cambio: es que Claude te la explique, en modo plan o manual, sin cambiar nada.</p>' + code("Peticiones para entender una zona", "Explícame cómo funciona <zona>: punto de entrada, por dónde pasan\nlos datos y dónde están los tests. No cambies nada.\n\nSi quisiera <cambio>, ¿qué ficheros tocaría y qué podría romperse?\n\n¿Qué convenciones sigue esta parte del código que no estén en\nCLAUDE.md? Dame ejemplos con archivo y línea.") + '<p>Contrasta lo que te cuente con quien conoce esa parte. Lo que descubras y sea estable, a las reglas de esa zona (siguiente lección).</p>' },
+    { k: "do", w: "quiz", q: "Te piden un cambio en el módulo de facturación, que nunca has visto. ¿Cuál es el mejor primer mensaje?", o: ["«Añade el campo descuento a la factura»", "«Explícame cómo se genera una factura: punto de entrada, flujo de datos y tests. No cambies nada.»", "«Revisa todo el repo»"], a: 1, e: "Entender el flujo te permite revisar después el plan con criterio. Sin eso, aceptarías cualquier cosa." }
+  ]},
+  { id: "4-2", title: "Reglas por área", idea: "Lo que solo aplica a una zona, en .claude/rules/ con paths: se carga solo donde aplica.", steps: [
+    { k: "learn", h: '<p>Lo que solo aplica a una parte del código no debería engordar el CLAUDE.md principal. Hay dos formas de cargarlo solo cuando hace falta:</p>' + code(".claude/rules/interfaz.md", '---\npaths:\n  - "src/web/**/*.tsx"\n---\n# Interfaz\n- Usa los componentes de src/web/ui/ antes de crear uno nuevo.\n- Todo texto visible pasa por el sistema de traducciones.\n- Verificación: <comando de tests de interfaz>.') + '<div class="two"><div class="mini"><h3><code>.claude/rules/*.md</code></h3><p>Con <code>paths</code>, se carga al trabajar con ficheros que coinciden. Sin <code>paths</code>, siempre.</p></div><div class="mini"><h3><code>carpeta/CLAUDE.md</code></h3><p>Se carga cuando Claude trabaja dentro de esa carpeta.</p></div></div>' + '<p>Como todo lo anterior, se le puede pedir:</p>' + pide("Crea una regla en .claude/rules/interfaz.md que solo se cargue para\nsrc/web/**/*.tsx: usar los componentes de src/web/ui/ y pasar todo texto visible\npor el sistema de traducciones.") },
+    { k: "do", w: "tree" },
+    { k: "do", w: "quiz", q: "Mientras Claude edita src/web/estilos.css, ¿tiene cargada .claude/rules/interfaz.md?", o: ["Sí, está en src/web/", "No: sus paths solo cubren ficheros .tsx", "Solo si se lo pides"], a: 1, e: "El patrón es src/web/**/*.tsx: un .css no coincide." }
+  ]},
+  { id: "4-3", title: "Planes revisados", idea: "Corregir un plan cuesta un minuto. Corregir una implementación entera, una tarde.", steps: [
+    { k: "learn", h: '<ol class="clean"><li>Plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd> o <code>/plan</code>) con la petición completa: contexto, alcance, cuándo está hecho.</li><li>Revisa el plan. <kbd>Ctrl</kbd>+<kbd>G</kbd> lo abre en tu editor para cambiarlo.</li><li>Si toca una zona que no es la tuya, que lo revise alguien que la conozca antes de aprobarlo.</li><li>Implementa por partes, verificando cada una. <code>/clear</code> entre partes si el contexto se llena.</li></ol><p>Para cambios grandes, pídele que guarde el plan en un fichero del repo: así sobrevive a un <code>/clear</code> y se puede revisar como cualquier otro documento.</p>' },
+    { k: "do", w: "quiz", q: "El plan propone tocar 14 ficheros en 3 módulos, y dos de ellos no los conoces. ¿Qué haces?", o: ["Lo apruebo: Claude sabrá lo que hace", "Pido a quien conoce esos módulos que revise el plan, y lo divido en partes verificables", "Lo rechazo y lo hago a mano"], a: 1, e: "La revisión humana llega antes de escribir código, cuando es barata. Y por partes, cada una se puede verificar." }
+  ]},
+  { id: "4-4", title: "Revisión antes de integrar", idea: "Los subagentes filtran lo evidente. La decisión de integrar es de una persona.", steps: [
+    { k: "learn", h: '<p>Cada revisor mira <strong>una cosa</strong>, con criterios escritos en un fichero. Se lanzan en paralelo y cada uno devuelve solo sus hallazgos.</p>' + code(".claude/agents/revisor-tests.md", "---\nname: revisor-tests\ndescription: Comprueba que los cambios tienen tests adecuados. Úsalo\n  antes de integrar un cambio.\ntools: Read, Grep, Glob, Bash\n---\nRevisa los cambios contra docs/criterios-verificacion.md.\n\nComprueba: que cada comportamiento nuevo tiene un test, que los tests\npasan y que no se ha borrado ni debilitado ningún test para que pasen.\nDevuelve una lista de huecos con archivo y línea. No edites nada.") + code("Lanzarlos en paralelo", "Revisa los cambios en paralelo con los subagentes\nrevisor, revisor-tests y revisor-seguridad. Junta sus hallazgos,\nquita duplicados y ordénalos por gravedad.") },
+    { k: "do", w: "order", intro: "Ordena el flujo completo, desde que te llega la tarea hasta que se integra. Cada paso usa una pieza que ya has montado.", items: ["Explorar la zona sin cambiar nada", "Plan en plan mode, revisado por quien conoce la zona", "Implementar por partes", "El hook Stop no deja terminar con tests en rojo", "Subagentes revisores en paralelo", "Revisión de una persona antes de integrar"], ok: "<strong>Ese es el flujo.</strong> Explorar (módulo 4), plan (1 y 2), hook (2), subagentes (3) y la revisión humana al final, siempre." },
+    { k: "do", w: "quiz", q: "Los tres subagentes revisores no encuentran nada grave. ¿Integras?", o: ["Sí, ya está revisado", "No: falta la revisión de una persona", "Solo si el hook pasa"], a: 1, e: "Los subagentes filtran lo evidente y ahorran tiempo de revisión. Pero la decisión de integrar sigue siendo humana." }
+  ]}
+  ]}
+];
+
+var LESSONS = [];
+MODULES.forEach(function (m) { m.lessons.forEach(function (l) { l.m = m; LESSONS.push(l); }); });
+function lessonById(id) { return LESSONS.filter(function (l) { return l.id === id; })[0]; }
+function modDone(m) { return m.lessons.filter(function (l) { return state.done[l.id]; }).length; }
+function nextLesson() { return LESSONS.filter(function (l) { return !state.done[l.id]; })[0]; }
+
+/* ================= portada ================= */
+function drawHarness() {
+  var svg = document.getElementById("harness"), cx = 200, cy = 200, r1 = 96, r2 = 172, gap = 3, out = "";
+  var step = 360 / MODULES.length;
+  MODULES.forEach(function (m, i) {
+    var a0 = (-90 + i * step + gap) * Math.PI / 180, a1 = (-90 + (i + 1) * step - gap) * Math.PI / 180;
+    var p = function (r, a) { return (cx + r * Math.cos(a)).toFixed(1) + " " + (cy + r * Math.sin(a)).toFixed(1); };
+    var d = "M" + p(r2, a0) + " A" + r2 + " " + r2 + " 0 0 1 " + p(r2, a1) + " L" + p(r1, a1) + " A" + r1 + " " + r1 + " 0 0 0 " + p(r1, a0) + " Z";
+    var full = modDone(m) === m.lessons.length, part = modDone(m) > 0;
+    var am = (a0 + a1) / 2, tr = (r1 + r2) / 2 - 8, tx = cx + tr * Math.cos(am), ty = cy + tr * Math.sin(am);
+    var first = m.lessons.filter(function (l) { return !state.done[l.id]; })[0] || m.lessons[0];
+    out += '<g class="seg" data-go="l' + first.id + '" tabindex="0" role="link" aria-label="Módulo ' + m.n + ': ' + esc(m.piece) + '">' +
+      '<path d="' + d + '" fill="' + (full ? "var(--accent)" : part ? "var(--accent-soft)" : "var(--surface)") + '" stroke="var(--accent)" stroke-width="2"/>' +
+      '<text x="' + tx.toFixed(1) + '" y="' + (ty - 6).toFixed(1) + '" text-anchor="middle" font-family="var(--font-display)" font-weight="800" font-size="24" fill="' + (full ? "var(--surface)" : "var(--accent-strong)") + '">' + m.n + '</text>' +
+      '<text x="' + tx.toFixed(1) + '" y="' + (ty + 16).toFixed(1) + '" text-anchor="middle" font-family="var(--font-body)" font-weight="700" font-size="13" fill="' + (full ? "var(--surface)" : "var(--muted)") + '">' + esc(m.short) + '</text></g>';
+  });
+  out += '<circle cx="200" cy="200" r="80" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/><text x="200" y="198" text-anchor="middle" font-family="var(--font-display)" font-weight="800" font-size="26" fill="var(--accent-strong)">Modelo</text><text x="200" y="222" text-anchor="middle" font-family="var(--font-body)" font-size="15" fill="var(--muted)">el motor</text>';
+  svg.innerHTML = out;
+  [].forEach.call(svg.querySelectorAll(".seg"), function (g) {
+    var go = function () { location.hash = g.getAttribute("data-go"); };
+    g.onclick = go; g.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+  });
+}
+function drawHome() {
+  var box = document.getElementById("modules"), nl = nextLesson();
+  box.innerHTML = "";
+  MODULES.forEach(function (m) {
+    var d = modDone(m), mod = el("div", "module");
+    mod.innerHTML = '<div class="module-head"><span class="module-n">' + m.n + '</span><h3>' + esc(m.title) + '</h3><span class="piece">' + esc(m.piece) + '</span><div class="module-meter"><div style="width:' + Math.round(d / m.lessons.length * 100) + '%"></div></div><span class="module-meter-label">' + d + ' de ' + m.lessons.length + ' lecciones</span></div>';
+    var ul = el("ul", "lessons");
+    m.lessons.forEach(function (l, i) {
+      var practice = l.steps.filter(function (s) { return s.k === "do"; }).length;
+      var li = el("li");
+      li.innerHTML = '<a href="#l' + l.id + '" class="' + (state.done[l.id] ? "done" : nl === l ? "next" : "") + '"><span class="l-mark">' + (state.done[l.id] ? "✓" : (i + 1)) + '</span><span class="l-title">' + esc(l.title) + '</span><span class="l-kind">' + practice + (practice === 1 ? " práctica" : " prácticas") + '</span></a>';
+      ul.appendChild(li);
+    });
+    mod.appendChild(ul); box.appendChild(mod);
+  });
+  var cta = document.getElementById("cta"), any = Object.keys(state.done).length;
+  if (!nl) { cta.textContent = "Ir al reto final"; cta.href = "#reto"; }
+  else { cta.textContent = any ? "Continuar: " + nl.title : "Empezar el curso"; cta.href = "#l" + nl.id; }
+  document.getElementById("pill").textContent = Object.keys(state.done).length + " de " + LESSONS.length + " lecciones";
+  drawHarness();
+}
+
+/* ================= lección ================= */
+var cur = { l: null, i: 0, completed: {} };
+function openLesson(l) {
+  cur = { l: l, i: 0, completed: {}, max: 0 };
+  document.getElementById("crumbs").innerHTML = '<a href="#inicio">Curso</a> · Módulo ' + l.m.n + ': ' + esc(l.m.title) + ' · Lección ' + (l.m.lessons.indexOf(l) + 1) + ' de ' + l.m.lessons.length;
+  document.getElementById("l-title").textContent = l.title;
+  document.title = l.title + " · Aprende Claude Code";
+  renderStep();
+}
+function renderStep() {
+  var l = cur.l, total = l.steps.length, stage = document.getElementById("stage");
+  var steps = document.getElementById("steps"); steps.innerHTML = "";
+  for (var k = 0; k <= total; k++) {
+    var b = el("button"); b.type = "button"; b.setAttribute("aria-label", k < total ? "Paso " + (k + 1) : "Final");
+    if (k === cur.i) b.className = "cur"; else if (k <= cur.max) b.className = "seen";
+    b.disabled = k > cur.max;
+    (function (k) { b.onclick = function () { cur.i = k; renderStep(); }; })(k);
+    steps.appendChild(b);
+  }
+  stage.innerHTML = "";
+  var prev = document.getElementById("prev"), next = document.getElementById("next"), hint = document.getElementById("hint-next");
+  prev.disabled = cur.i === 0;
+  if (cur.i === total) {
+    state.done[l.id] = true; save();
+    var idx = LESSONS.indexOf(l), nl = LESSONS[idx + 1];
+    var endModule = !nl || nl.m !== l.m;
+    var end = el("div", "endcard");
+    end.innerHTML = '<span class="big">✓</span><h2>' + (endModule ? "Módulo " + l.m.n + " completado" : "Lección completada") + '</h2><div class="idea" style="max-width:56ch">' + l.idea + '</div>' +
+      (endModule ? '<p class="lead">Pieza del arnés montada: <strong>' + esc(l.m.piece) + '</strong>.</p>' : "");
+    stage.appendChild(end);
+    hint.textContent = "";
+    next.disabled = false;
+    next.textContent = nl ? (endModule ? "Empezar módulo " + nl.m.n + " →" : "Siguiente lección →") : "Ir al reto final →";
+    next.onclick = function () { location.hash = nl ? "l" + nl.id : "reto"; };
+    return;
+  }
+  var s = l.steps[cur.i];
+  stage.appendChild(el("p", "step-kind" + (s.k === "learn" ? " learn" : ""), s.k === "learn" ? "Aprende" : "Practica"));
+  var box = el("div", "prose"); stage.appendChild(box);
+  if (s.k === "learn") { box.innerHTML = s.h; cur.completed[cur.i] = true; }
+  else {
+    var key = cur.i;
+    W[s.w](box, function () { cur.completed[key] = true; if (cur.i === key) paintNext(); }, s);
+  }
+  next.textContent = cur.i === total - 1 ? "Terminar lección" : "Continuar →";
+  next.onclick = function () { cur.i++; cur.max = Math.max(cur.max, cur.i); renderStep(); window.scrollTo(0, 0); };
+  paintNext();
+  function paintNext() {
+    var ok = !!cur.completed[cur.i] || cur.i < cur.max;
+    next.disabled = !ok;
+    hint.textContent = ok ? "" : "Completa la práctica para seguir";
+  }
+}
+document.getElementById("prev").onclick = function () { if (cur.i > 0) { cur.i--; renderStep(); window.scrollTo(0, 0); } };
+
+/* ================= reto final ================= */
+var PLACES = [
+  { id: "claudemd", name: "CLAUDE.md", hint: "Instrucciones del proyecto" }, { id: "rules", name: ".claude/rules/", hint: "Reglas de una zona" },
+  { id: "perm", name: "Regla de permisos", hint: "deny · ask · allow" }, { id: "hook", name: "Hook", hint: "Comprobación automática" },
+  { id: "skill", name: "Skill o comando", hint: "Procedimiento reutilizable" }, { id: "agent", name: "Subagente", hint: "Tarea con su propio contexto" },
+  { id: "mcp", name: "MCP", hint: "Datos vivos de otro sistema" }, { id: "managed", name: "Configuración gestionada", hint: "La impone IT" },
+  { id: "memory", name: "MEMORY.md", hint: "Lo que Claude recuerda de ti" }
+];
+var SCEN = [
+  { t: "Los tests se lanzan con «make test-unit», no con «npm test».", a: "claudemd", e: "Un dato estable del proyecto que Claude no puede deducir: CLAUDE.md, sección de comandos." },
+  { t: "Claude nunca debe leer los ficheros de la carpeta secrets/.", a: "perm", e: "Lo que no puede pasar nunca necesita una regla: \"deny\": [\"Read(./secrets/**)\"]." },
+  { t: "Que no pueda dar una tarea por terminada si el lint falla.", a: "hook", e: "Un hook Stop que ejecuta el lint y sale con código 2 si falla." },
+  { t: "El equipo revisa los cambios con un checklist de 15 puntos, y cada uno lo hace a su manera.", a: "skill", e: "Un procedimiento que se repite, con un fichero de apoyo: una skill del equipo." },
+  { t: "Necesitas un resumen de cómo se usa el módulo de facturación en todo el repo, sin llenar tu conversación.", a: "agent", e: "Un subagente investiga en su contexto y te devuelve la conclusión." },
+  { t: "Quieres que Claude consulte el estado de las incidencias abiertas.", a: "mcp", e: "Información que cambia y vive en otro sistema: MCP, con permisos mínimos." },
+  { t: "En el código de la interfaz, todo texto visible pasa por el sistema de traducciones.", a: "rules", e: "Solo aplica a una zona: .claude/rules/ con paths." },
+  { t: "Nadie de la organización debe poder activar el modo sin permisos.", a: "managed", e: "Lo que nadie puede cambiar: configuración gestionada de IT." },
+  { t: "Prefieres que Claude te responda con explicaciones breves.", a: "memory", e: "Es una preferencia tuya. Pídeselo y lo guardará en tu memoria personal (también valdría ~/.claude/CLAUDE.md)." },
+  { t: "Cualquier «git push» tiene que pedir confirmación.", a: "perm", e: "Una regla ask: \"ask\": [\"Bash(git push *)\"]." },
+  { t: "Después de cada edición de un fichero .py, pasar el formateador.", a: "hook", e: "Hook PostToolUse con matcher Edit|Write." },
+  { t: "La carpeta src/generated/ se genera sola: hay que cambiar el origen, no el resultado.", a: "claudemd", alt: ["perm"], e: "El porqué va en CLAUDE.md. Si además quieres impedirlo siempre, un deny de Edit: las dos piezas se complementan." }
+];
+function drawGame() {
+  var box = document.getElementById("game"), answered = Object.keys(state.game).length, ok = 0;
+  for (var k in state.game) { var sc = SCEN[k]; if (state.game[k] === sc.a || (sc.alt && sc.alt.indexOf(state.game[k]) > -1)) ok++; }
+  box.innerHTML = "";
+  if (answered >= SCEN.length) {
+    var r = el("div", "scenario");
+    r.innerHTML = '<p class="counter">Resultado</p><p class="scenario-text">' + ok + ' de ' + SCEN.length + ' en la pieza correcta.</p><p>' + (ok >= 10 ? "Tienes claro el mapa del arnés." : ok >= 7 ? "Bien. Repasa la lección «De consejo a regla» del módulo 2: es donde más se duda." : "Repasa el módulo 2, sobre todo «De consejo a regla», y vuelve a intentarlo.") + '</p>';
+    var again = el("button", "btn", "Volver a jugar"); again.type = "button";
+    again.onclick = function () { state.game = {}; save(); drawGame(); };
+    r.appendChild(el("div")).appendChild(again); box.appendChild(r); return;
+  }
+  var gi = 0; while (state.game[gi] != null) gi++;
+  var s = SCEN[gi];
+  box.appendChild(el("div", "bar", '<div style="width:' + Math.round(answered / SCEN.length * 100) + '%"></div>'));
+  var card = el("div", "scenario");
+  card.appendChild(el("p", "counter", "Situación " + (answered + 1) + " de " + SCEN.length + " · " + ok + " aciertos"));
+  card.appendChild(el("p", "scenario-text", esc(s.t)));
+  var places = el("div", "places"), fb = el("p", "fb"), nx = el("button", "btn", answered + 1 === SCEN.length ? "Ver resultado" : "Siguiente →");
+  fb.hidden = true; nx.hidden = true; nx.type = "button";
+  var btns = PLACES.map(function (p) {
+    var b = el("button", "place", esc(p.name) + "<small>" + esc(p.hint) + "</small>"); b.type = "button";
+    b.onclick = function () {
+      state.game[gi] = p.id; save();
+      var good = p.id === s.a || (s.alt && s.alt.indexOf(p.id) > -1);
+      btns.forEach(function (x, i) { x.disabled = true; if (PLACES[i].id === s.a) x.classList.add("right"); });
+      if (!good) b.classList.add("wrong");
+      fb.hidden = false; fb.className = "fb " + (good ? "good" : "bad");
+      fb.innerHTML = "<strong>" + (good ? "Bien. " : "Mejor en: " + esc(PLACES.filter(function (x) { return x.id === s.a; })[0].name) + ". ") + "</strong>" + esc(s.e);
+      nx.hidden = false; nx.focus();
+    };
+    places.appendChild(b); return b;
+  });
+  nx.onclick = drawGame;
+  card.appendChild(places); card.appendChild(fb); card.appendChild(el("div")).appendChild(nx);
+  box.appendChild(card);
+}
+
+/* ================= referencia ================= */
+var CHEAT = [
+  ["claude", "Abrir Claude Code en la carpeta actual", 1], ["claude --permission-mode manual", "Arrancar en un modo concreto (manual, plan, acceptEdits…)", 1],
+  ["claude -c", "Retomar la última conversación", 1], ["claude -r <nombre>", "Retomar una conversación por nombre", 1],
+  ["claude --version", "Comprobar la versión instalada", 1], ["claude doctor", "Diagnóstico de la instalación y la configuración", 1],
+  ["/help", "Todo lo disponible", 1], ["/status", "Cuenta, organización y origen de la configuración", 1],
+  ["/context", "Qué ocupa el contexto ahora", 1], ["/clear", "Vaciar la conversación al cambiar de tarea", 1],
+  ["/resume", "Elegir una conversación anterior", 1], ["/init", "Generar un primer CLAUDE.md a partir del repo", 1],
+  ["/memory", "Ver y editar CLAUDE.md y la memoria automática", 1], ["/logout", "Cerrar sesión (por ejemplo, si entraste con la cuenta personal)", 1],
+  ["@archivo", "Señalar un archivo en la petición", 1], ["!comando", "Ejecutar un comando de terminal desde Claude", 1],
+  ["Esc", "Interrumpir. En un permiso, equivale a «no»", 1], ["Shift+Tab", "Cambiar de modo de permisos (Alt+M en algunos Windows)", 1],
+  ["CLAUDE.md", "Reglas del proyecto, compartidas en el repositorio", 1], ["CLAUDE.local.md", "Tus reglas en este proyecto, no se comparten", 1],
+  ["~/.claude/CLAUDE.md", "Tus reglas para todos tus proyectos", 1], ["@docs/fichero.md", "Importar otro fichero dentro de CLAUDE.md", 1],
+  [".claude/commands/<n>.md", "Un comando propio: /<n>", 1], ["$ARGUMENTS", "Lo que escribes detrás del comando", 1],
+  ["/plan", "Empezar una petición en plan mode", 2], ["Ctrl+G", "Abrir el plan en tu editor para cambiarlo", 2],
+  ["/permissions", "Ver las reglas de permisos y de qué fichero viene cada una", 2], [".claude/settings.json", "Reglas y hooks del equipo, en el repositorio", 2],
+  [".claude/settings.local.json", "Tus reglas en este proyecto, no se comparten", 2], ["Read(./.env)", "Regla: no leer el .env (tampoco con cat)", 2],
+  ["Bash(git push *)", "Regla: cualquier comando que empiece por git push", 2], ["/hooks", "Ver los hooks activos", 2],
+  ["exit 2", "En un hook: frenar la acción y avisar a Claude", 2], ["/rewind · Esc Esc", "Volver a un checkpoint", 2],
+  ["/sandbox", "Aislar comandos a nivel de sistema (macOS, Linux, WSL2)", 2],
+  [".claude/skills/<n>/SKILL.md", "Una skill con su carpeta de apoyo", 3], ["disable-model-invocation: true", "Que la skill o comando solo lo lances tú", 3],
+  ["/agents", "Crear y gestionar subagentes", 3], [".claude/agents/<n>.md", "Un subagente del equipo", 3],
+  ["claude mcp add", "Añadir un servidor MCP (--scope project para el equipo)", 3], ["claude mcp list", "Listar servidores MCP", 3],
+  ["/mcp", "Estado y autenticación de los servidores MCP", 3], [".mcp.json", "Servidores MCP del equipo, sin secretos", 3],
+  ["/plugin", "Explorar, instalar y gestionar plugins", 3],
+  [".claude/rules/<area>.md", "Reglas de una zona del código, con paths", 4], ["carpeta/CLAUDE.md", "Reglas que se cargan al trabajar en esa carpeta", 4]
+];
+var cf = 0;
+function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+function drawCheat() {
+  var f = document.getElementById("filters");
+  f.innerHTML = [[0, "Todo"]].concat(MODULES.map(function (m) { return [m.n, "Módulo " + m.n]; })).map(function (o) { return '<button type="button" class="filter" data-f="' + o[0] + '" aria-pressed="' + (o[0] === cf) + '">' + o[1] + '</button>'; }).join("");
+  [].forEach.call(f.children, function (b) { b.onclick = function () { cf = +b.getAttribute("data-f"); drawCheat(); }; });
+  var q = norm(document.getElementById("q").value.trim());
+  var rows = CHEAT.filter(function (r) { return (!cf || r[2] === cf) && (!q || norm(r[0] + " " + r[1]).indexOf(q) > -1); });
+  document.getElementById("cheat-body").innerHTML = rows.length ? rows.map(function (r) { return '<tr><td><code>' + esc(r[0]) + '</code></td><td>' + esc(r[1]) + '</td><td>' + r[2] + '</td></tr>'; }).join("") : '<tr><td colspan="3">Nada con ese texto. Prueba con otra palabra.</td></tr>';
+}
+document.getElementById("q").addEventListener("input", drawCheat);
+
+/* ================= copiar ================= */
+document.addEventListener("click", function (e) {
+  var b = e.target.closest(".copy:not([data-hint])");
+  if (!b) return;
+  var pre = b.closest(".code").querySelector("pre");
+  var reset = function (t) { b.textContent = t; setTimeout(function () { b.textContent = "Copiar"; }, 1800); };
+  var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); reset("Seleccionado: Ctrl+C"); };
+  try { navigator.clipboard.writeText(pre.innerText).then(function () { reset("Copiado"); }, fallback); } catch (err) { fallback(); }
+});
+
+/* ================= rutas ================= */
+function route() {
+  var h = (location.hash || "#inicio").slice(1), view = "inicio";
+  if (/^l\d-\d+$/.test(h) && lessonById(h.slice(1))) view = "leccion";
+  else if (h === "reto" || h === "referencia") view = h;
+  [].forEach.call(document.querySelectorAll("[data-view]"), function (v) { v.hidden = v.getAttribute("data-view") !== view; });
+  [].forEach.call(document.querySelectorAll("#nav a"), function (a) {
+    var t = a.getAttribute("href").slice(1);
+    if (t === view || (t === "inicio" && view === "leccion")) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  if (view === "leccion") openLesson(lessonById(h.slice(1)));
+  else { document.title = "Aprende Claude Code"; }
+  if (view === "inicio") drawHome();
+  if (view === "reto") drawGame();
+  if (view === "referencia") drawCheat();
+  document.getElementById("pill").textContent = Object.keys(state.done).length + " de " + LESSONS.length + " lecciones";
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+
+document.getElementById("reset").onclick = function () { document.getElementById("reset-confirm").hidden = false; };
+document.getElementById("reset-no").onclick = function () { document.getElementById("reset-confirm").hidden = true; };
+document.getElementById("reset-yes").onclick = function () { state = { done: {}, game: {} }; save(); document.getElementById("reset-confirm").hidden = true; drawHome(); };
+
+route();
+})();
+</script>
+</body>
+</html>

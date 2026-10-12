@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sesión 1 · Claude Code</title>
+  <style>
+    :root {
+      --bg:#eef2f5; --paper:#ffffff; --ink:#132029; --muted:#4f5d6b; --line:#d5dde5;
+      --accent:#13706b; --accent-strong:#0b4f4b; --accent-soft:#dcf1ee;
+      --act:#b8430f; --act-soft:#fff1e8;
+      --warn:#7a4f00; --warn-soft:#fff3d6;
+      --red:#a8201a; --red-soft:#fde4e2; --green:#1d6b37; --green-soft:#e5f5ea;
+      --code-bg:#0e1621; --code-ink:#e9f2f3; --code-dim:#8fa3b3;
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; height:100%; background:#1c2630; overflow:hidden; }
+    body { font-family:"Segoe UI", Inter, system-ui, -apple-system, sans-serif; color:var(--ink); }
+
+    /* Escenario fijo 1600x900 escalado al tamaño de la ventana */
+    #viewport { position:fixed; inset:0; overflow:hidden; }
+    #stage { width:1600px; height:900px; position:absolute; left:50%; top:50%; transform-origin:center center; }
+    .slide { position:absolute; inset:0; background:var(--paper); padding:70px 96px 80px; display:none; flex-direction:column; overflow:hidden; font-size:34px; line-height:1.4; }
+    .slide.on { display:flex; }
+    .slide h2 { font-size:58px; line-height:1.12; margin:0 0 34px; letter-spacing:-.01em; }
+    .slide h3 { font-size:38px; margin:0 0 14px; color:var(--accent-strong); }
+    .slide p { margin:0 0 20px; }
+    .kicker { font-size:24px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
+    .muted { color:var(--muted); }
+    ul.b { margin:0; padding-left:40px; } ul.b li { margin:0 0 18px; }
+    ul.b li::marker { color:var(--accent); }
+    code, pre, kbd { font-family:"Cascadia Code", Consolas, "JetBrains Mono", ui-monospace, monospace; }
+    :not(pre) > code { background:var(--accent-soft); color:var(--accent-strong); padding:2px 10px; border-radius:8px; font-size:.88em; }
+    pre { background:var(--code-bg); color:var(--code-ink); border-radius:16px; padding:26px 32px; margin:0 0 22px; font-size:29px; line-height:1.45; white-space:pre-wrap; }
+    pre .c { color:var(--code-dim); }
+    kbd { font-size:.82em; background:#fff; border:2px solid var(--line); border-bottom-width:4px; border-radius:10px; padding:2px 12px; }
+    .foot { position:absolute; left:96px; right:96px; bottom:28px; display:flex; justify-content:space-between; font-size:20px; color:var(--muted); }
+
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+    .card { background:var(--bg); border-radius:18px; padding:28px 32px; }
+    .card h3 { font-size:34px; }
+    .card.good { background:var(--green-soft); } .card.good h3 { color:var(--green); }
+    .card.bad { background:var(--red-soft); } .card.bad h3 { color:var(--red); }
+
+    table.t { width:100%; border-collapse:collapse; font-size:29px; }
+    table.t th { text-align:left; font-size:22px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong); background:var(--accent-soft); padding:14px 20px; }
+    table.t td { padding:14px 20px; border-bottom:2px solid var(--line); vertical-align:top; }
+    table.t td:first-child { white-space:nowrap; }
+    table.t.wrap td:first-child { white-space:normal; }
+
+    .big { font-size:52px; line-height:1.25; font-weight:700; }
+    .quote { font-size:52px; line-height:1.25; font-weight:700; border-left:12px solid var(--accent); padding-left:40px; margin:auto 0; }
+    .quote small { display:block; font-size:28px; font-weight:400; color:var(--muted); margin-top:24px; }
+
+    /* Portada y separadores */
+    .slide.cover { background:linear-gradient(135deg,#0b4f4b,#13706b 60%,#1b8c85); color:#fff; justify-content:center; }
+    .slide.cover h1 { font-size:96px; line-height:1.02; margin:0 0 26px; letter-spacing:-.02em; }
+    .slide.cover p { font-size:40px; opacity:.92; }
+    .slide.cover .kicker { color:#bfeee8; }
+    .slide.cover .foot { color:#bfeee8; }
+    .slide.section { background:var(--accent-strong); color:#fff; justify-content:center; }
+    .slide.section .num { font-size:30px; font-weight:800; letter-spacing:.1em; color:#9fe0d8; margin-bottom:18px; }
+    .slide.section h2 { font-size:92px; margin:0 0 20px; }
+    .slide.section p { font-size:38px; color:#d6f3ef; }
+    .slide.section .foot { color:#9fe0d8; }
+
+    /* Actividades */
+    .slide.activity { background:var(--act-soft); }
+    .actbar { display:flex; justify-content:space-between; align-items:center; background:var(--act); color:#fff; margin:-70px -96px 40px; padding:24px 96px; font-size:30px; font-weight:800; letter-spacing:.04em; }
+    .actbar .dur { background:rgba(255,255,255,.22); padding:4px 18px; border-radius:999px; }
+    ol.steps { margin:0; padding-left:48px; } ol.steps li { margin:0 0 16px; padding-left:8px; }
+    ol.steps li::marker { color:var(--act); font-weight:800; }
+    .check { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px; font-size:31px; }
+    .check div { background:#fff; border-radius:14px; padding:14px 22px; }
+    .check b { color:var(--act); margin-right:10px; }
+
+    /* Diagrama del harness */
+    .harness { position:relative; width:640px; height:560px; margin:0 auto; }
+    .harness .core { position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:38px; font-weight:800; text-align:center; line-height:1.1; }
+    .harness .ring { position:absolute; inset:20px 50px; border:4px dashed #9cc9c4; border-radius:50%; }
+    .harness .pill { position:absolute; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); border-radius:999px; padding:10px 24px; font-size:27px; font-weight:700; white-space:nowrap; transform:translate(-50%,-50%); }
+
+    .flow { display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:34px; font-weight:700; }
+    .flow span.s { background:var(--accent-soft); color:var(--accent-strong); padding:16px 26px; border-radius:16px; }
+    .flow span.s.hl { background:var(--warn-soft); color:var(--warn); outline:3px solid var(--warn); }
+    .flow span.a { color:var(--muted); }
+
+    .term { display:inline-block; background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:10px 22px; font-family:Consolas, monospace; font-size:30px; }
+
+    .note { background:var(--warn-soft); border-left:10px solid var(--warn); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .note b { color:var(--warn); }
+    .danger { background:var(--red-soft); border-left:10px solid var(--red); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .danger b { color:var(--red); }
+
+    /* Programa y agenda */
+    .prog { display:flex; flex-direction:column; gap:12px; }
+    .prog .row { display:grid; grid-template-columns:64px 1fr auto; gap:22px; align-items:center; background:var(--bg); border-radius:16px; padding:12px 26px; }
+    .prog .row .n { width:52px; height:52px; border-radius:50%; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); display:grid; place-items:center; font-weight:800; font-size:26px; }
+    .prog .row .tt { font-size:30px; font-weight:700; line-height:1.15; }
+    .prog .row .tt small { display:block; font-size:24px; font-weight:400; color:var(--muted); margin-top:2px; }
+    .prog .row .st { font-size:22px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .prog .row.done { opacity:.55; }
+    .prog .row.done .n { background:var(--accent); color:#fff; }
+    .prog .row.now { background:var(--accent); color:#fff; }
+    .prog .row.now .n { background:#fff; border-color:#fff; }
+    .prog .row.now .tt small { color:#d6f3ef; }
+    .prog .row.now .st { color:#fff; background:rgba(255,255,255,.2); padding:4px 14px; border-radius:999px; }
+    .today { display:grid; grid-template-columns:1.25fr 1fr; gap:44px; align-items:start; }
+    .today table.t td { font-size:30px; padding:12px 18px; }
+    .takeaway { background:var(--accent-soft); border-radius:18px; padding:28px 32px; }
+    .takeaway h3 { margin:0 0 16px; }
+    .takeaway ul { margin:0; padding-left:34px; font-size:30px; } .takeaway li { margin-bottom:14px; }
+
+    /* Barra de control (fuera del escenario) */
+    #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
+    #hud:hover { opacity:1; }
+    #hud button { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; }
+    #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
+
+    @media print {
+      html, body { overflow:visible; background:#fff; height:auto; }
+      #viewport { position:static; display:block; }
+      #stage { transform:none !important; position:static; width:1600px; height:auto; }
+      .slide { display:flex !important; position:relative; width:1600px; height:900px; break-after:page; }
+      #hud, #progress { display:none; }
+      @page { size:1600px 900px; margin:0; }
+    }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 -->
+<section class="slide cover">
+  <p class="kicker">Curso Claude Code · Sesión 1 de 6</p>
+  <h1>Fundamentos y memoria de proyecto</h1>
+  <p>Instalar, pedir trabajo bien y darle a Claude el contexto del proyecto</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kicker">Dónde estamos</p>
+  <h2 style="margin-bottom:26px">El programa</h2>
+  <div class="prog">
+    <div class="row now"><div class="n">1</div><div class="tt">Fundamentos y memoria de proyecto<small>Instalar y darle a Claude el contexto del proyecto</small></div><div class="st">Hoy</div></div>
+    <div class="row "><div class="n">2</div><div class="tt">Uso seguro y gobierno<small>Pasar de consejos a reglas: permisos y validaciones</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">3</div><div class="tt">Skills, subagentes y MCP<small>Herramientas del equipo y reparto de tareas</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">4</div><div class="tt">Trabajar fuera de tu especialidad<small>Reglas por área y revisión antes de integrar</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">5</div><div class="tt">Taller: vuestro caso real<small>Arrancar la mejora interna</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">6</div><div class="tt">Acompañamiento y cierre<small>Revisar, terminar y dejarlo listo para el equipo</small></div><div class="st"></div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kicker">Hoy</p>
+  <h2>Qué vemos hoy</h2>
+  <div class="today">
+    <table class="t">
+      <tr><td>12:00</td><td>Qué vamos a construir</td></tr>
+      <tr><td>12:08</td><td>Instalación</td></tr>
+      <tr><td>12:35</td><td>Primer contacto: permisos y contexto</td></tr>
+      <tr><td>12:50</td><td>Cómo pedir trabajo a Claude</td></tr>
+      <tr><td>13:15</td><td>Memoria de proyecto: <code>CLAUDE.md</code></td></tr>
+      <tr><td>13:45</td><td>Tu primer comando</td></tr>
+      <tr><td>13:55</td><td>Cierre y tarea</td></tr>
+    </table>
+    <div class="takeaway"><h3>Al terminar tendrás</h3>
+      <ul>
+        <li>Claude Code funcionando con la cuenta de la empresa</li>
+        <li>Un <code>CLAUDE.md</code> con zonas prohibidas y verificación</li>
+        <li>Tu primer comando: <code>/revisa-cambios</code></li>
+        <li>La primera versión de <b>Cadena de frío</b>, la app del curso</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <p class="kicker">Punto de partida</p>
+  <h2>No es un chat para código</h2>
+  <div class="grid2">
+    <div class="card bad"><h3>Chat en el navegador</h3>
+      <ul class="b"><li>Copias código y lo pegas</li><li>No ve tu proyecto</li><li>Aplicas tú los cambios</li><li>Olvida al cerrar</li></ul></div>
+    <div class="card good"><h3>Claude Code</h3>
+      <ul class="b"><li>Vive en tu repositorio</li><li>Lee, ejecuta y edita</li><li>Pide permiso antes de actuar</li><li>Recuerda las reglas del proyecto</li></ul></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <p class="kicker">El hilo del curso</p>
+  <h2>Harness engineering</h2>
+  <div class="grid2" style="align-items:center;grid-template-columns:700px 1fr;gap:70px">
+    <div class="harness">
+      <div class="ring"></div>
+      <div class="core">Modelo</div>
+      <div class="pill" style="left:50%;top:6%">Instrucciones</div>
+      <div class="pill" style="left:90%;top:36%">Herramientas</div>
+      <div class="pill" style="left:80%;top:88%">Permisos</div>
+      <div class="pill" style="left:20%;top:88%">Validaciones</div>
+      <div class="pill" style="left:8%;top:36%">Revisión humana</div>
+    </div>
+    <div>
+      <p class="big">El modelo es el motor.<br>El <em>harness</em> es todo lo que lo rodea.</p>
+      <p class="muted">El modelo no lo controláis. El harness, sí.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <p class="kicker">El proyecto del curso</p>
+  <h2>Cadena de frío, desde cero</h2>
+  <div class="grid2" style="align-items:start">
+    <div>
+      <p class="big">Una web para apuntar las temperaturas de neveras y congeladores y ver de un vistazo qué equipo está fuera de rango.</p>
+      <p class="muted">Se instala en el móvil y funciona sin conexión. Sin datos de pacientes: solo equipos, temperaturas y quién toma la lectura.</p>
+    </div>
+    <ol class="steps">
+      <li><b>Hoy</b> · especificación, <code>CLAUDE.md</code> y primera versión</li>
+      <li><b>Sesión 2</b> · reglas, tests y un hook</li>
+      <li><b>Sesión 3</b> · skill del equipo, revisores y exportar a CSV</li>
+      <li><b>Sesión 4</b> · instalable y sin conexión</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Preséntate en el chat</span><span class="dur">2 min</span></div>
+  <p class="big">Escribe en el chat:</p>
+  <pre>Nombre · en qué trabajas habitualmente · qué herramientas de IA usas y para qué (o ninguna)</pre>
+  <p class="muted" style="font-size:30px">Por ejemplo: ChatGPT, Copilot, Cursor, Claude…</p>
+</section>
+
+<!-- 8 -->
+<section class="slide section">
+  <div class="num">BLOQUE 1</div>
+  <h2>Instalación</h2>
+  <p>Juntos, paso a paso</p>
+</section>
+
+<!-- 9 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Instalación paso a paso</span><span class="dur">22 min</span></div>
+  <p>Después de cada paso, escribe <b>✅</b> o <b>❌</b> en el chat.</p>
+  <div class="check">
+    <div><b>1</b> Abrir PowerShell / Terminal</div>
+    <div><b>2</b> Instalar</div>
+    <div><b>3</b> Terminal nueva · <code>claude --version</code></div>
+    <div><b>4</b> <code>claude doctor</code></div>
+    <div><b>5</b> <code>git --version</code> (Windows)</div>
+    <div><b>6</b> <code>cd</code> al repo · <code>claude</code> · login</div>
+    <div><b>7</b> <code>/status</code> · <code>/exit</code></div>
+    <div style="background:transparent">¿Ya lo tenías instalado? Solo comprueba.</div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Paso 1</p>
+  <h2>¿PowerShell o CMD?</h2>
+  <div class="grid2">
+    <div class="card good"><h3>PowerShell ✔</h3><p><span class="term">PS C:\Users\ana&gt;</span></p><p>Empieza por <code>PS</code></p></div>
+    <div class="card"><h3>CMD</h3><p><span class="term">C:\Users\ana&gt;</span></p><p>Sin <code>PS</code>: tiene otro comando</p></div>
+  </div>
+  <div class="note"><b>No hace falta ser administrador.</b> Claude Code se instala en tu carpeta de usuario.</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <p class="kicker">Paso 2</p>
+  <h2>Instalar</h2>
+<pre><span class="c"># Windows · PowerShell</span>
+irm https://claude.ai/install.ps1 | iex
+
+<span class="c"># Windows · CMD</span>
+curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd
+
+<span class="c"># macOS</span>
+curl -fsSL https://claude.ai/install.sh | bash</pre>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <p class="kicker">Pasos 3, 4 y 5</p>
+  <h2>Comprobar</h2>
+  <ol class="steps">
+    <li><b>Cierra la terminal y abre una nueva</b></li>
+    <li><code>claude --version</code> → un número de versión</li>
+    <li><code>claude doctor</code> → estado de la instalación y avisos</li>
+    <li>Windows: <code>git --version</code> (recomendado, no obligatorio)</li>
+  </ol>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <p class="kicker">Pasos 6 y 7</p>
+  <h2>Primer arranque y login</h2>
+  <ol class="steps">
+    <li><code>mkdir cadena-de-frio</code> · <code>cd cadena-de-frio</code> · <code>git init</code><span class="muted" style="display:block;font-size:28px">Git: los puntos de guardado del proyecto del curso</span></li>
+    <li><code>claude</code> → se abre el navegador</li>
+    <li>Entra con la <b>cuenta de la empresa</b></li>
+    <li><code>Login successful</code> → <kbd>Enter</kbd></li>
+    <li><code>/status</code> → aparece la organización de la empresa</li>
+  </ol>
+  <div class="note"><b>¿No se abre el navegador?</b> Pulsa <kbd>c</kbd> para copiar la URL. ¿Te muestra un código? Pégalo en la terminal.</div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <p class="kicker">Si algo falla</p>
+  <h2>Errores más habituales</h2>
+  <table class="t wrap">
+    <tr><th>Ves esto</th><th>Haz esto</th></tr>
+    <tr><td><code>'irm' is not recognized</code></td><td>Estás en CMD: usa el comando de CMD</td></tr>
+    <tr><td><code>The token '&amp;&amp;' is not valid…</code></td><td>Estás en PowerShell: usa <code>irm …</code></td></tr>
+    <tr><td><code>claude</code> no se reconoce</td><td>Abre una terminal nueva</td></tr>
+    <tr><td><code>403</code> o error de certificado</td><td>Proxy de la empresa: avisa a IT</td></tr>
+    <tr><td>Sale tu cuenta personal</td><td><code>/logout</code> y entra con la de la empresa</td></tr>
+  </table>
+</section>
+
+<!-- 15 -->
+<section class="slide section">
+  <div class="num">BLOQUE 2</div>
+  <h2>Primer contacto</h2>
+  <p>Permisos, comandos y contexto</p>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <p class="kicker">Hoy, en modo manual</p>
+  <h2>Modos de permisos</h2>
+<pre>claude --permission-mode manual</pre>
+  <table class="t">
+    <tr><th>Modo</th><th>Qué hace sin preguntarte</th></tr>
+    <tr><td><b>Auto</b> (por defecto)</td><td>Un segundo modelo revisa cada acción por ti</td></tr>
+    <tr><td><b>Manual</b></td><td>Solo leer. Para editar o ejecutar, te pregunta</td></tr>
+    <tr><td><b>Plan</b></td><td>Explora y propone un plan. No cambia nada</td></tr>
+  </table>
+  <p style="margin-top:24px"><kbd>Shift</kbd>+<kbd>Tab</kbd> cambia de modo. Lo ves en la barra de abajo.</p>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <p class="kicker">Cómo trabaja</p>
+  <h2>El ciclo</h2>
+  <div class="flow" style="margin-bottom:56px">
+    <span class="s">Lee</span><span class="a">→</span><span class="s">Propone</span><span class="a">→</span><span class="s hl">Pide permiso</span><span class="a">→</span><span class="s">Actúa</span><span class="a">→</span><span class="s">Verifica</span>
+  </div>
+  <h3>Cuando te pide permiso</h3>
+  <ul class="b">
+    <li><b>Sí</b>, esta vez</li>
+    <li><b>Sí, y no vuelvas a preguntar</b> por esto en la sesión</li>
+    <li><b>No</b>, y dile qué hacer en su lugar</li>
+  </ul>
+  <div class="note"><b>Lee antes de aceptar.</b> <kbd>Esc</kbd> le interrumpe en cualquier momento.</div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <p class="kicker">Para moverse</p>
+  <h2>Comandos esenciales</h2>
+  <table class="t">
+    <tr><td><code>/help</code></td><td>Todo lo disponible</td></tr>
+    <tr><td><code>/status</code></td><td>Cuenta, organización y modelo</td></tr>
+    <tr><td><code>/context</code></td><td>Qué ocupa el contexto ahora</td></tr>
+    <tr><td><code>/clear</code></td><td>Empezar de cero</td></tr>
+    <tr><td><code>/resume</code> · <code>claude -c</code></td><td>Retomar una conversación</td></tr>
+    <tr><td><code>@archivo</code> · <code>!comando</code></td><td>Señalar un archivo · ejecutar un comando</td></tr>
+    <tr><td><kbd>Esc</kbd> · <kbd>Esc</kbd><kbd>Esc</kbd></td><td>Interrumpir · volver atrás</td></tr>
+  </table>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <p class="kicker">La habilidad número uno</p>
+  <h2>Gestionar el contexto</h2>
+  <p class="quote" style="margin:10px 0 50px">"La ventana de contexto se llena rápido, y el rendimiento empeora a medida que se llena."<small>Anthropic, Best practices for Claude Code</small></p>
+  <ul class="b">
+    <li><code>/clear</code> al cambiar de tarea</li>
+    <li>¿Le has corregido dos veces lo mismo? <code>/clear</code> y un prompt mejor</li>
+  </ul>
+</section>
+
+<!-- 20 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Explícame la especificación</span><span class="dur">6 min</span></div>
+  <ol class="steps">
+    <li>En <code>cadena-de-frio</code>: <code>claude --permission-mode manual</code></li>
+    <li>Pega la petición de la <b>guía del proyecto</b> que crea <code>docs/especificacion.md</code> · <b>lee el permiso</b> antes de aceptar</li>
+    <li>Escribe:</li>
+  </ol>
+<pre>Lee docs/especificacion.md y explícame con tus palabras qué vamos a construir.
+Dime qué ves ambiguo o qué dudas tienes. No escribas código todavía.</pre>
+  <ol class="steps" start="4">
+    <li>Al terminar, <code>/context</code></li>
+  </ol>
+  <div class="note"><b>En el chat:</b> ¿qué dudas o ambigüedades ha encontrado Claude?</div>
+</section>
+
+<!-- 21 -->
+<section class="slide section">
+  <div class="num">BLOQUE 3</div>
+  <h2>Cómo pedir trabajo</h2>
+  <p>Lo que recomienda Anthropic</p>
+</section>
+
+<!-- 22 -->
+<section class="slide">
+  <p class="kicker">Principio 1</p>
+  <h2>Un empleado brillante… y nuevo</h2>
+  <p class="big" style="margin-bottom:50px">No conoce vuestras normas ni vuestra forma de trabajar.</p>
+  <div class="note"><b>Regla de oro:</b> enseña tu prompt a un compañero que no sepa nada de la tarea. Si él se confundiría, Claude también.</div>
+</section>
+
+<!-- 23 -->
+<section class="slide">
+  <p class="kicker">Principio 2</p>
+  <h2>Explica el porqué</h2>
+  <div class="grid2">
+    <div class="card bad"><h3>Solo la orden</h3><p>"No uses <code>console.log</code>."</p></div>
+    <div class="card good"><h3>Con el motivo</h3><p>"Los logs de producción se revisan en auditorías, así que no escribas datos personales en ellos. Usa el logger del proyecto."</p></div>
+  </div>
+  <p class="muted" style="margin-top:36px">Con el motivo, Claude acierta también en los casos que no habías previsto.</p>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <p class="kicker">Principio 3</p>
+  <h2>Sé específico</h2>
+  <table class="t wrap">
+    <tr><th>Vago</th><th>Específico</th></tr>
+    <tr><td>"Añade tests para foo.py"</td><td>"Escribe un test para foo.py para el caso en que el usuario no ha iniciado sesión. Sin mocks."</td></tr>
+    <tr><td>"Arregla el bug del login"</td><td>"El login falla tras caducar la sesión. Revisa src/auth/, sobre todo el refresco del token. Escribe un test que lo reproduzca y luego arréglalo."</td></tr>
+    <tr><td>"El build falla"</td><td>"…arréglalo y comprueba que el build pasa. Ataca la causa, no silencies el error."</td></tr>
+  </table>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <p class="kicker">Principios 4 y 5</p>
+  <h2>Pide la acción · Dale cómo comprobarla</h2>
+  <div class="grid2">
+    <div class="card"><h3>Lo que pides es lo que hace</h3>
+      <p>"¿Puedes sugerir cambios…?"<br><span class="muted">→ sugiere y no toca nada</span></p>
+      <p>"Cambia esta función para…"<br><span class="muted">→ la cambia</span></p></div>
+    <div class="card"><h3>Que pueda verificar</h3>
+      <ul class="b"><li>Tests</li><li>Un build</li><li>Una captura para comparar</li></ul>
+      <p><b>Pide evidencia, no afirmaciones.</b></p></div>
+  </div>
+</section>
+
+<!-- 26 -->
+<section class="slide">
+  <p class="kicker">Principio 6</p>
+  <h2>Primero el plan</h2>
+  <div class="flow" style="margin-bottom:56px">
+    <span class="s">Explorar</span><span class="a">→</span><span class="s hl">Planificar</span><span class="a">→</span><span class="s">Implementar</span><span class="a">→</span><span class="s">Guardar</span>
+  </div>
+  <ul class="b">
+    <li><kbd>Shift</kbd>+<kbd>Tab</kbd> hasta ver <code>⏸ plan mode on</code>: propone sin tocar nada</li>
+    <li>Si puedes describir el cambio en una frase, sáltate el plan</li>
+  </ul>
+</section>
+
+<!-- 27 -->
+<section class="slide">
+  <p class="kicker">Principio 7</p>
+  <h2>Tono normal, en positivo</h2>
+  <div class="grid2">
+    <div class="card bad"><h3>Evita</h3><p>"CRÍTICO: DEBES usar X SIEMPRE"</p><p>"No uses listas"</p></div>
+    <div class="card good"><h3>Mejor</h3><p>"Usa X cuando…"</p><p>"Responde en párrafos"</p></div>
+  </div>
+  <p class="muted" style="margin-top:36px">Los modelos actuales siguen muy bien las instrucciones: las mayúsculas les hacen exagerar.</p>
+</section>
+
+<!-- 28 -->
+<section class="slide">
+  <p class="quote">Contexto, alcance y cómo comprobarlo.<small>Si falta uno de los tres, Claude lo rellenará adivinando.</small></p>
+</section>
+
+<!-- 29 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · La primera versión de la app</span><span class="dur">12 min</span></div>
+  <ol class="steps">
+    <li>Escribe en el chat cómo pedirías hoy la primera versión de Cadena de frío</li>
+    <li>Reescríbela con la plantilla (en la guía del proyecto hay una versión posible)</li>
+    <li><kbd>Shift</kbd>+<kbd>Tab</kbd> a <b>plan mode</b> y lánzala · al aprobar el plan, elige <b>aceptar ediciones</b></li>
+    <li><code>npm start</code> → comprueba los dos ejemplos de la especificación</li>
+  </ol>
+<pre>Contexto:    qué pasa y por qué importa
+Alcance:     dónde trabajar y qué NO tocar
+Hecho cuando: cómo comprobamos que está bien
+Entrega:     qué quiero ver al final</pre>
+</section>
+
+<!-- 30 -->
+<section class="slide section">
+  <div class="num">BLOQUE 4</div>
+  <h2>Memoria de proyecto</h2>
+  <p>Lo que Claude lee al empezar cada sesión</p>
+</section>
+
+<!-- 31 -->
+<section class="slide">
+  <p class="kicker">CLAUDE.md</p>
+  <h2>Las reglas de vuestro proyecto, en un fichero</h2>
+  <table class="t">
+    <tr><th>Fichero</th><th>Para quién</th></tr>
+    <tr><td><code>./CLAUDE.md</code></td><td>Todo el equipo · va en el repositorio</td></tr>
+    <tr><td><code>./CLAUDE.local.md</code></td><td>Solo tú, en este proyecto · no se comparte</td></tr>
+    <tr><td><code>~/.claude/CLAUDE.md</code></td><td>Solo tú, en todos tus proyectos</td></tr>
+    <tr><td><code>subcarpeta/CLAUDE.md</code></td><td>Se carga al trabajar en esa carpeta</td></tr>
+  </table>
+</section>
+
+<!-- 32 -->
+<section class="slide">
+  <p class="kicker">CLAUDE.md</p>
+  <h2>Qué poner: solo lo que Claude no puede deducir</h2>
+  <div class="grid2">
+    <div class="card good"><h3>No lo puede deducir → ponlo</h3><ul class="b"><li>Comandos de build, test y lint</li><li>Convenciones propias</li><li>Zonas prohibidas</li><li>Cómo verificar</li><li>Cómo se revisan e integran los cambios</li></ul></div>
+    <div class="card bad"><h3>Lo deduce, o no debe ir → fuera</h3><ul class="b"><li>Lo que se ve leyendo el código<span class="muted" style="display:block;font-size:28px">lo deduce</span></li><li>Documentación larga<span class="muted" style="display:block;font-size:28px">tapa lo importante</span></li><li>Tareas de esta semana<span class="muted" style="display:block;font-size:28px">mañana ya no es verdad</span></li><li>Secretos y contraseñas<span class="muted" style="display:block;font-size:28px">acaban en el repositorio</span></li></ul></div>
+  </div>
+</section>
+
+<!-- 33 -->
+<section class="slide">
+  <p class="kicker">Menos es más</p>
+  <h2>Corto, o no lo leerá bien</h2>
+  <ul class="b">
+    <li>Menos de <b>200 líneas</b></li>
+    <li>Para cada línea: <b>"si la quito, ¿Claude se equivocaría?"</b></li>
+    <li><code>@docs/arquitectura.md</code> importa otro fichero… pero también se carga entero</li>
+  </ul>
+  <div class="note"><b>¿Usáis también Cursor u otros agentes?</b> Claude Code lee <code>AGENTS.md</code> si no hay <code>CLAUDE.md</code>. Para una sola fuente: un <code>CLAUDE.md</code> que contenga <code>@AGENTS.md</code>.</div>
+</section>
+
+<!-- 34 -->
+<section class="slide">
+  <p class="kicker">Para empezar</p>
+  <h2><code>/init</code></h2>
+  <p>Lee el repo y genera un primer <code>CLAUDE.md</code>: comandos, tests y convenciones que descubre.</p>
+  <p class="quote" style="margin-top:40px"><code>/init</code> arranca tu <code>CLAUDE.md</code>.<br>Tú lo terminas.</p>
+</section>
+
+<!-- 35 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Tu primer CLAUDE.md</span><span class="dur">15 min</span></div>
+  <ol class="steps">
+    <li><code>/init</code> en el proyecto · lee el permiso antes de aceptar</li>
+    <li>Recorta: "si lo quito, ¿se equivocaría?"</li>
+    <li>Añade las secciones de la siguiente diapositiva: <b>escríbelas o pídeselas a Claude</b></li>
+    <li>Añade 1–2 dudas que Claude planteó sobre la especificación</li>
+    <li><code>/clear</code> y pregúntale:
+      <br>· "¿Qué tienes que hacer antes de dar una tarea por terminada?"
+      <br>· "Cambia el segundo ejemplo de la especificación"</li>
+  </ol>
+</section>
+
+<!-- 36 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Así debería quedar tu CLAUDE.md</span><span class="dur">15 min</span></div>
+<pre>## No tocar
+- docs/especificacion.md — la cambia una persona, no Claude. Si crees que
+  hay que cambiarla, dilo.
+- No añadas dependencias de npm sin preguntar.
+
+## Verificación antes de dar algo por terminado
+1. Arranca la app y comprueba los ejemplos de la especificación.
+2. Enseña lo que has comprobado; no digas "funciona" sin decir cómo.
+3. Di qué no has podido verificar.
+
+## Convenciones
+- Código y nombres en español.
+- Nada de datos de pacientes: solo equipos y lecturas.
+- Los datos no salen del navegador: nada de analítica ni servicios externos.</pre>
+</section>
+
+<!-- 37 -->
+<section class="slide">
+  <p class="kicker">Importante</p>
+  <h2>Consejos no son reglas</h2>
+  <div class="grid2">
+    <div class="card"><h3><code>CLAUDE.md</code></h3><p>Instrucciones que Claude <b>normalmente</b> sigue</p></div>
+    <div class="card"><h3>Hooks y permisos</h3><p>Reglas que se aplican <b>siempre</b>, las siga o no</p></div>
+  </div>
+  <div class="danger"><b>Lo que no puede pasar nunca</b> (producción, <code>.env</code>…) necesita una regla, no solo una línea en <code>CLAUDE.md</code>. → Sesión 2</div>
+</section>
+
+<!-- 38 -->
+<section class="slide">
+  <p class="kicker">La segunda capa</p>
+  <h2><code>CLAUDE.md</code> y <code>MEMORY.md</code></h2>
+  <table class="t">
+    <tr><th></th><th><code>CLAUDE.md</code></th><th><code>MEMORY.md</code></th></tr>
+    <tr><td>Lo escribe</td><td>El equipo</td><td>Claude</td></tr>
+    <tr><td>Vive en</td><td>El repositorio, con el código</td><td>Tu ordenador, fuera del repositorio</td></tr>
+    <tr><td>Se comparte</td><td>Sí</td><td>No, es personal</td></tr>
+    <tr><td>Se revisa con</td><td>Tu editor</td><td><code>/memory</code></td></tr>
+  </table>
+  <p class="big" style="margin-top:40px;font-size:42px">Lo que todo el equipo debe saber, en <code>CLAUDE.md</code>.</p>
+</section>
+
+<!-- 39 -->
+<section class="slide section">
+  <div class="num">BLOQUE 5</div>
+  <h2>Tu primer comando</h2>
+  <p>Un prompt que se repite, convertido en fichero</p>
+</section>
+
+<!-- 40 -->
+<section class="slide">
+  <p class="kicker">Slash commands</p>
+  <h2>Un fichero = un comando</h2>
+  <p><code>.claude/commands/revisa-cambios.md</code> &nbsp;→&nbsp; <code>/revisa-cambios</code></p>
+  <ul class="b" style="margin-top:20px">
+    <li>El contenido del fichero <b>es</b> el prompt</li>
+    <li>Va en el repo: todo el equipo tiene el mismo comando</li>
+    <li>En la sesión 3 lo convertiremos en <b>skill</b></li>
+  </ul>
+  <div class="note"><b>Regla de la tercera vez:</b> si escribes el mismo prompt por tercera vez, merece ser un comando.</div>
+</section>
+
+<!-- 41 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Crea /revisa-cambios</span><span class="dur">8 min</span></div>
+  <p style="margin-bottom:12px">Antes, un punto de guardado: <code>git add -A</code> · <code>git commit -m "Primera versión"</code>. Luego <b>pídeselo a Claude</b> (petición en la guía). Así debería quedar <code>.claude/commands/revisa-cambios.md</code>:</p>
+<pre>---
+description: Revisa los cambios sin commitear contra CLAUDE.md
+disable-model-invocation: true
+---
+Estos son los cambios sin commitear del repo:
+
+!`git diff HEAD`
+
+Revísalos contra las reglas de CLAUDE.md. Para cada problema:
+archivo, qué regla incumple y cómo arreglarlo. No cambies nada.
+
+Foco adicional: $ARGUMENTS</pre>
+</section>
+
+<!-- 42 -->
+<section class="slide">
+  <p class="kicker">Cómo funciona</p>
+  <h2>Las tres piezas</h2>
+  <table class="t wrap">
+    <tr><td><code>!`git diff HEAD`</code></td><td>Se ejecuta antes: Claude recibe el diff real</td></tr>
+    <tr><td><code>$ARGUMENTS</code></td><td>Lo que escribes detrás: <code>/revisa-cambios céntrate en seguridad</code></td></tr>
+    <tr><td><code>disable-model-invocation</code></td><td>Solo lo lanzas tú, no Claude por su cuenta</td></tr>
+  </table>
+  <div class="note"><b>Windows sin Git:</b> añade <code>shell: powershell</code> en la cabecera.</div>
+</section>
+
+<!-- 43 -->
+<section class="slide">
+  <p class="kicker">Resumen</p>
+  <h2>Hoy hemos montado</h2>
+  <div class="grid3">
+    <div class="card"><h3>Instrucciones</h3><p><code>CLAUDE.md</code> con zonas prohibidas y verificación</p></div>
+    <div class="card"><h3>Atajos</h3><p><code>/revisa-cambios</code>, compartido en el repo</p></div>
+    <div class="card"><h3>Peticiones</h3><p>Contexto, alcance y cómo comprobarlo</p></div>
+  </div>
+  <p class="big" style="margin-top:50px;font-size:40px">Siguiente: que lo importante no dependa de que Claude lo recuerde.</p>
+</section>
+
+<!-- 44 -->
+<section class="slide">
+  <p class="kicker">Para la sesión 2</p>
+  <h2>Tarea</h2>
+  <ol class="steps">
+    <li>Termina la primera versión de la app (si no llegas, en la sesión 2 tendrás un punto de partida)</li>
+    <li>Pule tu <code>CLAUDE.md</code> y pide a un compañero que lo revise</li>
+    <li>Trae <b>3 cosas que Claude nunca debería hacer</b> en el proyecto o en vuestro entorno</li>
+    <li>Ve pensando qué <b>mejora interna</b> queréis sacar adelante en las sesiones 5 y 6</li>
+  </ol>
+</section>
+
+<!-- 45 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">1 min</span></div>
+  <p class="big">En el chat, una línea:</p>
+  <p class="big" style="color:var(--act)">¿Qué es lo que más te ha servido hoy, y qué no ha funcionado?</p>
+</section>
+
+<!-- 46 -->
+<section class="slide cover">
+  <p class="kicker">Sesión 1 · Cierre</p>
+  <h1 style="font-size:76px">Hoy no habéis aprendido a chatear con código.</h1>
+  <p>Habéis empezado a construir el entorno en el que vuestro equipo va a trabajar con IA.</p>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev" title="Anterior (←)">←</button>
+  <button id="next" title="Siguiente (→)">→</button>
+  <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var bar = document.getElementById('progress');
+  var i = 0;
+  var total = slides.length;
+
+  slides.forEach(function (s, n) {
+    var f = document.createElement('div');
+    f.className = 'foot';
+    f.innerHTML = '<span>Claude Code · Sesión 1</span><span>' + (n + 1) + ' / ' + total + '</span>';
+    s.appendChild(f);
+  });
+
+  function fit() {
+    var k = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    bar.style.width = ((i + 1) / total * 100) + '%';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); show(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(i - 1); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'f' || k === 'F') fullscreen();
+  });
+  document.getElementById('prev').onclick = function () { show(i - 1); };
+  document.getElementById('next').onclick = function () { show(i + 1); };
+  document.getElementById('fs').onclick = fullscreen;
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n && n - 1 !== i) show(n - 1);
+  });
+
+  fit();
+  var start = parseInt(location.hash.slice(1), 10);
+  show(start ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proyecto del curso · Cadena de frío</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+[hidden] { display: none !important; }
+:root {
+  --bg: #f3f6f6; --surface: #ffffff; --sunken: #e8efee; --text: #14211f; --muted: #4f5f5c; --line: #d3dedc;
+  --accent: #176b68; --accent-strong: #0d4f4d; --accent-soft: #dcf1ee; --amber: #a85a0c; --amber-soft: #fbeedd;
+  --ok: #1d7a3e; --ok-soft: #e1f4e7; --code-bg: #10201e; --code-fg: #d9efe9; --code-dim: #8fb3ab;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "SF Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1716; --surface: #152220; --sunken: #1b2b29; --text: #e6efed; --muted: #a3b6b2; --line: #2c403d;
+    --accent: #4fc2b8; --accent-strong: #8fded6; --accent-soft: #173a37; --amber: #f0a65a; --amber-soft: #3a2a17;
+    --ok: #6fd28f; --ok-soft: #173323; --code-bg: #08110f; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 18px; line-height: 1.62; }
+a { color: var(--accent-strong); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.7rem); font-weight: 800; }
+h2 { font-size: 1.7rem; font-weight: 800; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 6px; border-radius: 5px; overflow-wrap: anywhere; }
+kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 900px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 16px; padding: 6px 11px; border-radius: 8px; }
+.nav a:hover { background: var(--sunken); color: var(--text); }
+.diapos { margin: 0 0 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
+main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
+.hero { display: grid; gap: 14px; }
+.eyebrow { font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 66ch; }
+.app { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.app div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+.app strong { font-family: var(--font-display); color: var(--accent-strong); }
+.app span { font-size: 15px; color: var(--muted); }
+.sesion { display: grid; gap: 14px; scroll-margin-top: 70px; }
+.steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.step-head { display: flex; gap: 12px; align-items: center; padding: 12px 18px; background: var(--sunken); flex-wrap: wrap; }
+.step-head .n { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-weight: 700; flex: none; }
+.step-head h3 { flex: 1; min-width: 12ch; }
+.when { font-size: 15px; color: var(--muted); }
+.step-body { padding: 14px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.code { background: var(--code-bg); color: var(--code-fg); border-radius: 10px; min-width: 0; }
+.code-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px 0 16px; }
+.code-file { font-family: var(--font-mono); font-size: 14px; color: var(--code-dim); overflow-wrap: anywhere; }
+.copy { font: inherit; font-size: 14px; font-weight: 700; background: transparent; color: var(--code-fg); border: 1px solid var(--code-dim); border-radius: 7px; padding: 3px 10px; cursor: pointer; flex: none; }
+.code pre { margin: 0; padding: 10px 16px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 15px; line-height: 1.55; }
+.check { background: var(--ok-soft); border-radius: 10px; padding: 10px 16px; }
+.check strong { color: var(--ok); }
+.check ul { margin: 4px 0 0; padding-left: 22px; display: grid; gap: 4px; }
+.note { background: var(--amber-soft); border-radius: 10px; padding: 10px 16px; }
+.queda { border: 1px dashed var(--line); border-radius: 10px; padding: 8px 14px; }
+.queda summary { cursor: pointer; color: var(--muted); font-size: 16px; }
+.queda[open] summary { margin-bottom: 10px; }
+.mano { background: var(--sunken); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 16px; display: grid; gap: 4px; }
+.mano strong { color: var(--accent-strong); }
+.rescate { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 8px; }
+.rescate-ses { display: flex; flex-wrap: wrap; gap: 8px; }
+.rescate-ses button { font: inherit; font-size: 16px; font-weight: 700; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+.rescate-ses button[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: transparent; }
+.rescate-estado { font-size: 15px; margin: 0; }
+.rescate-estado.ok { color: var(--ok); } .rescate-estado.no { color: var(--amber); font-weight: 700; }
+.rescate details summary { cursor: pointer; font-weight: 700; }
+.rescate pre { white-space: pre-wrap; word-break: break-all; }
+@media (max-width: 700px) { .app { grid-template-columns: repeat(2, minmax(0, 1fr)); } body { font-size: 17px; } .code pre { font-size: 14px; } }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+  <a class="brand" href="index.html">Aprende Claude Code</a>
+  <nav class="nav" aria-label="Sesiones"><a href="#s1">Sesión 1</a><a href="#s2">Sesión 2</a><a href="#s3">Sesión 3</a><a href="#s4">Sesión 4</a><a href="diapositivas/">Diapositivas</a></nav>
+</div></header>
+<main>
+  <section class="hero">
+    <p class="eyebrow">El proyecto del curso</p>
+    <h1>Cadena de frío, desde cero</h1>
+    <p class="lead">A lo largo de las cuatro sesiones construyes una web para registrar las temperaturas de las neveras y congeladores de un centro y ver de un vistazo qué equipo está fuera de rango. Al final se instala en el móvil y funciona sin conexión. Cada sesión añade una parte de la app y una pieza del entorno de trabajo de Claude.</p>
+    <div class="app">
+      <div><strong>Sesión 1</strong><span>Especificación, CLAUDE.md y primera versión</span></div>
+      <div><strong>Sesión 2</strong><span>Reglas, secretos, tests, hook y la falsa alarma del límite</span></div>
+      <div><strong>Sesión 3</strong><span>Skill del equipo, revisores y exportar a CSV · en casa: incidencias, anular lecturas, avisos a Teams</span></div>
+      <div><strong>Sesión 4</strong><span>Instalable y sin conexión, con reglas por zona · en casa: varios centros</span></div>
+    </div>
+    <div class="rescate" id="rescate">
+      <h3>Si te quedas atrás</h3>
+      <p>Si al empezar una sesión no tienes terminada la anterior, descarga el punto de partida: el proyecto como quedó al final de esa sesión. Sale de esta misma web, con un comando: no hace falta que nadie te mande ningún fichero.</p>
+      <p><strong>1.</strong> ¿Qué sesión te falta por terminar?</p>
+      <div class="rescate-ses" role="group" aria-label="Sesión que te falta"><button type="button" data-s="s1" aria-pressed="true">Sesión 1</button><button type="button" data-s="s2" aria-pressed="false">Sesión 2</button><button type="button" data-s="s3" aria-pressed="false">Sesión 3</button><button type="button" data-s="s4" aria-pressed="false">Sesión 4</button></div>
+      <p class="rescate-estado" aria-live="polite"></p>
+      <p><strong>2.</strong> Abre una terminal en la carpeta donde guardas tus proyectos (no dentro de otro proyecto) y pega el comando. Crea la carpeta <code class="rescate-dir">cadena-de-frio-s1</code> con el proyecto y lo convierte en tu repositorio local.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Terminal · Windows (PowerShell)</span><button class="copy" type="button">Copiar</button></div><pre class="rescate-win"></pre></div>
+      <details><summary>En macOS</summary><div class="code"><div class="code-head"><span class="code-file">Terminal · macOS</span><button class="copy" type="button">Copiar</button></div><pre class="rescate-mac"></pre></div></details>
+      <p><strong>3.</strong> Entra en la carpeta y arranca Claude Code desde ahí: <code class="rescate-cd">cd cadena-de-frio-s1</code>.</p>
+      <div class="mano"><strong>A mano, y por qué</strong><p>Claude Code se arranca dentro de la carpeta del proyecto, y aquí todavía no la tienes. Además, el comando copia los ficheros tal cual, sin que nadie los reescriba.</p></div>
+      <p>Tu versión no tiene que ser igual a nadie: Claude no escribe dos veces el mismo código. Lo que importa es que funcione y que sepas por qué.</p>
+      <p>Necesitas Node.js 22 o superior y Git, que aquí solo se usa en local, como punto de guardado del proyecto: no hace falta GitHub. No hay dependencias que instalar.</p>
+      <p><strong>Cómo usar esta guía:</strong> casi todo se le pide a Claude, con la petición que verás en cada paso. Debajo, plegado, tienes cómo debería quedar el fichero, para comparar. Solo se hace a mano lo que tiene un motivo, y en esos casos se explica cuál.</p>
+    </div>
+  </section>
+  <section class="sesion" id="s1"><p class="eyebrow">Sesión 1</p><h2>Fundamentos y memoria de proyecto</h2><p class="lead">Al acabar, tienes la primera versión de la app funcionando, con su especificación, su CLAUDE.md y tu primer comando.</p><p class="diapos"><a href="diapositivas/sesion-1.html" target="_blank" rel="noopener">Diapositivas de la sesión 1</a></p><ol class="steps"><li class="step"><div class="step-head"><span class="n">1</span><h3>Crear el proyecto</h3><span class="when">Instalación, paso 6</span></div><div class="step-body"><p>En la instalación, en vez de ir a un repo existente, crea una carpeta nueva para el proyecto:</p><div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copiar</button></div><pre>mkdir cadena-de-frio
+cd cadena-de-frio
+git init
+claude --permission-mode manual</pre></div><div class="mano"><strong>A mano, y por qué</strong><p>Claude Code se arranca dentro de la carpeta del proyecto, así que esto se hace antes, en la terminal.</p></div><p class="note"><code>git init</code> convierte la carpeta en un repositorio local de Git. En este proyecto de prácticas lo usamos como punto de guardado: para volver atrás y para que Claude vea qué has cambiado. No hace falta GitHub ni ningún servidor. Si en tu equipo usáis otro control de versiones, la idea es la misma.</p></div></li><li class="step"><div class="step-head"><span class="n">2</span><h3>La especificación</h3><span class="when">Actividad «Explícame»</span></div><div class="step-body"><p>Pídele que cree la especificación. Te pedirá permiso para escribir el fichero: léelo antes de aceptar.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea el fichero docs/especificacion.md con este contenido, sin cambiar nada:
+
+# Cadena de frío
+
+## Problema
+
+En cada centro hay neveras y congeladores con muestras y reactivos que tienen que mantenerse dentro de un rango de temperatura. Hoy las lecturas se apuntan en papel o en una hoja de cálculo, y una lectura fuera de rango puede pasar desapercibida hasta la siguiente revisión.
+
+## Alcance de la primera versión
+
+Entra:
+- Un único centro.
+- Dar de alta equipos (neveras y congeladores): nombre y rango permitido, con mínimo y máximo en °C. Los rangos los define el procedimiento de cada laboratorio.
+- Apuntar una lectura: equipo, temperatura y quién la toma. La fecha y la hora se ponen solas.
+- Ver el estado de cada equipo: su última lectura y si está en rango o fuera de rango (por encima o por debajo).
+- Ver las lecturas de cada equipo, de la más reciente a la más antigua.
+- Los datos se guardan en el navegador. Nada sale del dispositivo.
+
+No entra (todavía):
+- Varios centros, usuarios o sincronización entre dispositivos.
+- Avisos, exportar o gráficos.
+- Editar o borrar lecturas.
+
+## Comportamiento esperado
+
+- Nevera de reactivos con rango de 2 a 8 °C: una lectura de 5,1 °C está en rango; una de 9,3 °C está fuera de rango, por encima.
+- Congelador de muestras con rango de −25 a −15 °C: una lectura de −20,5 °C está en rango; una de −12 °C está fuera de rango, por encima.
+- Las temperaturas se escriben como en España, con coma decimal y un decimal como mucho: «5,1», «−20,5».
+- No se puede dar de alta un equipo con el mínimo mayor o igual que el máximo.
+- No se puede apuntar una lectura sin una temperatura válida o sin decir quién la toma.
+
+## Hecho cuando
+
+- La app se abre con `npm start` en http://localhost:3000.
+- Los dos ejemplos de arriba dan exactamente ese estado.
+- Al recargar la página, los datos siguen ahí.</pre></div><p>Después, que te la explique sin escribir código. Al terminar, mira <code>/context</code>.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Lee docs/especificacion.md y explícame con tus palabras qué vamos a construir.
+Dime qué ves ambiguo o qué dudas tienes. No escribas código todavía.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li>Existe <code>docs/especificacion.md</code>.</li><li>En el chat: ¿qué dudas o ambigüedades ha encontrado Claude?</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">3</span><h3>La primera versión</h3><span class="when">Actividad «La primera versión»</span></div><div class="step-body"><p>Primero escribe en el chat cómo lo pedirías hoy. Luego reescríbelo con la plantilla: contexto, alcance, hecho cuando y entrega. Esta es una versión posible; revisa el plan y, al aprobarlo, elige aceptar ediciones.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Contexto: vamos a construir Cadena de frío, la web de docs/especificacion.md,
+para registrar las temperaturas de las neveras y congeladores de un centro.
+
+Alcance: solo la primera versión que describe la especificación. HTML, CSS y
+JavaScript con módulos ES, sin dependencias de npm ni paso de compilación.
+Separa los cálculos en src/logica/, el guardado en src/datos/ y la interfaz
+en src/ui/. Añade un servidor estático mínimo con Node para que npm start la
+sirva en http://localhost:3000. No toques docs/especificacion.md.
+
+Hecho cuando: npm start arranca la app y los dos ejemplos de «Comportamiento
+esperado» dan exactamente ese estado.
+
+Entrega: la lista de ficheros creados y cómo has comprobado los ejemplos.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm start</code> y abre http://localhost:3000.</li><li>Da de alta una nevera de 2 a 8 °C: 5,1 °C sale en rango y 9,3 °C fuera de rango, por encima.</li><li>Da de alta un congelador de −25 a −15 °C: −20,5 °C sale en rango y −12 °C por encima.</li><li>Recarga la página: los datos siguen ahí.</li></ul></div><p class="note">Si no te da tiempo, no pasa nada: termínalo en casa. Si aun así no llegas, al empezar la sesión 2 tendrás el punto de partida para descargar (mira «Si te quedas atrás», arriba).</p></div></li><li class="step"><div class="step-head"><span class="n">4</span><h3>CLAUDE.md</h3><span class="when">Actividad «Tu primer CLAUDE.md»</span></div><div class="step-body"><p>Lanza <code>/init</code>, lee el permiso y recorta lo que no pase la pregunta «si lo quito, ¿se equivocaría?». Después añade las secciones que <code>/init</code> no puede deducir. Puedes escribirlas tú en el editor o pedírselas a Claude: lo importante es que el contenido lo decides tú.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a CLAUDE.md estas secciones, cortas:
+- «No tocar»: docs/especificacion.md (la cambia una persona; si crees que hay que
+  cambiarla, dilo) y no añadir dependencias de npm sin preguntar.
+- «Convenciones»: código y nombres en español, nada de datos de pacientes (solo
+  equipos, temperaturas y quién toma la lectura) y los datos no salen del navegador.
+- «Verificación antes de dar algo por terminado»: arrancar la app y comprobar los
+  ejemplos de la especificación, enseñar cómo lo has comprobado y decir qué no has
+  podido verificar.</pre></div><details class="queda"><summary>Así debería quedar · <code>CLAUDE.md · secciones añadidas</code></summary><div class="code"><div class="code-head"><span class="code-file">CLAUDE.md · secciones añadidas</span><button class="copy" type="button">Copiar</button></div><pre>## No tocar
+
+- `docs/especificacion.md` — la especificación la cambia una persona, no Claude. Si crees que hay que cambiarla, dilo.
+- No añadas dependencias de npm sin preguntar: el proyecto funciona sin ninguna.
+
+## Convenciones
+
+- Código y nombres en español (`estadoDeLectura`, no `readingStatus`).
+- Nada de datos de pacientes: la app solo guarda equipos, temperaturas y quién toma la lectura.
+- Los datos no salen del navegador: nada de analítica, servicios externos ni peticiones de red.
+
+## Verificación antes de dar algo por terminado
+
+1. Arranca la app y comprueba los ejemplos de «Comportamiento esperado» de la especificación.
+2. Enseña lo que has comprobado; no digas &quot;funciona&quot; sin decir cómo lo has visto.
+3. Di qué no has podido verificar.</pre></div></details><div class="check"><strong>Compruébalo</strong><ul><li><code>/clear</code> y pregúntale: «¿Qué tienes que hacer antes de dar una tarea por terminada?»</li><li>Pídele: «Cambia el segundo ejemplo de la especificación». Debería decirte que no le toca.</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">5</span><h3>Tu primer comando</h3><span class="when">Actividad «Crea /revisa-cambios»</span></div><div class="step-body"><p>Primero guarda un punto en Git, para que el comando vea solo lo que cambies después. Luego pídele el comando. Luego haz un cambio pequeño (por ejemplo, que cambie el subtítulo de la cabecera) y revísalo.</p><div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copiar</button></div><pre>git add -A
+git commit -m &quot;Primera versión&quot;</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un comando /revisa-cambios en .claude/commands/revisa-cambios.md que:
+- reciba los cambios sin commitear con !`git diff HEAD`,
+- los revise contra CLAUDE.md y docs/especificacion.md,
+- diga para cada problema el archivo, la regla que incumple y cómo arreglarlo,
+- no cambie nada,
+- acepte un foco adicional con $ARGUMENTS,
+- y que solo lo pueda lanzar yo (disable-model-invocation).</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/commands/revisa-cambios.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/commands/revisa-cambios.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+description: Revisa los cambios sin commitear contra CLAUDE.md
+disable-model-invocation: true
+---
+Estos son los cambios sin commitear del repo:
+
+!`git diff HEAD`
+
+Revísalos contra las reglas de CLAUDE.md y la especificación de docs/especificacion.md.
+Para cada problema: archivo, qué regla incumple y cómo arreglarlo. No cambies nada.
+
+Foco adicional: $ARGUMENTS</pre></div></details><div class="check"><strong>Compruébalo</strong><ul><li>Escribe <code>/</code>: aparece <code>/revisa-cambios</code>. Si no, reinicia Claude Code.</li><li><code>/revisa-cambios</code> revisa tu cambio contra el CLAUDE.md.</li><li><code>/revisa-cambios céntrate en la especificación</code></li></ul></div></div></li></ol></section><section class="sesion" id="s2"><p class="eyebrow">Sesión 2</p><h2>Uso seguro y gobierno</h2><p class="lead">Al acabar, lo importante ya no depende de que Claude se acuerde: reglas de permisos, secretos protegidos, tests y un hook que no le deja terminar con los tests en rojo. Y de paso aparece el primer fallo de verdad: una falsa alarma justo en el límite.</p><p class="diapos"><a href="diapositivas/sesion-2.html" target="_blank" rel="noopener">Diapositivas de la sesión 2</a></p><ol class="steps"><li class="step"><div class="step-head"><span class="n">1</span><h3>Tu lista de «nunca», en reglas</h3><span class="when">Actividad «Lista de nunca → reglas»</span></div><div class="step-body"><p>En el CLAUDE.md pusiste que la especificación no se toca. Eso es un consejo. Pídele que lo convierta en regla, junto con el resto de tu lista. Te pedirá permiso para crear el fichero. Después reinicia Claude Code y míralas en <code>/permissions</code>.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea .claude/settings.json con estas reglas de permisos:
+- prohibido leer .env y .env.*
+- preguntar antes de editar docs/especificacion.md, de npm install y de git push
+- permitido sin preguntar: npm test y node --test</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/settings.json</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/settings.json</span><button class="copy" type="button">Copiar</button></div><pre>{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;Read(./.env)&quot;,
+      &quot;Read(./.env.*)&quot;
+    ],
+    &quot;ask&quot;: [
+      &quot;Edit(./docs/especificacion.md)&quot;,
+      &quot;Bash(npm install *)&quot;,
+      &quot;Bash(git push *)&quot;
+    ],
+    &quot;allow&quot;: [
+      &quot;Bash(npm test *)&quot;,
+      &quot;Bash(node --test *)&quot;
+    ]
+  }
+}</pre></div></details><div class="check"><strong>Compruébalo</strong><ul><li>Pídele que edite la especificación: ahora te tiene que preguntar.</li><li>Pídele que instale una librería con npm: también te pregunta.</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">2</span><h3>Un secreto de verdad: el .env</h3><span class="when">Actividad «Lista de nunca → reglas»</span></div><div class="step-body"><p>La primera regla protege el <code>.env</code>, el fichero de los secretos. En Cadena de frío hará falta uno para avisar a Teams cuando un equipo se salga de rango: la dirección del webhook de un canal es un secreto, porque quien la tenga puede publicar en él. Pídele la plantilla, que no tiene secretos:</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea ejemplo.env, la plantilla del .env: la variable TEAMS_WEBHOOK_URL vacía,
+con un comentario de para qué sirve, y una nota de que el .env de verdad no se
+sube a Git ni lo puedes leer tú. Haz que servidor.js cargue el .env si existe
+(process.loadEnvFile). No leas ni crees el .env.</pre></div><details class="queda"><summary>Así debería quedar · <code>ejemplo.env</code></summary><div class="code"><div class="code-head"><span class="code-file">ejemplo.env</span><button class="copy" type="button">Copiar</button></div><pre># Plantilla del fichero .env. Cópiala como .env y rellena tus valores:
+#   cp ejemplo.env .env        (en PowerShell: Copy-Item ejemplo.env .env)
+#
+# El .env de verdad NO se sube a Git (está en .gitignore) y Claude no puede leerlo
+# (regla deny en .claude/settings.json). Escríbelo tú, a mano: si le dictas el secreto
+# a Claude, el secreto entra en su contexto.
+#
+# Se llama ejemplo.env y no .env.ejemplo para que la regla Read(./.env.*) y el
+# .gitignore no lo atrapen: esta plantilla sí debe verse y subirse, porque no tiene secretos.
+
+# Dirección del webhook de Teams para avisar cuando un equipo se sale de rango.
+# Quien la tenga puede publicar en ese canal: es un secreto. Sin ella, la app funciona igual, sin avisos.
+TEAMS_WEBHOOK_URL=</pre></div></details><p>Y ahora crea el <code>.env</code> de verdad copiando la plantilla. Pon de momento una dirección inventada; la real llega en la tarea de la sesión 3.</p><div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copiar</button></div><pre># macOS / Git Bash
+cp ejemplo.env .env
+# Windows (PowerShell)
+Copy-Item ejemplo.env .env
+
+# Ábrelo en tu editor y escribe:  TEAMS_WEBHOOK_URL=https://ejemplo.invalid/webhook-de-prueba</pre></div><div class="mano"><strong>A mano, y por qué</strong><p>Si le dictas la dirección a Claude para que escriba el <code>.env</code>, entra en su contexto, que es justo lo que la regla quiere evitar. Los secretos los escribe una persona.</p></div><div class="check"><strong>Compruébalo</strong><ul><li>Pídele: «¿Qué dirección hay en el .env?». No puede leerlo.</li><li>Pídele: «Ejecuta cat .env». Tampoco: la regla de Read también frena cat, head y similares.</li><li><code>git status</code>: el <code>.env</code> no aparece, porque está en <code>.gitignore</code>. <code>ejemplo.env</code> sí.</li></ul></div><p>Si te da tiempo, un último hueco que no cubre ninguna regla: el servidor de desarrollo.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Revisa servidor.js sin leer el .env: si alguien abre http://localhost:3000/.env,
+¿se lo entregaría? Si es así, haz que no sirva ficheros ni carpetas que empiecen
+por punto (.env, .git, .claude) y añade un test que lo compruebe.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">3</span><h3>Una regla nueva en la especificación</h3><span class="when">Antes de los hooks</span></div><div class="step-body"><p>¿8,0 °C en una nevera de 2 a 8 °C está dentro o fuera? La especificación no lo decía. Pídele que lo aclare.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a docs/especificacion.md, en «Comportamiento esperado», esta regla:
+los límites cuentan como dentro del rango: 8,0 °C en una nevera de 2 a 8 °C está
+en rango. Una falsa alarma también es un problema: hace que se dejen de mirar.</pre></div><p class="note">La especificación tiene una regla <code>ask</code>: cuando se lo pidas, Claude te pedirá permiso para editarla. Apruébalo tú, después de leer el cambio. Es la idea de esa regla: la especificación la decide una persona.</p></div></li><li class="step"><div class="step-head"><span class="n">4</span><h3>Tests</h3><span class="when">Actividad «Tu primer hook»</span></div><div class="step-body"><p>Pide los tests, solo los tests. Lo normal es que falle el de los límites: si la primera versión compara con «mayor que» y «menor que», 8,0 °C da una falsa alarma. Si pasa a la primera, mejor: tu versión ya lo hacía bien y el test se queda para que no se rompa.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Escribe tests para src/logica/ con el test runner de Node (node:test), sin
+dependencias, en la carpeta test/. Cubre los dos ejemplos de la especificación y los
+límites: 8,0 y 2,0 °C en una nevera de 2 a 8 °C están en rango. Añade
+&quot;test&quot;: &quot;node --test&quot; a los scripts de package.json.
+
+Solo tests: no cambies el código de la app. Ejecútalos y enséñame qué falla.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">5</span><h3>El hook</h3></div><div class="step-body"><p>Pídele el hook, diciéndole tu sistema. Luego reinicia Claude Code y comprueba que aparece en <code>/hooks</code>.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un hook Stop en .claude/settings.json que ejecute .claude/hooks/verifica.sh.
+El script lanza npm test y, si falla, escribe las últimas líneas de la salida en
+stderr y sale con código 2, para que no puedas terminar con los tests en rojo.
+Estoy en &lt;macOS | Windows con Git Bash | Windows sin Git Bash, usa PowerShell&gt;.</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/hooks/verifica.sh · macOS y Windows con Git Bash</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/hooks/verifica.sh · macOS y Windows con Git Bash</span><button class="copy" type="button">Copiar</button></div><pre># Hook Stop: Claude no puede dar la tarea por terminada con los tests en rojo.
+out=$(npm test 2&gt;&amp;1) || {
+  echo &quot;Los tests fallan. Corrígelos antes de terminar (sin debilitar ningún test):&quot; &gt;&amp;2
+  echo &quot;$out&quot; | tail -n 40 &gt;&amp;2
+  exit 2
+}</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/settings.json · bloque hooks</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/settings.json · bloque hooks</span><button class="copy" type="button">Copiar</button></div><pre>&quot;hooks&quot;: {
+  &quot;Stop&quot;: [
+    { &quot;hooks&quot;: [ { &quot;type&quot;: &quot;command&quot;,
+        &quot;command&quot;: &quot;bash \&quot;$CLAUDE_PROJECT_DIR/.claude/hooks/verifica.sh\&quot;&quot; } ] }
+  ]
+}</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/hooks/verifica.ps1 · Windows sin Git Bash</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/hooks/verifica.ps1 · Windows sin Git Bash</span><button class="copy" type="button">Copiar</button></div><pre># Hook Stop para Windows sin Git Bash. En settings.json:
+#   &quot;command&quot;: &quot;powershell.exe&quot;,
+#   &quot;args&quot;: [&quot;-NoProfile&quot;, &quot;-ExecutionPolicy&quot;, &quot;Bypass&quot;, &quot;-File&quot;, &quot;${CLAUDE_PROJECT_DIR}/.claude/hooks/verifica.ps1&quot;]
+$out = npm test 2&gt;&amp;1 | Out-String
+if ($LASTEXITCODE -ne 0) {
+  [Console]::Error.WriteLine(&quot;Los tests fallan. Corrígelos antes de terminar (sin debilitar ningún test):&quot;)
+  [Console]::Error.WriteLine($out)
+  exit 2
+}</pre></div></details><p class="note">Antes de fiarte de un hook, léelo: es código que se ejecuta en tu máquina cada vez que Claude termina.</p></div></li><li class="step"><div class="step-head"><span class="n">6</span><h3>Arreglarlo, sin poder hacer trampa</h3></div><div class="step-body"><p>Ahora pídele el arreglo. Si intenta terminar con algún test en rojo, el hook se lo impide y le devuelve el fallo.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Haz que pasen los tests. En src/logica/ guarda las temperaturas en décimas de
+grado enteras (5,1 °C = 51), no con decimales. Si cambias cómo se guardan, convierte
+los datos que ya están guardados. No cambies los tests.</pre></div><p>Y que actualice el CLAUDE.md, porque ahora hay tests:</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Actualiza CLAUDE.md: añade una sección «Tests» (cada cambio en src/logica/ o
+src/datos/ lleva su test; no borres ni debilites un test para que pase, y si
+crees que un test está mal, dilo) y cambia la verificación: primero npm test
+enseñando la salida, y si se ha tocado la interfaz, comprobarlo en el navegador.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm test</code> en verde.</li><li>En la app, 8,0 °C en la nevera de 2 a 8 °C sale en rango, y 8,1 °C fuera, por encima.</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">7</span><h3>Prueba y deshaz</h3><span class="when">Actividad «Prueba y deshaz»</span></div><div class="step-body"><p>Pide un cambio grande que no tengas claro, apruébalo y deja que lo haga. Después, <code>/rewind</code> → elige el mensaje → «Restaurar código».</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Reorganiza la interfaz en pestañas: Estado, Lecturas y Equipos.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li>Los ficheros están como antes del cambio: <code>git status</code> no muestra nada nuevo.</li><li>La app sigue funcionando y <code>npm test</code> está en verde.</li></ul></div></div></li></ol></section><section class="sesion" id="s3"><p class="eyebrow">Sesión 3</p><h2>Skills, subagentes y MCP</h2><p class="lead">Al acabar, el equipo tiene su procedimiento para añadir funcionalidades y sus revisores, y la app exporta las lecturas a CSV para las auditorías.</p><ol class="steps"><li class="step"><div class="step-head"><span class="n">1</span><h3>De comando a skill</h3></div><div class="step-body"><p>Sigue funcionando como <code>/revisa-cambios</code>, pero ahora tiene su carpeta.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Convierte el comando .claude/commands/revisa-cambios.md en una skill en
+.claude/skills/revisa-cambios/SKILL.md, con name en la cabecera. Usa git mv
+para que se vea como un movimiento. No cambies lo que hace.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">2</span><h3>La skill del equipo</h3></div><div class="step-body"><p>El procedimiento para añadir cualquier funcionalidad, con su plantilla. Fíjate en la descripción que escribe: es lo que hace que Claude la use cuando toca.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea una skill nueva-funcionalidad en .claude/skills/nueva-funcionalidad/ con el
+procedimiento del equipo para añadir cualquier funcionalidad a la app:
+1. Especificación: si no está descrita, redacta el cambio con una plantilla
+   (plantilla.md, en la misma carpeta) y enséñamelo; no edites la especificación.
+2. Plan: qué ficheros tocarás en cada capa; espera mi visto bueno.
+3. Test primero, comprobando que falla por el motivo correcto.
+4. Lógica pura en src/logica/, con las temperaturas en décimas de grado.
+5. Interfaz en src/ui/, sin peticiones de red.
+6. npm test y qué has comprobado en el navegador.
+7. Ficheros cambiados y un mensaje de commit.
+La descripción tiene que decir cuándo usarla.</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/skills/nueva-funcionalidad/SKILL.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/skills/nueva-funcionalidad/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+name: nueva-funcionalidad
+description: Procedimiento del equipo para añadir una funcionalidad a Cadena de frío. Úsala cuando pidan añadir, ampliar o cambiar lo que hace la app (por ejemplo, exportar, incidencias, avisos o una pantalla nueva), o cuando se trabaje a partir de una issue.
+---
+Sigue estos pasos en orden y no te saltes ninguno.
+
+1. **Especificación.** Lee docs/especificacion.md. Si la funcionalidad no está descrita, redacta el cambio con la [plantilla](plantilla.md) y enséñamelo. No edites la especificación: la actualiza una persona.
+2. **Plan.** Di qué ficheros vas a tocar en cada capa (`src/logica/`, `src/datos/`, `src/ui/`) y espera mi visto bueno.
+3. **Test primero.** Escribe el test de la lógica nueva en `test/` y comprueba que falla por el motivo correcto.
+4. **Lógica.** Implementa en `src/logica/` con funciones puras, temperaturas en décimas de grado enteras.
+5. **Interfaz.** Conecta la lógica en `src/ui/`. Nada de peticiones de red ni servicios externos.
+6. **Verificación.** Ejecuta `npm test` y enseña la salida. Si has tocado la interfaz, dime qué has comprobado en el navegador y qué no.
+7. **Resumen.** Lista los ficheros cambiados y propón un mensaje de commit.</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/skills/nueva-funcionalidad/plantilla.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/skills/nueva-funcionalidad/plantilla.md</span><button class="copy" type="button">Copiar</button></div><pre># Cambio en la especificación: &lt;nombre de la funcionalidad&gt;
+
+## Qué problema resuelve
+&lt;Una o dos frases, desde el punto de vista de quien usa la app.&gt;
+
+## Alcance
+- Entra: &lt;…&gt;
+- No entra: &lt;…&gt;
+
+## Comportamiento esperado
+- &lt;Un ejemplo concreto con equipos y temperaturas, como los de la especificación.&gt;
+- &lt;Los casos límite: sin lecturas, justo en el límite del rango, temperaturas negativas, tildes…&gt;
+
+## Hecho cuando
+- &lt;Qué test lo comprueba.&gt;
+- &lt;Qué se comprueba a mano en el navegador.&gt;</pre></div></details></div></li><li class="step"><div class="step-head"><span class="n">3</span><h3>Los revisores</h3></div><div class="step-body"><p>También puedes crearlos con el asistente de <code>/agents</code>. Fíjate en <code>tools</code>: ninguno puede editar.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea dos subagentes en .claude/agents/, de solo lectura:
+- revisor (Read, Grep, Glob, Bash): revisa los cambios contra CLAUDE.md y la
+  especificación, puede ejecutar npm test, no edita nada y devuelve hallazgos por
+  gravedad con archivo y línea.
+- revisor-privacidad (Read, Grep, Glob): comprueba en todo el código que los datos
+  no salen del dispositivo: peticiones de red, recursos de otros dominios,
+  analítica, datos en la consola. Termina con un veredicto de una línea.</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/agents/revisor.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/agents/revisor.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+name: revisor
+description: Revisor de código de Cadena de frío. Úsalo al terminar un cambio y antes de integrarlo.
+tools: Read, Grep, Glob, Bash
+---
+Eres un revisor de código exigente y concreto. Revisa los cambios sin commitear (`git diff HEAD`).
+
+Compruébalos contra CLAUDE.md y docs/especificacion.md:
+- ¿Cumple la especificación y no se sale del alcance?
+- ¿La lógica está en `src/logica/`, es pura y trabaja en décimas de grado enteras?
+- ¿Cada cambio de lógica o datos tiene su test? ¿Se ha borrado o debilitado algún test?
+- ¿Nombres en español y sin dependencias nuevas?
+
+Puedes ejecutar `npm test`, pero no edites nada. Devuelve los hallazgos ordenados por gravedad (crítico, a corregir, sugerencia), cada uno con archivo y línea. Si algo no lo has podido comprobar, dilo.</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/agents/revisor-privacidad.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/agents/revisor-privacidad.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+name: revisor-privacidad
+description: Comprueba que Cadena de frío cumple su promesa de que los datos no salen del dispositivo. Úsalo antes de integrar cualquier cambio en la interfaz, en los datos o en la configuración.
+tools: Read, Grep, Glob
+---
+La app promete que los datos de quien la usa no salen de su navegador. Tu trabajo es comprobar que eso sigue siendo cierto en todo el código, no solo en los cambios.
+
+Busca y señala con archivo y línea:
+- Peticiones de red: `fetch`, `XMLHttpRequest`, `WebSocket`, `navigator.sendBeacon`, `EventSource`. Solo se permiten las de `/api/avisos` a nuestro propio servidor, con el equipo, la temperatura, el rango y la hora.
+- Claves o secretos en el código del navegador (`src/ui/`, `src/logica/`, `index.html`). Los secretos solo los lee `servidor.js` desde el `.env`, y nunca se devuelven al navegador.
+- Scripts, hojas de estilo, fuentes o imágenes cargadas desde otro dominio.
+- Analítica, píxeles de seguimiento o servicios de terceros.
+- Datos de pacientes en cualquier sitio: la app no debe guardarlos nunca.
+- Lecturas o nombres de quien las toma escritos en la consola, en la URL o en ficheros que no sean la exportación que pide la persona.
+- En el service worker, si existe: que solo guarde en caché ficheros de la propia app.
+
+No edites nada. Termina con un veredicto de una línea: «Los datos no salen del dispositivo» o «Hay fugas posibles» con la lista.</pre></div></details></div></li><li class="step"><div class="step-head"><span class="n">4</span><h3>Exportar a CSV</h3></div><div class="step-body"><p>Que añada la funcionalidad a la especificación (te pedirá permiso: apruébalo tú) y luego pídela a través de la skill. Te enseñará el plan antes de tocar nada.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a docs/especificacion.md la exportación a CSV:
+- En «Entra»: exportar las lecturas a un fichero CSV para las auditorías de calidad,
+  que se abra bien en Excel en español.
+- En «Comportamiento esperado»: el CSV usa punto y coma y coma decimal, conserva las
+  tildes al abrirlo en Excel y tiene una fila por lectura, de la más antigua a la más
+  reciente: fecha, hora, equipo, temperatura, mínimo, máximo, estado y quién la tomó.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir la exportación a CSV de la especificación.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Revisa los cambios sin commitear con los subagentes revisor y revisor-privacidad,
+en paralelo. Junta sus hallazgos y ordénalos por gravedad.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm test</code> en verde, con tests nuevos para el CSV.</li><li>En la app, «Exportar a CSV» descarga un fichero que se abre en Excel con tildes y columnas bien.</li><li>El revisor de privacidad concluye que los datos no salen del dispositivo.</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">5</span><h3>Opcional, si usas GitHub: conectarlo por MCP</h3></div><div class="step-body"><p>Solo si ya usas GitHub. Sube tu proyecto a un repositorio tuyo y crea una issue, por ejemplo «Poder anular una lectura mal apuntada». La idea vale para otros sistemas con servidor MCP: GitLab, Jira, una base de datos.</p><div class="code"><div class="code-head"><span class="code-file">Terminal</span><button class="copy" type="button">Copiar</button></div><pre># Las comillas simples importan: así se guarda ${GITHUB_TOKEN}, no tu token.
+claude mcp add --transport http github https://api.githubcopilot.com/mcp/ --scope project --header &#x27;Authorization: Bearer ${GITHUB_TOKEN}&#x27;
+
+# Y el token, en una variable de entorno de tu terminal (solo lectura):
+# Windows (PowerShell): $env:GITHUB_TOKEN = &quot;&lt;tu token&gt;&quot;
+# macOS / Git Bash:     export GITHUB_TOKEN=&quot;&lt;tu token&gt;&quot;</pre></div><div class="mano"><strong>A mano, y por qué</strong><p>El token es un secreto: lo pones tú en una variable de entorno de tu terminal, y en <code>.mcp.json</code> solo queda la referencia <code>${GITHUB_TOKEN}</code>. Ese fichero sí se puede compartir en el repositorio.</p></div><details class="queda"><summary>Así debería quedar · <code>.mcp.json</code></summary><div class="code"><div class="code-head"><span class="code-file">.mcp.json</span><button class="copy" type="button">Copiar</button></div><pre>{
+  &quot;mcpServers&quot;: {
+    &quot;github&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://api.githubcopilot.com/mcp/&quot;,
+      &quot;headers&quot;: { &quot;Authorization&quot;: &quot;Bearer ${GITHUB_TOKEN}&quot; }
+    }
+  }
+}</pre></div></details><p>Reinicia Claude Code desde esa terminal, comprueba la conexión con <code>/mcp</code> y pide:</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Lee la issue #1 de nuestro repositorio en GitHub y resúmeme qué pide. No cambies nada.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">6</span><h3>Para casa: un registro de verdad</h3><span class="when">Después de la sesión</span></div><div class="step-body"><p>Una lectura fuera de rango tiene que dejar rastro de qué se hizo, y una lectura mal apuntada no se puede borrar sin más. Ahora tienes un procedimiento para añadir funcionalidades, así que úsalo: que añada esto a la especificación, y pídelo funcionalidad a funcionalidad, con <code>/clear</code> entre una y otra.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a docs/especificacion.md estas funcionalidades:
+En «Entra»:
+- Incidencias: una lectura fuera de rango abre una incidencia en el equipo, que se
+  cierra registrando la acción correctiva y quién la hizo.
+- Las lecturas no se editan ni se borran: se anulan con un motivo y quedan en el registro.
+- Editar equipos y archivar los que ya no se usan.
+- Resumen del centro y gráfico de las últimas lecturas de cada equipo, con la banda
+  del rango.
+En «Comportamiento esperado»:
+- Si una nevera de 2 a 8 °C da 9,3 °C se abre una incidencia; si después da 9,8 °C
+  sigue siendo la misma incidencia, no se abre otra.
+- Para cerrar una incidencia hace falta la acción correctiva y quién la cierra.
+- Un equipo es «pendiente de lectura» si su última lectura tiene más de 12 horas.
+- Una lectura anulada no cuenta para el estado ni para el gráfico, pero se sigue
+  viendo, tachada, con su motivo.
+- Un equipo con lecturas no se puede borrar, solo archivar.</pre></div><p class="note">La especificación tiene una regla <code>ask</code>: cuando se lo pidas, Claude te pedirá permiso para editarla. Apruébalo tú, después de leer el cambio. Es la idea de esa regla: la especificación la decide una persona.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · 1</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir las incidencias: abrirlas con una lectura fuera de rango y cerrarlas con la acción correctiva de la especificación.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · 2</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir anular lecturas con un motivo, sin borrarlas de la especificación.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · 3</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir editar y archivar equipos de la especificación.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · 4</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir el resumen del centro y el gráfico de cada equipo de la especificación.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li>Las incidencias tienen tests: 9,3 °C y después 9,8 °C en la misma nevera son una sola incidencia.</li><li>Si cambia cómo se guardan los datos, lo que ya tenías sigue apareciendo (la skill te lo pedirá: hay que migrarlo).</li><li>Los revisores pasan antes de dar cada funcionalidad por terminada.</li></ul></div><p class="note">Si te atascas, tráelo a la siguiente sesión tal como esté: un cambio a medias es buen material para revisarlo con los subagentes.</p></div></li><li class="step"><div class="step-head"><span class="n">7</span><h3>Para casa: avisos a Teams (y para qué sirve el .env)</h3><span class="when">Después de la sesión</span></div><div class="step-body"><p>Si una nevera se sale de rango, lo útil es que lo sepa alguien aunque no esté mirando la app. La app avisará en un canal de Teams. Para eso era el <code>.env</code> de la sesión 2.</p><div class="mano"><strong>A mano, y por qué</strong><p>Crea el webhook tú, en un canal de Teams de pruebas: en el canal, <em>Workflows</em> → la plantilla que publica en un canal al recibir una solicitud de webhook. Copia la dirección que te da y ponla tú en el <code>.env</code>, en lugar de la inventada. A Claude solo le dices cómo se llama la variable, nunca su valor. Si tu organización no deja crear workflows, sáltate este paso: sin dirección, la app funciona igual, sin avisos.</p></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a docs/especificacion.md los avisos a Teams:
+- En «Entra»: avisos a Teams cuando se abre una incidencia. Los envía el servidor
+  con la dirección del webhook guardada en .env; sin ella, la app funciona igual,
+  sin avisos.
+- En «Comportamiento esperado»: el aviso lleva el equipo, la temperatura, el rango
+  y la hora. Nunca datos de pacientes. La dirección del webhook nunca llega al
+  navegador ni se sube a Git.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Usa la skill nueva-funcionalidad para añadir los avisos a Teams de la
+especificación. El aviso lo envía servidor.js, como tarjeta adaptable, a la
+dirección de TEAMS_WEBHOOK_URL del .env: no leas el .env, mira ejemplo.env. La
+dirección no puede llegar nunca al navegador, ni dentro de un error.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li>Apunta 9,3 °C en una nevera de 2 a 8 °C: se abre la incidencia y llega el aviso al canal. Sin dirección o sin conexión, la app lo dice y sigue funcionando.</li><li>En el navegador, F12 → Red → <code>/api/avisos</code>: la petición lleva el equipo y la temperatura, y la respuesta no trae la dirección.</li><li>Busca la dirección en <code>src/</code> e <code>index.html</code>: no aparece. Solo la usa <code>servidor.js</code>, que la lee del <code>.env</code>.</li><li>El revisor de privacidad da por buena la petición a <code>/api/avisos</code> y no encuentra secretos en el código del navegador.</li></ul></div><p class="note">Una dirección dentro del código de la página la puede ver cualquiera con F12, y con ella publicar en vuestro canal. Por eso la usa el servidor, y el navegador solo le pide que avise.</p></div></li></ol></section><section class="sesion" id="s4"><p class="eyebrow">Sesión 4</p><h2>Trabajar fuera de tu especialidad</h2><p class="lead">Al acabar, la app se instala como una app y funciona sin conexión, aunque nunca hubieras hecho algo así. Y el proyecto tiene reglas por zona y un flujo de revisión antes de integrar.</p><ol class="steps"><li class="step"><div class="step-head"><span class="n">1</span><h3>Explorar antes de tocar</h3></div><div class="step-body"><p>Antes de cambiar nada, que Claude te explique qué hace falta. Contrasta lo que diga con la documentación o con alguien que lo conozca.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Quiero que Cadena de frío se pueda instalar en el móvil como una app y que
+funcione sin conexión. Nunca he hecho algo así. Explícame qué hace falta, qué
+ficheros habría que crear, cómo se prueba y qué puede salir mal. No cambies nada.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">2</span><h3>Plan revisado</h3></div><div class="step-body"><p>Pídele el plan en un fichero. Ábrelo con <kbd>Ctrl</kbd>+<kbd>G</kbd> o en tu editor, cámbialo si hace falta y que lo revise otra persona antes de aprobarlo.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Propón un plan dividido en partes que se puedan comprobar por separado y guárdalo
+en docs/planes/instalable.md. No implementes nada todavía.</pre></div></div></li><li class="step"><div class="step-head"><span class="n">3</span><h3>Reglas para cada zona</h3></div><div class="step-body"><p>Las reglas que solo valen para una parte del código van en <code>.claude/rules/</code> con sus rutas, y se cargan solas al trabajar ahí.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea reglas por zona en .claude/rules/, cada una con sus paths:
+- instalable.md (sw.js, manifest.webmanifest, iconos/): todo fichero nuevo de la app
+  va en la lista de la caché de sw.js; si cambia algo de la app, sube VERSION;
+  nada de recursos de otros dominios; ni /api/ ni src/servidor/ en la caché.
+- logica.md (src/logica/, src/datos/, test/): funciones puras, temperaturas en
+  décimas de grado enteras y, para el rango, estadoDeLectura();
+  si cambia la forma de los datos guardados, sube VERSION y migra con test.
+- servidor.md (servidor.js, src/servidor/): los secretos solo de process.env,
+  nunca en respuestas ni logs; cada variable nueva, también en ejemplo.env.</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/rules/instalable.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/rules/instalable.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+paths:
+  - &quot;sw.js&quot;
+  - &quot;manifest.webmanifest&quot;
+  - &quot;iconos/**&quot;
+---
+# App instalable (PWA)
+
+- `sw.js` guarda en caché la lista `FICHEROS`. Si añades un fichero a la app, añádelo a la lista; `test/pwa.test.js` lo comprueba.
+- Si cambias cualquier fichero de la app, sube `VERSION` en `sw.js`. Si no, quien ya la tiene instalada seguirá viendo la versión vieja. Ningún test lo detecta: dilo en el resumen.
+- El service worker solo sirve ficheros de la propia app. Nada de cachear ni pedir recursos de otros dominios.
+- Ni `/api/` ni `src/servidor/` van en la caché: lo primero necesita red y lo segundo se ejecuta en el servidor.
+- Para probarlo: `npm start` y Chrome en http://localhost:3000 (en el móvil hace falta https). DevTools → Application → Service workers, y la casilla «Offline» para comprobar que funciona sin conexión.</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/rules/logica.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/rules/logica.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+paths:
+  - &quot;src/logica/**&quot;
+  - &quot;src/datos/**&quot;
+  - &quot;test/**&quot;
+---
+# Lógica y datos
+
+- Funciones puras: sin `document`, `window` ni `localStorage` en `src/logica/`.
+- Temperaturas siempre en décimas de grado enteras (5,1 °C = 51). Para decidir si una lectura está en rango, usa `estadoDeLectura()`: los límites cuentan como dentro.
+- Si cambias la forma de los datos guardados, sube `VERSION` en `src/datos/almacen.js` y añade su paso en `migrar()`, con test. Hay personas con datos de la versión anterior en su móvil.
+- Cada función nueva o cambiada lleva su test en `test/`.</pre></div></details><details class="queda"><summary>Así debería quedar · <code>.claude/rules/servidor.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/rules/servidor.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+paths:
+  - &quot;servidor.js&quot;
+  - &quot;src/servidor/**&quot;
+---
+# Servidor y secretos
+
+- Los secretos solo se leen de `process.env`, que `servidor.js` carga del `.env`. Nunca escritos en el código.
+- Una clave no se devuelve nunca al navegador, ni dentro de un mensaje de error, ni en los logs.
+- Si añades una variable de entorno, añádela también a `ejemplo.env`, vacía y con un comentario de para qué sirve.
+- No leas el `.env` (está prohibido en `.claude/settings.json`). Para saber qué variables hay, mira `ejemplo.env`.
+- El servidor no entrega ficheros ocultos (`.env`, `.git`, `.claude`); `test/servidor.test.js` lo comprueba.</pre></div></details></div></li><li class="step"><div class="step-head"><span class="n">4</span><h3>Implementar por partes</h3></div><div class="step-body"><p>Una parte cada vez, comprobando cada una antes de pasar a la siguiente. <code>/clear</code> entre partes si el contexto se llena: el plan está en un fichero.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Implementa la parte 1 del plan de docs/planes/instalable.md y dime cómo comprobarla.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm test</code> en verde.</li><li>Chrome en http://localhost:3000 → icono de instalar en la barra de direcciones.</li><li>DevTools → Application → Service workers: activo. Marca «Offline» y recarga: la app sigue funcionando.</li></ul></div></div></li><li class="step"><div class="step-head"><span class="n">5</span><h3>Revisión antes de integrar</h3></div><div class="step-body"><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un subagente revisor-tests de solo lectura (Read, Grep, Glob, Bash) que
+compruebe que cada cambio de src/logica/ y src/datos/ tiene tests, que cubren los
+casos límite de la especificación, que no se ha borrado ni debilitado ningún test y
+que npm test pasa. Que termine con «Tests suficientes» o «Faltan tests».</pre></div><details class="queda"><summary>Así debería quedar · <code>.claude/agents/revisor-tests.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/agents/revisor-tests.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+name: revisor-tests
+description: Comprueba que los cambios de Cadena de frío tienen tests adecuados. Úsalo antes de integrar un cambio.
+tools: Read, Grep, Glob, Bash
+---
+Revisa los cambios sin commitear (`git diff HEAD`).
+
+Comprueba:
+- Que cada comportamiento nuevo de `src/logica/` y `src/datos/` tiene un test en `test/`.
+- Que los casos límite de la especificación están cubiertos: justo en el límite del rango, temperaturas negativas, equipos sin lecturas, lecturas anuladas, tildes.
+- Que no se ha borrado, saltado (`skip`, `todo`) ni debilitado ningún test.
+- Que `npm test` pasa. Enseña el resumen de la salida.
+
+No edites nada. Devuelve la lista de huecos con archivo y línea, y una frase final: «Tests suficientes» o «Faltan tests».</pre></div></details><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Revisa los cambios para hacerla instalable con los subagentes revisor,
+revisor-tests y revisor-privacidad, en paralelo. Junta sus hallazgos, quita duplicados y
+ordénalos por gravedad.</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Escribe un resumen del cambio para quien lo tenga que aprobar: qué cambia, por qué
+(enlaza docs/planes/instalable.md), cómo se ha verificado y qué no se ha podido
+verificar.</pre></div><p class="note">Los subagentes filtran lo evidente. El cambio lo aprueba una persona, antes de integrarlo: en una PR de GitHub, una merge request de GitLab o como lo hagáis en vuestro equipo.</p></div></li><li class="step"><div class="step-head"><span class="n">6</span><h3>Opcional: en tu móvil</h3></div><div class="step-body"><p>En el móvil hace falta https. Si usas GitHub, una forma sencilla es GitHub Pages: sube tu proyecto a un repositorio tuyo, activa Pages en <em>Settings → Pages</em> y abre la dirección en el móvil. En Android, menú → «Instalar aplicación». Ahí no hay servidor propio, así que no hay avisos a Teams.</p></div></li><li class="step"><div class="step-head"><span class="n">7</span><h3>Para casa: varios centros</h3><span class="when">Después de la sesión</span></div><div class="step-body"><p>Lo último: varios centros en la misma app, cada uno con sus equipos y su registro. Toca la forma de los datos guardados, así que fíjate en lo que dicen las reglas de <code>.claude/rules/</code>: migrar los datos con su test y actualizar la caché del service worker.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a docs/especificacion.md los varios centros:
+- En «Entra»: varios centros en la misma app, cada uno con sus equipos, lecturas
+  e incidencias; se cambia de centro desde arriba.
+- En «Comportamiento esperado»: lo que se apunta en un centro no se ve en otro.
+  Borrar un centro borra su registro entero, así que pide confirmación. Quien ya
+  usaba la app conserva sus datos: lo que tenía aparece en «Mi centro».</pre></div><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Usa la skill nueva-funcionalidad para añadir los varios centros de la
+especificación. Cambia la forma de los datos guardados: sigue las reglas de
+migración y de la caché del service worker. El aviso a Teams tiene que decir de
+qué centro es.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm test</code> en verde, con un test de migración desde la versión anterior.</li><li>Abre la app con los datos que ya tenías: aparecen en «Mi centro».</li><li>Crea un segundo centro, da de alta un equipo, apunta una lectura y vuelve al primero: cada centro tiene su registro.</li><li>El aviso a Teams dice de qué centro es.</li><li>Si has creado ficheros nuevos, el test de la caché te dirá si faltan en <code>sw.js</code>.</li></ul></div><p class="note">Al preparar el curso, el test de la caché cazó más de una vez un fichero nuevo que faltaba en la lista. Y una prueba en el navegador cazó un fallo al cambiar la forma de los datos que ningún test cubría: por eso la regla de la interfaz pide comprobarla a mano.</p></div></li></ol></section>
+</main>
+<script>
+document.addEventListener("click", function (e) {
+  var b = e.target.closest(".copy"); if (!b) return;
+  var pre = b.closest(".code").querySelector("pre");
+  var reset = function (t) { b.textContent = t; setTimeout(function () { b.textContent = "Copiar"; }, 1800); };
+  var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); reset("Seleccionado: Ctrl+C"); };
+  try { navigator.clipboard.writeText(pre.innerText).then(function () { reset("Copiado"); }, fallback); } catch (err) { fallback(); }
+});
+</script>
+<script>
+(function () {
+  // Punto de partida: el JSON lo publica herramientas\preparar-sesion-N en rescate/ de esta web.
+  var caja = document.getElementById("rescate"); if (!caja) return;
+  function pinta(et) {
+    var url = new URL("rescate/cadena-de-frio-" + et + ".json", location.href).href;
+    var dir = "cadena-de-frio-" + et;
+    caja.querySelector(".rescate-win").textContent =
+      "$d = '" + dir + "'; $f = irm '" + url + "'; foreach ($p in $f.PSObject.Properties) { $r = Join-Path $d $p.Name; New-Item -Force -ItemType File $r | Out-Null; [IO.File]::WriteAllBytes((Resolve-Path $r).Path, [Convert]::FromBase64String($p.Value)) }; git -C $d init -q; git -C $d add -A; git -C $d commit -q -m 'Punto de partida'; Get-ChildItem $d";
+    caja.querySelector(".rescate-mac").textContent =
+      "curl -fsSL '" + url + "' | node -e \"let t='';process.stdin.on('data',c=>t+=c).on('end',()=>{const fs=require('fs'),p=require('path');for(const[n,b]of Object.entries(JSON.parse(t))){const r=p.join('" + dir + "',n);fs.mkdirSync(p.dirname(r),{recursive:true});fs.writeFileSync(r,Buffer.from(b,'base64'))}})\" && git -C " + dir + " init -q && git -C " + dir + " add -A && git -C " + dir + " commit -q -m 'Punto de partida' && ls " + dir;
+    caja.querySelectorAll(".rescate-dir").forEach(function (c) { c.textContent = dir; });
+    caja.querySelector(".rescate-cd").textContent = "cd " + dir;
+    caja.querySelectorAll(".rescate-ses button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.s === et ? "true" : "false"); });
+    var estado = caja.querySelector(".rescate-estado"); estado.textContent = ""; estado.className = "rescate-estado";
+    if (location.protocol.indexOf("http") !== 0 || !window.fetch) return;
+    fetch(url, { method: "HEAD", cache: "no-store" }).then(function (r) {
+      estado.textContent = r.ok ? "Disponible." : "Todavía no está publicado. Avisa al profesor.";
+      estado.className = "rescate-estado " + (r.ok ? "ok" : "no");
+    }, function () {});
+  }
+  caja.addEventListener("click", function (e) { var b = e.target.closest(".rescate-ses button"); if (b) pinta(b.dataset.s); });
+  pinta("s1");
+})();
+</script>
+</body>
+</html>
