@@ -6,7 +6,7 @@ Es una sola página estática (`index.html`), sin dependencias ni compilación. 
 
 ## Publicarlo
 
-- **GitHub Pages:** doble clic en `herramientas\publicar-web.cmd`. Copia esta carpeta y las diapositivas (`diapositivas/sesion-N.html`) a un repositorio aparte, `aprende-claude-code`, lo sube y activa Pages. Repítelo cada vez que cambies algo.
+- **GitHub Pages:** doble clic en `herramientas\publicar-web.cmd`. Copia esta carpeta y las diapositivas (`diapositivas/sesion-N.html`) al repositorio `aprende-claude-code` de la organización KIBOMCG, lo sube y activa Pages. Repítelo cada vez que cambies algo.
 - **En local:** abre `index.html` en el navegador.
 
 El progreso de cada persona se guarda en su propio navegador (`localStorage`).
