@@ -120,7 +120,7 @@
     /* Barra de control (fuera del escenario) */
     #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
     #hud:hover { opacity:1; }
-    #hud button { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; }
+    #hud button, #hud a { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; text-decoration:none; }
     #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
 
     @media print {
@@ -232,7 +232,7 @@
       <li><b>Sesión 4</b> · instalable y sin conexión</li>
     </ol>
   </div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html" target="_blank" rel="noopener">📖 Guía del proyecto</a><span class="url">kibomcg.github.io/aprende-claude-code/proyecto.html</span></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html" target="guia">📖 Guía del proyecto</a><span class="url">kibomcg.github.io/aprende-claude-code/proyecto.html</span></p>
 </section>
 
 <!-- 7 -->
@@ -264,7 +264,7 @@
     <div><b>7</b> <code>/status</code> · <code>/exit</code></div>
     <div style="background:transparent">¿Ya lo tenías instalado? Solo comprueba.</div>
   </div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/instalacion.html" target="_blank" rel="noopener">📖 Guía de instalación</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/instalacion.html" target="guia">📖 Guía de instalación</a></p>
 </section>
 
 <!-- 10 -->
@@ -316,7 +316,7 @@ curl -fsSL https://claude.ai/install.sh | bash</pre>
     <li><code>/status</code> → aparece la organización de la empresa</li>
   </ol>
   <div class="note"><b>¿No se abre el navegador?</b> Pulsa <kbd>c</kbd> para copiar la URL. ¿Te muestra un código? Pégalo en la terminal.</div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-1" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 1, paso 1</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-1" target="guia">📖 Guía del proyecto · Sesión 1, paso 1</a></p>
 </section>
 
 <!-- 14 -->
@@ -410,7 +410,7 @@ Dime qué ves ambiguo o qué dudas tienes. No escribas código todavía.</pre>
     <li>Al terminar, <code>/context</code></li>
   </ol>
   <div class="note"><b>En el chat:</b> ¿qué dudas o ambigüedades ha encontrado Claude?</div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-2" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 1, paso 2</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-2" target="guia">📖 Guía del proyecto · Sesión 1, paso 2</a></p>
 </section>
 
 <!-- 21 -->
@@ -507,7 +507,7 @@ Dime qué ves ambiguo o qué dudas tienes. No escribas código todavía.</pre>
 Alcance:     dónde trabajar y qué NO tocar
 Hecho cuando: cómo comprobamos que está bien
 Entrega:     qué quiero ver al final</pre>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-3" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 1, paso 3</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-3" target="guia">📖 Guía del proyecto · Sesión 1, paso 3</a></p>
 </section>
 
 <!-- 30 -->
@@ -572,7 +572,7 @@ Entrega:     qué quiero ver al final</pre>
       <br>· "¿Qué tienes que hacer antes de dar una tarea por terminada?"
       <br>· "Cambia el segundo ejemplo de la especificación"</li>
   </ol>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-4" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 1, paso 4</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-4" target="guia">📖 Guía del proyecto · Sesión 1, paso 4</a></p>
 </section>
 
 <!-- 36 -->
@@ -642,7 +642,7 @@ Entrega:     qué quiero ver al final</pre>
 <!-- 41 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Crea /revisa-cambios</span><span class="dur">8 min</span></div>
-  <p style="margin-bottom:12px">Antes, un punto de guardado: <code>git add -A</code> · <code>git commit -m "Primera versión"</code>. Luego <b>pídeselo a Claude</b> (petición en la <a class="enlinea" href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-5" target="_blank" rel="noopener">guía, paso 5</a>). Así debería quedar <code>.claude/commands/revisa-cambios.md</code>:</p>
+  <p style="margin-bottom:12px">Antes, un punto de guardado: <code>git add -A</code> · <code>git commit -m "Primera versión"</code>. Luego <b>pídeselo a Claude</b> (petición en la <a class="enlinea" href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s1-5" target="guia">guía, paso 5</a>). Así debería quedar <code>.claude/commands/revisa-cambios.md</code>:</p>
 <pre>---
 description: Revisa los cambios sin commitear contra CLAUDE.md
 disable-model-invocation: true
@@ -691,7 +691,7 @@ Foco adicional: $ARGUMENTS</pre>
     <li>Trae <b>3 cosas que Claude nunca debería hacer</b> en el proyecto o en vuestro entorno</li>
     <li>Ve pensando qué <b>mejora interna</b> queréis sacar adelante en las sesiones 5 y 6</li>
   </ol>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="_blank" rel="noopener">📖 Si te quedas atrás: el punto de partida, en la guía</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="guia">📖 Si te quedas atrás: el punto de partida, en la guía</a></p>
 </section>
 
 <!-- 45 -->
@@ -714,6 +714,7 @@ Foco adicional: $ARGUMENTS</pre>
   <button id="prev" title="Anterior (←)">←</button>
   <button id="next" title="Siguiente (→)">→</button>
   <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+  <a href="https://kibomcg.github.io/aprende-claude-code/diapositivas/" title="Todas las sesiones y la web del curso">Índice</a>
 </div>
 
 <script>

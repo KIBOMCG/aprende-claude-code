@@ -119,7 +119,7 @@
     /* Barra de control (fuera del escenario) */
     #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
     #hud:hover { opacity:1; }
-    #hud button { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; }
+    #hud button, #hud a { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; text-decoration:none; }
     #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
 
     @media print {
@@ -192,7 +192,7 @@
     <div class="card"><h3><code>/revisa-cambios</code></h3><p>Un prompt repetido convertido en comando</p></div>
   </div>
   <div class="note"><b>El problema:</b> todo eso son consejos. Claude normalmente los sigue… pero no siempre.</div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="_blank" rel="noopener">📖 ¿No terminaste la sesión 1? Punto de partida, en la guía</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="guia">📖 ¿No terminaste la sesión 1? Punto de partida, en la guía</a></p>
 </section>
 
 <!-- 5 -->
@@ -345,7 +345,7 @@
     <li>Pídele que edite la especificación, que instale una librería y que te diga qué hay en el <code>.env</code></li>
   </ol>
   <div class="note"><b>En el CLAUDE.md pusiste que la especificación no se toca.</b> Era un consejo. Ahora es una regla.</div>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-1" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, pasos 1 y 2</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-1" target="guia">📖 Guía del proyecto · Sesión 2, pasos 1 y 2</a></p>
 </section>
 
 <!-- 17 -->
@@ -451,7 +451,7 @@ if ($LASTEXITCODE -ne 0) {
     <li>Reinicia y comprueba que aparece en <code>/hooks</code></li>
     <li>Pídele que lo arregle <b>sin tocar los tests</b>: no podrá terminar hasta que pasen</li>
   </ol>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-3" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, pasos 3 a 6</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-3" target="guia">📖 Guía del proyecto · Sesión 2, pasos 3 a 6</a></p>
 </section>
 
 <!-- 24 -->
@@ -506,7 +506,7 @@ if ($LASTEXITCODE -ne 0) {
     <li><code>/rewind</code> → elige el mensaje → <b>Restaurar código</b></li>
     <li>Comprueba con <code>git status</code> que todo está como antes</li>
   </ol>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-7" target="_blank" rel="noopener">📖 Guía del proyecto · Sesión 2, paso 7</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-7" target="guia">📖 Guía del proyecto · Sesión 2, paso 7</a></p>
 </section>
 
 <!-- 29 -->
@@ -564,7 +564,7 @@ if ($LASTEXITCODE -ne 0) {
     <li>Trae <b>un procedimiento que repitáis</b> en el equipo (revisión de código, una migración, crear un servicio…): lo convertiremos en skill</li>
     <li>Pasa a IT vuestra respuesta sobre el modo de permisos por defecto</li>
   </ol>
-  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/" target="_blank" rel="noopener">📖 Web del curso: lecciones y prácticas para repasar</a></p>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/" target="guia">📖 Web del curso: lecciones y prácticas para repasar</a></p>
 </section>
 
 <!-- 34 -->
@@ -587,6 +587,7 @@ if ($LASTEXITCODE -ne 0) {
   <button id="prev" title="Anterior (←)">←</button>
   <button id="next" title="Siguiente (→)">→</button>
   <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+  <a href="https://kibomcg.github.io/aprende-claude-code/diapositivas/" title="Todas las sesiones y la web del curso">Índice</a>
 </div>
 
 <script>
