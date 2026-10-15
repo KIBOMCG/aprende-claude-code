@@ -336,6 +336,24 @@
 </section>
 
 <!-- 16 -->
+<section class="slide">
+  <p class="kicker">La pregunta de la semana pasada</p>
+  <h2>¿Puede Claude leer todo mi PC?</h2>
+  <table class="t wrap">
+    <tr><th></th><th>En el proyecto</th><th>Fuera del proyecto</th></tr>
+    <tr><td>Leer con sus herramientas</td><td>Sin preguntar</td><td>Te pide permiso</td></tr>
+    <tr><td>Comandos de solo lectura: <code>cat</code>, <code>ls</code>, <code>which</code>…</td><td>Sin preguntar</td><td><b>Sin preguntar</b></td></tr>
+  </table>
+  <ul class="b" style="margin-top:28px">
+    <li>No sabe qué tienes instalado: lo comprueba con <code>which node</code>, <code>node --version</code>…</li>
+    <li>Lo que lee entra en su contexto y viaja al modelo</li>
+  </ul>
+  <div class="note"><b>Puedes impedirlo</b> con <code>blockReadsOutsideWorkingDirectories</code>. Pídeselo a Claude:
+<pre style="margin:14px 0 0">Añade "blockReadsOutsideWorkingDirectories": true dentro de "permissions"
+en mi ~/.claude/settings.json, sin tocar lo demás.</pre></div>
+</section>
+
+<!-- 17 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Tu lista de "nunca", convertida en reglas</span><span class="dur">15 min</span></div>
   <ol class="steps">
@@ -348,7 +366,7 @@
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-1" target="guia">📖 Guía del proyecto · Sesión 2, pasos 1 y 2</a></p>
 </section>
 
-<!-- 17 -->
+<!-- 18 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Así debería quedar · .claude/settings.json</span><span class="dur">15 min</span></div>
 <pre style="font-size:25px;padding:18px 28px">{
@@ -370,14 +388,14 @@
 }</pre>
 </section>
 
-<!-- 18 -->
+<!-- 19 -->
 <section class="slide section">
   <div class="num">BLOQUE 3</div>
   <h2>Hooks</h2>
   <p>Comprobaciones automáticas</p>
 </section>
 
-<!-- 19 -->
+<!-- 20 -->
 <section class="slide">
   <p class="kicker">Hooks</p>
   <h2>Tu código, en momentos clave</h2>
@@ -390,7 +408,7 @@
   </table>
 </section>
 
-<!-- 20 -->
+<!-- 21 -->
 <section class="slide">
   <p class="kicker">Cómo funcionan</p>
   <h2>Salir con código 2 = "no"</h2>
@@ -402,7 +420,7 @@
   <div class="note"><b>Criterio de Anthropic:</b> para prohibir, reglas de permisos. Para automatizar comprobaciones, hooks.</div>
 </section>
 
-<!-- 21 -->
+<!-- 22 -->
 <section class="slide">
   <p class="kicker">Ejemplo · macOS y Windows con Git Bash</p>
   <h2 style="margin-bottom:20px">No terminar con los tests en rojo</h2>
@@ -421,7 +439,7 @@
 }</pre>
 </section>
 
-<!-- 22 -->
+<!-- 23 -->
 <section class="slide">
   <p class="kicker">Ejemplo · Windows sin Git Bash</p>
   <h2 style="margin-bottom:20px">Lo mismo, en PowerShell</h2>
@@ -441,7 +459,7 @@ if ($LASTEXITCODE -ne 0) {
 }</pre>
 </section>
 
-<!-- 23 -->
+<!-- 24 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Tu primer hook</span><span class="dur">15 min</span></div>
   <ol class="steps">
@@ -454,7 +472,7 @@ if ($LASTEXITCODE -ne 0) {
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-3" target="guia">📖 Guía del proyecto · Sesión 2, pasos 3 a 6</a></p>
 </section>
 
-<!-- 24 -->
+<!-- 25 -->
 <section class="slide">
   <p class="kicker">Con cuidado</p>
   <h2>Antes de confiar en un hook</h2>
@@ -466,14 +484,14 @@ if ($LASTEXITCODE -ne 0) {
   </ul>
 </section>
 
-<!-- 25 -->
+<!-- 26 -->
 <section class="slide section">
   <div class="num">BLOQUE 4</div>
   <h2>Experimentar sin miedo</h2>
   <p>Checkpoints y <code style="background:rgba(255,255,255,.15);color:#fff">/rewind</code></p>
 </section>
 
-<!-- 26 -->
+<!-- 27 -->
 <section class="slide">
   <p class="kicker">Checkpoints</p>
   <h2>Volver atrás</h2>
@@ -486,7 +504,7 @@ if ($LASTEXITCODE -ne 0) {
   </table>
 </section>
 
-<!-- 27 -->
+<!-- 28 -->
 <section class="slide">
   <p class="kicker">Límites</p>
   <h2>Checkpoints no son control de versiones</h2>
@@ -497,7 +515,7 @@ if ($LASTEXITCODE -ne 0) {
   <p class="quote" style="font-size:44px;margin-top:40px">Checkpoints para probar. Control de versiones para decidir.<small>En Cadena de frío usamos Git. En vuestro trabajo, el que uséis: la idea es la misma.</small></p>
 </section>
 
-<!-- 28 -->
+<!-- 29 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Prueba y deshaz</span><span class="dur">7 min</span></div>
   <ol class="steps">
@@ -509,14 +527,14 @@ if ($LASTEXITCODE -ne 0) {
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s2-7" target="guia">📖 Guía del proyecto · Sesión 2, paso 7</a></p>
 </section>
 
-<!-- 29 -->
+<!-- 30 -->
 <section class="slide section">
   <div class="num">BLOQUE 5</div>
   <h2>Gobierno del equipo</h2>
   <p>Qué se decide para todos</p>
 </section>
 
-<!-- 30 -->
+<!-- 31 -->
 <section class="slide">
   <p class="kicker">Configuración gestionada</p>
   <h2>Lo que puede imponer IT</h2>
@@ -530,7 +548,7 @@ if ($LASTEXITCODE -ne 0) {
   <div class="note"><b>Se despliega</b> como fichero, por registro o GPO, o desde el panel de administración de Claude.</div>
 </section>
 
-<!-- 31 -->
+<!-- 32 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Decisiones del equipo</span><span class="dur">5 min</span></div>
   <table class="t wrap">
@@ -543,7 +561,7 @@ if ($LASTEXITCODE -ne 0) {
   <div class="note"><b>En el chat:</b> ¿auto mode o manual por defecto para vuestro equipo? ¿Por qué?</div>
 </section>
 
-<!-- 32 -->
+<!-- 33 -->
 <section class="slide">
   <p class="kicker">Resumen</p>
   <h2>Hoy hemos montado</h2>
@@ -555,7 +573,7 @@ if ($LASTEXITCODE -ne 0) {
   <p class="big" style="margin-top:50px;font-size:40px">Siguiente: empaquetar el conocimiento del equipo y repartir el trabajo.</p>
 </section>
 
-<!-- 33 -->
+<!-- 34 -->
 <section class="slide">
   <p class="kicker">Para la sesión 3</p>
   <h2>Tarea</h2>
@@ -567,14 +585,14 @@ if ($LASTEXITCODE -ne 0) {
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/" target="guia">📖 Web del curso: lecciones y prácticas para repasar</a></p>
 </section>
 
-<!-- 34 -->
+<!-- 35 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">1 min</span></div>
   <p class="big">En el chat, una línea:</p>
   <p class="big" style="color:var(--act)">¿Qué regla o hook vas a usar desde mañana?</p>
 </section>
 
-<!-- 35 -->
+<!-- 36 -->
 <section class="slide cover">
   <p class="kicker">Sesión 2 · Cierre</p>
   <h1 style="font-size:76px">Un consejo se puede olvidar.</h1>
