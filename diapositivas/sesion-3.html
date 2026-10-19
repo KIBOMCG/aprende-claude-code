@@ -167,7 +167,7 @@
       <tr><td>12:10</td><td>De comando a skill</td></tr>
       <tr><td>12:45</td><td>Subagentes y revisores</td></tr>
       <tr><td>13:25</td><td>MCP: conectar con otros sistemas</td></tr>
-      <tr><td>13:45</td><td>Plugins: repartirlo al equipo</td></tr>
+      <tr><td>13:45</td><td>Compartir con el equipo</td></tr>
       <tr><td>13:52</td><td>Cierre y tarea</td></tr>
     </table>
     <div class="takeaway"><h3>Al terminar tendrás</h3>
@@ -542,42 +542,33 @@ No edites nada. Termina con un veredicto de una línea.</pre>
 <!-- 29 -->
 <section class="slide section">
   <div class="num">BLOQUE 4</div>
-  <h2>Plugins</h2>
-  <p>Repartirlo a todo el equipo</p>
+  <h2>Compartir</h2>
+  <p>Pasárselo a un compañero o a otro proyecto</p>
 </section>
 
 <!-- 30 -->
-<section class="slide">
-  <p class="kicker">Plugins</p>
-  <h2>Un flujo de trabajo, listo para instalar</h2>
-  <div class="grid2" style="grid-template-columns:.9fr 1.1fr;gap:32px">
-<pre style="font-size:26px">revision-equipo/
-├─ .claude-plugin/
-│  └─ plugin.json
-├─ skills/
-├─ agents/
-├─ hooks/
-└─ .mcp.json</pre>
-    <ul class="b">
-      <li>Junta skills, subagentes, hooks y servidores MCP</li>
-      <li>Se instala con <code>/plugin</code> desde un <b>marketplace</b>: una carpeta o un repositorio con la lista de plugins</li>
-      <li>Se actualiza para todos a la vez</li>
-    </ul>
-  </div>
-  <div class="note"><b>Para IT:</b> la configuración gestionada puede limitar de qué marketplaces se instala.</div>
-</section>
-
-<!-- 31 -->
 <section class="slide">
   <p class="kicker">Compartir</p>
   <h2 style="margin-bottom:20px">Un subagente es un fichero: se puede pasar</h2>
   <table class="t wrap">
     <tr><th>Cómo</th><th>Dónde queda</th><th>Para qué</th></tr>
     <tr><td>Por correo o en una carpeta compartida</td><td><code>.claude/agents/</code> de otro proyecto, o <code>~/.claude/agents/</code>: en todos tus proyectos</td><td>Probarlo o pasárselo a un compañero</td></tr>
-    <tr><td>En la carpeta del proyecto</td><td><code>.claude/</code>: viaja con el código</td><td>Lo que es de <b>un proyecto</b></td></tr>
-    <tr><td>En un plugin</td><td>Se instala con <code>/plugin</code>; se actualiza para todos</td><td>Lo que se repite en <b>muchos proyectos</b></td></tr>
+    <tr><td>En la carpeta del proyecto</td><td><code>.claude/</code>: viaja con el código</td><td>Que lo tenga quien trabaje en ese proyecto</td></tr>
   </table>
+  <p class="muted" style="margin-top:14px">Con las skills, igual: se copia la carpeta entera.</p>
   <div class="danger" style="margin-top:18px"><b>Antes de usar uno que te pasan, léelo:</b> mira la línea <code>tools</code> (sin ella, puede hacerlo todo) y que la descripción hable de <b>tu</b> proyecto.</div>
+</section>
+
+<!-- 31 -->
+<section class="slide">
+  <p class="kicker">Para que lo sepáis</p>
+  <h2>Plugins: paquetes ya hechos</h2>
+  <ul class="b">
+    <li>Juntan skills, subagentes, hooks y servidores MCP</li>
+    <li>Se instalan con <code>/plugin</code>, desde un <b>marketplace</b> (el oficial viene de serie)</li>
+    <li>Antes de instalar uno, mira qué trae: es código de otros</li>
+  </ul>
+  <div class="note"><b>Para IT:</b> la configuración gestionada puede limitar de dónde se instalan.</div>
 </section>
 
 <!-- 32 -->
