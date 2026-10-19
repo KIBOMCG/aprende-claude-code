@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sesión 3 · Claude Code</title>
+  <style>
+    :root {
+      --bg:#eef2f5; --paper:#ffffff; --ink:#132029; --muted:#4f5d6b; --line:#d5dde5;
+      --accent:#13706b; --accent-strong:#0b4f4b; --accent-soft:#dcf1ee;
+      --act:#b8430f; --act-soft:#fff1e8;
+      --warn:#7a4f00; --warn-soft:#fff3d6;
+      --red:#a8201a; --red-soft:#fde4e2; --green:#1d6b37; --green-soft:#e5f5ea;
+      --code-bg:#0e1621; --code-ink:#e9f2f3; --code-dim:#8fa3b3;
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; height:100%; background:#1c2630; overflow:hidden; }
+    body { font-family:"Segoe UI", Inter, system-ui, -apple-system, sans-serif; color:var(--ink); }
+
+    /* Escenario fijo 1600x900 escalado al tamaño de la ventana */
+    #viewport { position:fixed; inset:0; overflow:hidden; }
+    #stage { width:1600px; height:900px; position:absolute; left:50%; top:50%; transform-origin:center center; }
+    .slide { position:absolute; inset:0; background:var(--paper); padding:70px 96px 80px; display:none; flex-direction:column; overflow:hidden; font-size:34px; line-height:1.4; }
+    .slide.on { display:flex; }
+    .slide h2 { font-size:58px; line-height:1.12; margin:0 0 34px; letter-spacing:-.01em; }
+    .slide h3 { font-size:38px; margin:0 0 14px; color:var(--accent-strong); }
+    .slide p { margin:0 0 20px; }
+    .kicker { font-size:24px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
+    .muted { color:var(--muted); }
+    .guia { margin:22px 0 0; font-size:28px; font-weight:700; }
+    .guia a { color:var(--accent-strong); text-decoration:underline; text-underline-offset:5px; }
+    .guia .url { display:block; font-family:"Cascadia Code", Consolas, monospace; font-size:26px; font-weight:400; color:var(--muted); margin-top:6px; }
+    
+    ul.b { margin:0; padding-left:40px; } ul.b li { margin:0 0 18px; }
+    ul.b li::marker { color:var(--accent); }
+    code, pre, kbd { font-family:"Cascadia Code", Consolas, "JetBrains Mono", ui-monospace, monospace; }
+    :not(pre) > code { background:var(--accent-soft); color:var(--accent-strong); padding:2px 10px; border-radius:8px; font-size:.88em; }
+    pre { background:var(--code-bg); color:var(--code-ink); border-radius:16px; padding:26px 32px; margin:0 0 22px; font-size:29px; line-height:1.45; white-space:pre-wrap; }
+    pre .c { color:var(--code-dim); }
+    kbd { font-size:.82em; background:#fff; border:2px solid var(--line); border-bottom-width:4px; border-radius:10px; padding:2px 12px; }
+    .foot { position:absolute; left:96px; right:96px; bottom:28px; display:flex; justify-content:space-between; font-size:20px; color:var(--muted); }
+
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+    .card { background:var(--bg); border-radius:18px; padding:28px 32px; }
+    .card h3 { font-size:34px; }
+    .card.good { background:var(--green-soft); } .card.good h3 { color:var(--green); }
+    .card.bad { background:var(--red-soft); } .card.bad h3 { color:var(--red); }
+
+    table.t { width:100%; border-collapse:collapse; font-size:29px; }
+    table.t th { text-align:left; font-size:22px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong); background:var(--accent-soft); padding:14px 20px; }
+    table.t td { padding:14px 20px; border-bottom:2px solid var(--line); vertical-align:top; }
+    table.t td:first-child { white-space:nowrap; }
+    table.t.wrap td:first-child { white-space:normal; }
+
+    .big { font-size:52px; line-height:1.25; font-weight:700; }
+    .quote { font-size:52px; line-height:1.25; font-weight:700; border-left:12px solid var(--accent); padding-left:40px; margin:auto 0; }
+    .quote small { display:block; font-size:28px; font-weight:400; color:var(--muted); margin-top:24px; }
+
+    /* Portada y separadores */
+    .slide.cover { background:linear-gradient(135deg,#0b4f4b,#13706b 60%,#1b8c85); color:#fff; justify-content:center; }
+    .slide.cover h1 { font-size:96px; line-height:1.02; margin:0 0 26px; letter-spacing:-.02em; }
+    .slide.cover p { font-size:40px; opacity:.92; }
+    .slide.cover .kicker { color:#bfeee8; }
+    .slide.cover .foot { color:#bfeee8; }
+    .slide.section { background:var(--accent-strong); color:#fff; justify-content:center; }
+    .slide.section .num { font-size:30px; font-weight:800; letter-spacing:.1em; color:#9fe0d8; margin-bottom:18px; }
+    .slide.section h2 { font-size:92px; margin:0 0 20px; }
+    .slide.section p { font-size:38px; color:#d6f3ef; }
+    .slide.section .foot { color:#9fe0d8; }
+
+    /* Actividades */
+    .slide.activity { background:var(--act-soft); }
+    .actbar { display:flex; justify-content:space-between; align-items:center; background:var(--act); color:#fff; margin:-70px -96px 40px; padding:24px 96px; font-size:30px; font-weight:800; letter-spacing:.04em; }
+    .actbar .dur { background:rgba(255,255,255,.22); padding:4px 18px; border-radius:999px; }
+    ol.steps { margin:0; padding-left:48px; } ol.steps li { margin:0 0 16px; padding-left:8px; }
+    ol.steps li::marker { color:var(--act); font-weight:800; }
+    .check { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px; font-size:31px; }
+    .check div { background:#fff; border-radius:14px; padding:14px 22px; }
+    .check b { color:var(--act); margin-right:10px; }
+
+    /* Diagrama del harness */
+    .harness { position:relative; width:640px; height:560px; margin:0 auto; }
+    .harness .core { position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:38px; font-weight:800; text-align:center; line-height:1.1; }
+    .harness .ring { position:absolute; inset:20px 50px; border:4px dashed #9cc9c4; border-radius:50%; }
+    .harness .pill { position:absolute; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); border-radius:999px; padding:10px 24px; font-size:27px; font-weight:700; white-space:nowrap; transform:translate(-50%,-50%); }
+
+    .flow { display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:34px; font-weight:700; }
+    .flow span.s { background:var(--accent-soft); color:var(--accent-strong); padding:16px 26px; border-radius:16px; }
+    .flow span.s.hl { background:var(--warn-soft); color:var(--warn); outline:3px solid var(--warn); }
+    .flow span.a { color:var(--muted); }
+
+    .term { display:inline-block; background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:10px 22px; font-family:Consolas, monospace; font-size:30px; }
+
+    .note { background:var(--warn-soft); border-left:10px solid var(--warn); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .note b { color:var(--warn); }
+    .danger { background:var(--red-soft); border-left:10px solid var(--red); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .danger b { color:var(--red); }
+
+    /* Programa y agenda */
+    .prog { display:flex; flex-direction:column; gap:12px; }
+    .prog .row { display:grid; grid-template-columns:64px 1fr auto; gap:22px; align-items:center; background:var(--bg); border-radius:16px; padding:12px 26px; }
+    .prog .row .n { width:52px; height:52px; border-radius:50%; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); display:grid; place-items:center; font-weight:800; font-size:26px; }
+    .prog .row .tt { font-size:30px; font-weight:700; line-height:1.15; }
+    .prog .row .tt small { display:block; font-size:24px; font-weight:400; color:var(--muted); margin-top:2px; }
+    .prog .row .st { font-size:22px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .prog .row.done { opacity:.55; }
+    .prog .row.done .n { background:var(--accent); color:#fff; }
+    .prog .row.now { background:var(--accent); color:#fff; }
+    .prog .row.now .n { background:#fff; border-color:#fff; }
+    .prog .row.now .tt small { color:#d6f3ef; }
+    .prog .row.now .st { color:#fff; background:rgba(255,255,255,.2); padding:4px 14px; border-radius:999px; }
+    .today { display:grid; grid-template-columns:1.25fr 1fr; gap:44px; align-items:start; }
+    .today table.t td { font-size:30px; padding:12px 18px; }
+    .takeaway { background:var(--accent-soft); border-radius:18px; padding:28px 32px; }
+    .takeaway h3 { margin:0 0 16px; }
+    .takeaway ul { margin:0; padding-left:34px; font-size:30px; } .takeaway li { margin-bottom:14px; }
+
+    /* Barra de control (fuera del escenario) */
+    #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
+    #hud:hover { opacity:1; }
+    #hud button, #hud a { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; text-decoration:none; }
+    #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
+
+    @media print {
+      html, body { overflow:visible; background:#fff; height:auto; }
+      #viewport { position:static; display:block; }
+      #stage { transform:none !important; position:static; width:1600px; height:auto; }
+      .slide { display:flex !important; position:relative; width:1600px; height:900px; break-after:page; }
+      #hud, #progress { display:none; }
+      @page { size:1600px 900px; margin:0; }
+    }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 -->
+<section class="slide cover">
+  <p class="kicker">Curso Claude Code · Sesión 3 de 6</p>
+  <h1>Skills, subagentes y MCP</h1>
+  <p>Empaquetar lo que sabe el equipo y repartir el trabajo</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kicker">Dónde estamos</p>
+  <h2 style="margin-bottom:26px">El programa</h2>
+  <div class="prog">
+    <div class="row done"><div class="n">✓</div><div class="tt">Fundamentos y memoria de proyecto<small>Instalar y darle a Claude el contexto del proyecto</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Uso seguro y gobierno<small>Pasar de consejos a reglas: permisos y validaciones</small></div><div class="st">Hecho</div></div>
+    <div class="row now"><div class="n">3</div><div class="tt">Skills, subagentes y MCP<small>Herramientas del equipo y reparto de tareas</small></div><div class="st">Hoy</div></div>
+    <div class="row "><div class="n">4</div><div class="tt">Trabajar fuera de tu especialidad<small>Reglas por área y revisión antes de integrar</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">5</div><div class="tt">Taller: vuestro caso real<small>Arrancar vuestra app, con vuestro stack</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">6</div><div class="tt">Acompañamiento y cierre<small>Revisar, terminar y dejarlo listo para el equipo</small></div><div class="st"></div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kicker">Hoy</p>
+  <h2>Qué vemos hoy</h2>
+  <div class="today">
+    <table class="t">
+      <tr><td>12:00</td><td>Repaso y vuestro procedimiento</td></tr>
+      <tr><td>12:10</td><td>De comando a skill</td></tr>
+      <tr><td>12:45</td><td>Subagentes y revisores</td></tr>
+      <tr><td>13:25</td><td>MCP: conectar con otros sistemas</td></tr>
+      <tr><td>13:45</td><td>Plugins: repartirlo al equipo</td></tr>
+      <tr><td>13:52</td><td>Cierre y tarea</td></tr>
+    </table>
+    <div class="takeaway"><h3>Al terminar tendrás</h3>
+      <ul>
+        <li>Una skill del equipo, con su plantilla</li>
+        <li>Dos subagentes revisores que no pueden editar</li>
+        <li>Una conexión MCP configurada</li>
+        <li>Cadena de frío exportando a CSV</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>En cada actividad:</b> primero lo hago yo en mi Cadena de frío, y después vosotros en la vuestra.</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <p class="kicker">Sesiones 1 y 2</p>
+  <h2>De dónde venimos</h2>
+  <div class="grid2">
+    <div class="card"><h3>Instrucciones</h3><p><code>CLAUDE.md</code> y <code>/revisa-cambios</code>: lo que Claude debe saber del proyecto</p></div>
+    <div class="card"><h3>Reglas y validaciones</h3><p><code>deny</code> · <code>ask</code> · <code>allow</code> y un hook que no deja terminar con los tests en rojo</p></div>
+  </div>
+  <div class="note"><b>Hoy, la tercera pieza:</b> que el conocimiento del equipo viaje en herramientas, y que Claude pueda repartir el trabajo.</div>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="guia">📖 ¿No terminaste la sesión 2? Punto de partida, en la guía</a></p>
+</section>
+
+<!-- 5 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Vuestro procedimiento</span><span class="dur">4 min</span></div>
+  <p class="big">En el chat: un procedimiento que repetís en el equipo.</p>
+  <ol class="steps">
+    <li><b>Qué es</b> y cuándo se hace</li>
+    <li><b>Sus pasos</b>, en una línea cada uno</li>
+    <li>Lo que <b>siempre se olvida</b></li>
+  </ol>
+  <p class="muted">Ejemplos: revisar un cambio · crear un servicio · una migración · preparar una versión</p>
+</section>
+
+<!-- 6 -->
+<section class="slide section">
+  <div class="num">BLOQUE 1</div>
+  <h2>De comando a skill</h2>
+  <p>Experiencia empaquetada</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <p class="kicker">Skills</p>
+  <h2>Un comando que ha crecido</h2>
+  <table class="t wrap">
+    <tr><th></th><th>Comando</th><th>Skill</th></tr>
+    <tr><td>Qué es</td><td>Un fichero con un prompt</td><td>Una carpeta: instrucciones, plantillas, scripts</td></tr>
+    <tr><td>Dónde</td><td><code>.claude/commands/x.md</code></td><td><code>.claude/skills/x/SKILL.md</code></td></tr>
+    <tr><td>Quién la lanza</td><td>Tú, con <code>/x</code></td><td>Tú con <code>/x</code>, <b>o Claude cuando encaja</b></td></tr>
+  </table>
+  <p class="quote" style="font-size:42px;margin-top:36px">Una skill es experiencia empaquetada: instrucciones, más sus plantillas y scripts.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <p class="kicker">Anatomía</p>
+  <h2 style="margin-bottom:22px">Una carpeta por skill</h2>
+  <div class="grid2" style="grid-template-columns:.8fr 1.2fr;gap:32px">
+<pre style="font-size:27px">.claude/skills/
+└─ nueva-funcionalidad/
+   ├─ SKILL.md
+   ├─ plantilla.md
+   └─ scripts/   <span class="c"># opcional</span></pre>
+<pre style="font-size:25px">---
+name: nueva-funcionalidad
+description: Procedimiento del equipo
+  para añadir una funcionalidad.
+  Úsala cuando pidan añadir, ampliar
+  o cambiar lo que hace la app.
+---
+Sigue estos pasos en orden:
+1. Especificación …
+2. Plan …</pre>
+  </div>
+  <p class="muted" style="margin-top:6px">Va en el repositorio, junto al código: la tiene todo el equipo. Las personales, en <code>~/.claude/skills/</code>.</p>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <p class="kicker">La clave</p>
+  <h2>La descripción es el disparador</h2>
+  <div class="flow" style="margin-bottom:30px">
+    <span class="s">Al arrancar: nombre y descripción</span><span class="a">→</span>
+    <span class="s">Al usarla: el <code>SKILL.md</code></span><span class="a">→</span>
+    <span class="s">Si hace falta: plantillas y scripts</span>
+  </div>
+  <div class="grid2">
+    <div class="card bad"><h3>Así no la encuentra</h3><p>«Ayuda con funcionalidades.»</p></div>
+    <div class="card good"><h3>Así sí</h3><p>«Úsala cuando pidan <b>añadir, ampliar o cambiar</b> lo que hace la app, o al trabajar a partir de una issue.»</p></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Quién la lanza</p>
+  <h2>Tú, Claude o los dos</h2>
+  <table class="t wrap">
+    <tr><th>En la cabecera</th><th>Quién</th><th>Para</th></tr>
+    <tr><td><i>(nada)</i></td><td>Tú con <code>/nombre</code> y Claude cuando encaja</td><td>Procedimientos y conocimiento</td></tr>
+    <tr><td><code>disable-model-invocation: true</code></td><td>Solo tú</td><td>Lo que tiene efectos: desplegar, publicar, enviar</td></tr>
+    <tr><td><code>user-invocable: false</code></td><td>Solo Claude</td><td>Contexto de fondo que no es una acción</td></tr>
+  </table>
+  <div class="note"><b>Y <code>allowed-tools</code>:</b> qué puede usar sin pedirte permiso mientras la skill está activa.</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <p class="kicker">Primero yo · en mi Cadena de frío</p>
+  <h2>De comando a skill, en directo</h2>
+  <ol class="steps">
+    <li>«Convierte <code>/revisa-cambios</code> en una skill… usa <code>git mv</code>», y lo pruebo</li>
+    <li>«Crea una skill <code>nueva-funcionalidad</code>…», con su <code>plantilla.md</code></li>
+    <li>Leo la descripción: ¿dice <b>cuándo</b> usarla?</li>
+    <li>«¿Qué skills tienes y cuándo usarías cada una?»</li>
+  </ol>
+  <ul class="b">
+    <li>Escribe <code>/</code> y aparece junto a los comandos. <code>/skills</code> las lista todas</li>
+    <li>O pide la tarea con tus palabras: si la descripción encaja, la usa sola</li>
+  </ul>
+</section>
+
+<!-- 12 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · La skill del equipo</span><span class="dur">16 min</span></div>
+  <ol class="steps">
+    <li><b>Pídele a Claude</b> que convierta <code>/revisa-cambios</code> en skill (con <code>git mv</code>) y pruébalo: sigue funcionando igual</li>
+    <li><b>Pídele</b> la skill <code>nueva-funcionalidad</code>, con su <code>plantilla.md</code> (petición en la guía)</li>
+    <li>Lee la descripción que ha escrito: ¿dice <b>cuándo</b> usarla?</li>
+    <li>Pregúntale: «¿Qué skills tienes y cuándo usarías cada una?»</li>
+    <li>Commit: punto de guardado</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s3-1" target="guia">📖 Guía del proyecto · Sesión 3, pasos 1 y 2</a></p>
+</section>
+
+<!-- 13 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Así debería quedar · .claude/skills/nueva-funcionalidad/SKILL.md</span><span class="dur">16 min</span></div>
+<pre style="font-size:23px;padding:18px 28px">---
+name: nueva-funcionalidad
+description: Procedimiento del equipo para añadir una funcionalidad a Cadena de frío.
+  Úsala cuando pidan añadir, ampliar o cambiar lo que hace la app (por ejemplo,
+  exportar, incidencias, avisos o una pantalla nueva), o al trabajar a partir de una issue.
+---
+Sigue estos pasos en orden y no te saltes ninguno.
+1. Especificación. Si no está descrita, redacta el cambio con la plantilla
+   (plantilla.md) y enséñamelo. No edites la especificación.
+2. Plan. Qué ficheros vas a tocar en cada capa. Espera mi visto bueno.
+3. Test primero, y comprueba que falla por el motivo correcto.
+4. Lógica en src/logica/: funciones puras, décimas de grado enteras.
+5. Interfaz en src/ui/. Nada de peticiones de red.
+6. Verificación: npm test y qué has comprobado en el navegador.
+7. Resumen: ficheros cambiados y un mensaje de commit.</pre>
+</section>
+
+<!-- 14 -->
+<section class="slide section">
+  <div class="num">BLOQUE 2</div>
+  <h2>Subagentes</h2>
+  <p>Delegar con su propio contexto</p>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <p class="kicker">Subagentes</p>
+  <h2>Un ayudante con su propia mesa</h2>
+  <div class="flow" style="margin-bottom:34px">
+    <span class="s">Tú</span><span class="a">→</span>
+    <span class="s">Claude</span><span class="a">→ encarga →</span>
+    <span class="s hl">Subagente<br><small style="font-size:24px;font-weight:400">lee 40 ficheros</small></span><span class="a">→ devuelve →</span>
+    <span class="s">La conclusión</span>
+  </div>
+  <ul class="b">
+    <li><b>Contexto propio:</b> lo que lee no llena tu conversación</li>
+    <li><b>Instrucciones propias:</b> un rol y un criterio</li>
+    <li><b>Herramientas propias:</b> puede no tener permiso para editar</li>
+  </ul>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <p class="kicker">Cuándo</p>
+  <h2>Si solo necesitas la conclusión, delega</h2>
+  <div class="grid2">
+    <div>
+      <h3>Para qué</h3>
+      <ul class="b">
+        <li>Investigar: ¿dónde se hace X?</li>
+        <li>Revisar con un criterio</li>
+        <li>Pasar y analizar tests</li>
+        <li>Varias cosas a la vez, en paralelo</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Ya vienen de serie</h3>
+      <ul class="b">
+        <li><b>Explore</b>: busca y lee, sin editar</li>
+        <li><b>Plan</b>: investiga en plan mode</li>
+        <li><b>General</b>: tareas de varios pasos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>Los tuyos:</b> pídeselos a Claude. Son un fichero en <code>.claude/agents/</code>, y van en el repositorio.</div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <p class="kicker">Anatomía</p>
+  <h2 style="margin-bottom:20px">Un fichero por subagente</h2>
+  <p style="margin:0 0 6px;font-size:28px"><code>.claude/agents/revisor.md</code></p>
+<pre style="font-size:25px">---
+name: revisor
+description: Revisor de código de Cadena de frío. Úsalo al
+  terminar un cambio y antes de integrarlo.
+tools: Read, Grep, Glob, Bash
+---
+Eres un revisor de código exigente y concreto. Revisa los cambios
+sin commitear (git diff HEAD) contra CLAUDE.md y la especificación.
+No edites nada. Devuelve los hallazgos por gravedad, con archivo y línea.</pre>
+  <div class="note"><b><code>tools</code> es una lista blanca:</b> sin <code>Edit</code> ni <code>Write</code>, no puede cambiar nada aunque quiera.</div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <p class="kicker">En mi Cadena de frío</p>
+  <h2>Investigar sin llenar el contexto</h2>
+  <ol class="steps">
+    <li><code>/context</code>: cuánto llevamos</li>
+    <li>«Usa un subagente Explore para buscar en todo el repositorio… Devuélveme solo la lista.»</li>
+    <li><code>/context</code> otra vez: casi igual</li>
+  </ol>
+  <p class="quote" style="font-size:40px;margin-top:30px">Si el hilo principal solo necesita la conclusión, delega la exploración.</p>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <p class="kicker">Revisión</p>
+  <h2>Varios revisores, en paralelo</h2>
+  <div class="grid3">
+    <div class="card"><h3><code>revisor</code></h3><p>¿Cumple la especificación y el <code>CLAUDE.md</code>? ¿Tiene tests?</p></div>
+    <div class="card"><h3><code>revisor-privacidad</code></h3><p>¿Sale algún dato del dispositivo? ¿Hay secretos en el navegador?</p></div>
+    <div class="card"><h3>Claude</h3><p>Junta los hallazgos, quita duplicados y los ordena por gravedad</p></div>
+  </div>
+  <div class="note"><b>Los subagentes filtran lo evidente.</b> La decisión de integrar sigue siendo de una persona.</div>
+</section>
+
+<!-- 20 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Revisores y exportar a CSV</span><span class="dur">13 min</span></div>
+  <ol class="steps">
+    <li><b>Pídele</b> los subagentes <code>revisor</code> y <code>revisor-privacidad</code>, de solo lectura. Escribe <code>@</code>: salen en la lista</li>
+    <li>Pídele que añada el CSV a la especificación: te preguntará, <b>apruébalo tú</b></li>
+    <li>«Usa la skill nueva-funcionalidad para añadir la exportación a CSV»: <b>revisa el plan</b> antes de aprobarlo</li>
+    <li>Revisa el cambio con los dos revisores <b>en paralelo</b></li>
+    <li>Abre el CSV en Excel: ¿tildes y columnas bien?</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s3-3" target="guia">📖 Guía del proyecto · Sesión 3, pasos 3 y 4</a></p>
+</section>
+
+<!-- 21 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Así debería quedar · .claude/agents/revisor-privacidad.md</span><span class="dur">13 min</span></div>
+<pre style="font-size:23px;padding:18px 28px">---
+name: revisor-privacidad
+description: Comprueba que Cadena de frío cumple su promesa de que los datos
+  no salen del dispositivo. Úsalo antes de integrar cualquier cambio en la
+  interfaz, en los datos o en la configuración.
+tools: Read, Grep, Glob
+---
+La app promete que los datos de quien la usa no salen de su navegador.
+Comprueba que sigue siendo cierto en todo el código, no solo en los cambios.
+
+Busca y señala con archivo y línea:
+- Peticiones de red: fetch, XMLHttpRequest, WebSocket, sendBeacon…
+- Claves o secretos en el código del navegador.
+- Recursos de otros dominios, analítica o servicios de terceros.
+- Datos de pacientes, o nombres y lecturas en la consola o en la URL.
+
+No edites nada. Termina con un veredicto de una línea.</pre>
+</section>
+
+<!-- 22 -->
+<section class="slide">
+  <p class="kicker">Para no liarse</p>
+  <h2>¿Dónde va esto?</h2>
+  <table class="t wrap">
+    <tr><th>Si quieres…</th><th>Usa</th></tr>
+    <tr><td>Que Claude sepa algo siempre</td><td><code>CLAUDE.md</code></td></tr>
+    <tr><td>Un procedimiento que se repite</td><td>Skill</td></tr>
+    <tr><td>Una tarea con su propio contexto y criterio</td><td>Subagente</td></tr>
+    <tr><td>Que algo pase o se compruebe siempre</td><td>Hook o regla de permisos</td></tr>
+    <tr><td>Datos que viven en otro sistema</td><td>MCP</td></tr>
+  </table>
+</section>
+
+<!-- 23 -->
+<section class="slide section">
+  <div class="num">BLOQUE 3</div>
+  <h2>MCP</h2>
+  <p>Conectar Claude con lo que ya usáis</p>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <p class="kicker">Model Context Protocol</p>
+  <h2>Un enchufe estándar para otros sistemas</h2>
+  <div class="grid2">
+    <div class="card"><h3>Memoria (<code>CLAUDE.md</code>)</h3><p>Lo estable: comandos, convenciones, zonas prohibidas</p></div>
+    <div class="card"><h3>MCP</h3><p>Lo que cambia o vive fuera: incidencias, PRs, bases de datos, documentación</p></div>
+  </div>
+  <p style="margin-top:30px">Ejemplos: GitHub, GitLab, Jira, una base de datos, la documentación de Microsoft…</p>
+  <div class="note"><b>Regla práctica:</b> si cambia a menudo o vive en otro sistema, MCP. Si no, memoria.</div>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <p class="kicker">Cómo se añade</p>
+  <h2 style="margin-bottom:22px">Un comando, en la terminal</h2>
+<pre style="font-size:27px">claude mcp add --transport http <span class="c">&lt;nombre&gt; &lt;dirección&gt;</span> --scope project</pre>
+  <table class="t wrap">
+    <tr><th><code>--scope</code></th><th>Dónde se guarda</th><th>Para quién</th></tr>
+    <tr><td><code>local</code> (por defecto)</td><td>Tu configuración, solo este proyecto</td><td>Solo tú</td></tr>
+    <tr><td><code>project</code></td><td><code>.mcp.json</code>, en el repositorio</td><td>Todo el equipo</td></tr>
+    <tr><td><code>user</code></td><td>Tu configuración, todos tus proyectos</td><td>Solo tú</td></tr>
+  </table>
+  <p class="muted" style="margin-top:18px"><code>/mcp</code> dentro de Claude Code: qué servidores hay, si están conectados y para iniciar sesión.</p>
+</section>
+
+<!-- 26 -->
+<section class="slide">
+  <p class="kicker">Con cuidado</p>
+  <h2>Secretos y permisos mínimos</h2>
+<pre style="font-size:26px">"headers": { "Authorization": "Bearer <b>${GITHUB_TOKEN}</b>" }</pre>
+  <ul class="b">
+    <li>El token, en una <b>variable de entorno</b>. En <code>.mcp.json</code> solo la referencia: así se puede compartir</li>
+    <li>Token con <b>los mínimos permisos</b>: si solo va a leer, de solo lectura</li>
+    <li>Las herramientas MCP pasan por tus reglas: <code>"deny": ["mcp__github__merge_pull_request"]</code></li>
+  </ul>
+  <div class="danger"><b>Lo que trae un MCP es texto de fuera.</b> Una issue puede llevar instrucciones escondidas: servidores de confianza y tú revisando.</div>
+</section>
+
+<!-- 27 -->
+<section class="slide">
+  <p class="kicker">Primero yo · en mi Cadena de frío</p>
+  <h2>La documentación de Microsoft, conectada</h2>
+<pre style="font-size:25px">claude mcp add --transport http microsoft-learn https://learn.microsoft.com/api/mcp</pre>
+  <ol class="steps">
+    <li><code>/mcp</code>: conectado, y sin claves</li>
+    <li>«¿Cómo se crea en Teams un flujo de Workflows que publique en un canal al recibir un webhook?»</li>
+    <li>Fíjate: te pide permiso la primera vez que usa la herramienta</li>
+  </ol>
+  <div class="note"><b>Te servirá esta semana:</b> es justo lo que necesitas para los avisos a Teams de la tarea.</div>
+</section>
+
+<!-- 28 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Tu primera conexión MCP</span><span class="dur">8 min</span></div>
+<pre style="font-size:25px">claude mcp add --transport http microsoft-learn https://learn.microsoft.com/api/mcp</pre>
+  <ol class="steps">
+    <li>Mira <code>/mcp</code>: conectado, y qué herramientas trae</li>
+    <li>Pregúntale algo de tu trabajo de esta semana: PowerShell, Azure, Teams, SQL Server…</li>
+    <li>Fíjate en el permiso que te pide la primera vez</li>
+  </ol>
+  <div class="note"><b>¿Usáis un gestor con servidor MCP</b> (Jira, GitLab, Azure DevOps…)? Se conecta igual, con el token en una variable de entorno.</div>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s3-5" target="guia">📖 Guía del proyecto · Sesión 3, paso 5</a></p>
+</section>
+
+<!-- 29 -->
+<section class="slide section">
+  <div class="num">BLOQUE 4</div>
+  <h2>Plugins</h2>
+  <p>Repartirlo a todo el equipo</p>
+</section>
+
+<!-- 30 -->
+<section class="slide">
+  <p class="kicker">Plugins</p>
+  <h2>Un flujo de trabajo, listo para instalar</h2>
+  <div class="grid2" style="grid-template-columns:.9fr 1.1fr;gap:32px">
+<pre style="font-size:26px">revision-equipo/
+├─ .claude-plugin/
+│  └─ plugin.json
+├─ skills/
+├─ agents/
+├─ hooks/
+└─ .mcp.json</pre>
+    <ul class="b">
+      <li>Junta skills, subagentes, hooks y servidores MCP</li>
+      <li>Se instala con <code>/plugin</code> desde un <b>marketplace</b>: una carpeta o un repositorio con la lista de plugins</li>
+      <li>Se actualiza para todos a la vez</li>
+    </ul>
+  </div>
+  <div class="note"><b>Para IT:</b> la configuración gestionada puede limitar de qué marketplaces se instala.</div>
+</section>
+
+<!-- 31 -->
+<section class="slide">
+  <p class="kicker">Compartir</p>
+  <h2 style="margin-bottom:20px">Un subagente es un fichero: se puede pasar</h2>
+  <table class="t wrap">
+    <tr><th>Cómo</th><th>Dónde queda</th><th>Para qué</th></tr>
+    <tr><td>Por correo o en una carpeta compartida</td><td><code>.claude/agents/</code> de otro proyecto, o <code>~/.claude/agents/</code>: en todos tus proyectos</td><td>Probarlo o pasárselo a un compañero</td></tr>
+    <tr><td>En la carpeta del proyecto</td><td><code>.claude/</code>: viaja con el código</td><td>Lo que es de <b>un proyecto</b></td></tr>
+    <tr><td>En un plugin</td><td>Se instala con <code>/plugin</code>; se actualiza para todos</td><td>Lo que se repite en <b>muchos proyectos</b></td></tr>
+  </table>
+  <div class="danger" style="margin-top:18px"><b>Antes de usar uno que te pasan, léelo:</b> mira la línea <code>tools</code> (sin ella, puede hacerlo todo) y que la descripción hable de <b>tu</b> proyecto.</div>
+</section>
+
+<!-- 32 -->
+<section class="slide">
+  <p class="kicker">Resumen</p>
+  <h2>Hoy hemos montado</h2>
+  <div class="grid3">
+    <div class="card"><h3>Skill</h3><p>El procedimiento del equipo para añadir funcionalidades, con su plantilla</p></div>
+    <div class="card"><h3>Subagentes</h3><p>Dos revisores con su criterio, que no pueden editar</p></div>
+    <div class="card"><h3>MCP</h3><p>Claude conectado con un sistema de fuera, con permisos mínimos</p></div>
+  </div>
+  <p class="big" style="margin-top:50px;font-size:40px">Siguiente: trabajar con garantías en lo que no domináis.</p>
+</section>
+
+<!-- 33 -->
+<section class="slide">
+  <p class="kicker">Para la sesión 4</p>
+  <h2>Tarea</h2>
+  <ol class="steps">
+    <li>Con la skill: <b>incidencias, lecturas anuladas, equipos y resumen</b>. Una funcionalidad cada vez, con <code>/clear</code> entre una y otra</li>
+    <li><b>Avisos a Teams</b>: el webhook lo pones tú en el <code>.env</code> (si tu organización lo permite)</li>
+    <li>Convierte <b>vuestro procedimiento</b> en una skill, en un repo de pruebas</li>
+    <li>Piensa qué <b>parte del sistema no dominas</b>: la traeremos al empezar</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s3-6" target="guia">📖 Guía del proyecto · Sesión 3, pasos 6 a 8</a></p>
+</section>
+
+<!-- 34 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">1 min</span></div>
+  <p class="big">En el chat, una línea:</p>
+  <p class="big" style="color:var(--act)">¿Qué procedimiento de tu equipo convertirías primero en skill?</p>
+</section>
+
+<!-- 35 -->
+<section class="slide cover">
+  <p class="kicker">Sesión 3 · Cierre</p>
+  <h1 style="font-size:76px">Lo que sabe el equipo, en herramientas.</h1>
+  <p>Y si el hilo principal solo necesita la conclusión, delega la exploración.</p>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev" title="Anterior (←)">←</button>
+  <button id="next" title="Siguiente (→)">→</button>
+  <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+  <a href="https://kibomcg.github.io/aprende-claude-code/diapositivas/" title="Todas las sesiones y la web del curso">Índice</a>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var bar = document.getElementById('progress');
+  var i = 0;
+  var total = slides.length;
+
+  slides.forEach(function (s, n) {
+    var f = document.createElement('div');
+    f.className = 'foot';
+    f.innerHTML = '<span>Claude Code · Sesión 3</span><span>' + (n + 1) + ' / ' + total + '</span>';
+    s.appendChild(f);
+  });
+
+  function fit() {
+    var k = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    bar.style.width = ((i + 1) / total * 100) + '%';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); show(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(i - 1); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'f' || k === 'F') fullscreen();
+  });
+  document.getElementById('prev').onclick = function () { show(i - 1); };
+  document.getElementById('next').onclick = function () { show(i + 1); };
+  document.getElementById('fs').onclick = fullscreen;
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n && n - 1 !== i) show(n - 1);
+  });
+
+  fit();
+  var start = parseInt(location.hash.slice(1), 10);
+  show(start ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>

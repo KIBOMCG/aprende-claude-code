@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sesión 4 · Claude Code</title>
+  <style>
+    :root {
+      --bg:#eef2f5; --paper:#ffffff; --ink:#132029; --muted:#4f5d6b; --line:#d5dde5;
+      --accent:#13706b; --accent-strong:#0b4f4b; --accent-soft:#dcf1ee;
+      --act:#b8430f; --act-soft:#fff1e8;
+      --warn:#7a4f00; --warn-soft:#fff3d6;
+      --red:#a8201a; --red-soft:#fde4e2; --green:#1d6b37; --green-soft:#e5f5ea;
+      --code-bg:#0e1621; --code-ink:#e9f2f3; --code-dim:#8fa3b3;
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; height:100%; background:#1c2630; overflow:hidden; }
+    body { font-family:"Segoe UI", Inter, system-ui, -apple-system, sans-serif; color:var(--ink); }
+
+    /* Escenario fijo 1600x900 escalado al tamaño de la ventana */
+    #viewport { position:fixed; inset:0; overflow:hidden; }
+    #stage { width:1600px; height:900px; position:absolute; left:50%; top:50%; transform-origin:center center; }
+    .slide { position:absolute; inset:0; background:var(--paper); padding:70px 96px 80px; display:none; flex-direction:column; overflow:hidden; font-size:34px; line-height:1.4; }
+    .slide.on { display:flex; }
+    .slide h2 { font-size:58px; line-height:1.12; margin:0 0 34px; letter-spacing:-.01em; }
+    .slide h3 { font-size:38px; margin:0 0 14px; color:var(--accent-strong); }
+    .slide p { margin:0 0 20px; }
+    .kicker { font-size:24px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
+    .muted { color:var(--muted); }
+    .guia { margin:22px 0 0; font-size:28px; font-weight:700; }
+    .guia a { color:var(--accent-strong); text-decoration:underline; text-underline-offset:5px; }
+    .guia .url { display:block; font-family:"Cascadia Code", Consolas, monospace; font-size:26px; font-weight:400; color:var(--muted); margin-top:6px; }
+    
+    ul.b { margin:0; padding-left:40px; } ul.b li { margin:0 0 18px; }
+    ul.b li::marker { color:var(--accent); }
+    code, pre, kbd { font-family:"Cascadia Code", Consolas, "JetBrains Mono", ui-monospace, monospace; }
+    :not(pre) > code { background:var(--accent-soft); color:var(--accent-strong); padding:2px 10px; border-radius:8px; font-size:.88em; }
+    pre { background:var(--code-bg); color:var(--code-ink); border-radius:16px; padding:26px 32px; margin:0 0 22px; font-size:29px; line-height:1.45; white-space:pre-wrap; }
+    pre .c { color:var(--code-dim); }
+    kbd { font-size:.82em; background:#fff; border:2px solid var(--line); border-bottom-width:4px; border-radius:10px; padding:2px 12px; }
+    .foot { position:absolute; left:96px; right:96px; bottom:28px; display:flex; justify-content:space-between; font-size:20px; color:var(--muted); }
+
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+    .card { background:var(--bg); border-radius:18px; padding:28px 32px; }
+    .card h3 { font-size:34px; }
+    .card.good { background:var(--green-soft); } .card.good h3 { color:var(--green); }
+    .card.bad { background:var(--red-soft); } .card.bad h3 { color:var(--red); }
+
+    table.t { width:100%; border-collapse:collapse; font-size:29px; }
+    table.t th { text-align:left; font-size:22px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong); background:var(--accent-soft); padding:14px 20px; }
+    table.t td { padding:14px 20px; border-bottom:2px solid var(--line); vertical-align:top; }
+    table.t td:first-child { white-space:nowrap; }
+    table.t.wrap td:first-child { white-space:normal; }
+
+    .big { font-size:52px; line-height:1.25; font-weight:700; }
+    .quote { font-size:52px; line-height:1.25; font-weight:700; border-left:12px solid var(--accent); padding-left:40px; margin:auto 0; }
+    .quote small { display:block; font-size:28px; font-weight:400; color:var(--muted); margin-top:24px; }
+
+    /* Portada y separadores */
+    .slide.cover { background:linear-gradient(135deg,#0b4f4b,#13706b 60%,#1b8c85); color:#fff; justify-content:center; }
+    .slide.cover h1 { font-size:96px; line-height:1.02; margin:0 0 26px; letter-spacing:-.02em; }
+    .slide.cover p { font-size:40px; opacity:.92; }
+    .slide.cover .kicker { color:#bfeee8; }
+    .slide.cover .foot { color:#bfeee8; }
+    .slide.section { background:var(--accent-strong); color:#fff; justify-content:center; }
+    .slide.section .num { font-size:30px; font-weight:800; letter-spacing:.1em; color:#9fe0d8; margin-bottom:18px; }
+    .slide.section h2 { font-size:92px; margin:0 0 20px; }
+    .slide.section p { font-size:38px; color:#d6f3ef; }
+    .slide.section .foot { color:#9fe0d8; }
+
+    /* Actividades */
+    .slide.activity { background:var(--act-soft); }
+    .actbar { display:flex; justify-content:space-between; align-items:center; background:var(--act); color:#fff; margin:-70px -96px 40px; padding:24px 96px; font-size:30px; font-weight:800; letter-spacing:.04em; }
+    .actbar .dur { background:rgba(255,255,255,.22); padding:4px 18px; border-radius:999px; }
+    ol.steps { margin:0; padding-left:48px; } ol.steps li { margin:0 0 16px; padding-left:8px; }
+    ol.steps li::marker { color:var(--act); font-weight:800; }
+    .check { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px; font-size:31px; }
+    .check div { background:#fff; border-radius:14px; padding:14px 22px; }
+    .check b { color:var(--act); margin-right:10px; }
+
+    /* Diagrama del harness */
+    .harness { position:relative; width:640px; height:560px; margin:0 auto; }
+    .harness .core { position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:38px; font-weight:800; text-align:center; line-height:1.1; }
+    .harness .ring { position:absolute; inset:20px 50px; border:4px dashed #9cc9c4; border-radius:50%; }
+    .harness .pill { position:absolute; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); border-radius:999px; padding:10px 24px; font-size:27px; font-weight:700; white-space:nowrap; transform:translate(-50%,-50%); }
+
+    .flow { display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:34px; font-weight:700; }
+    .flow span.s { background:var(--accent-soft); color:var(--accent-strong); padding:16px 26px; border-radius:16px; }
+    .flow span.s.hl { background:var(--warn-soft); color:var(--warn); outline:3px solid var(--warn); }
+    .flow span.a { color:var(--muted); }
+
+    .term { display:inline-block; background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:10px 22px; font-family:Consolas, monospace; font-size:30px; }
+
+    .note { background:var(--warn-soft); border-left:10px solid var(--warn); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .note b { color:var(--warn); }
+    .danger { background:var(--red-soft); border-left:10px solid var(--red); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .danger b { color:var(--red); }
+
+    /* Programa y agenda */
+    .prog { display:flex; flex-direction:column; gap:12px; }
+    .prog .row { display:grid; grid-template-columns:64px 1fr auto; gap:22px; align-items:center; background:var(--bg); border-radius:16px; padding:12px 26px; }
+    .prog .row .n { width:52px; height:52px; border-radius:50%; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); display:grid; place-items:center; font-weight:800; font-size:26px; }
+    .prog .row .tt { font-size:30px; font-weight:700; line-height:1.15; }
+    .prog .row .tt small { display:block; font-size:24px; font-weight:400; color:var(--muted); margin-top:2px; }
+    .prog .row .st { font-size:22px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .prog .row.done { opacity:.55; }
+    .prog .row.done .n { background:var(--accent); color:#fff; }
+    .prog .row.now { background:var(--accent); color:#fff; }
+    .prog .row.now .n { background:#fff; border-color:#fff; }
+    .prog .row.now .tt small { color:#d6f3ef; }
+    .prog .row.now .st { color:#fff; background:rgba(255,255,255,.2); padding:4px 14px; border-radius:999px; }
+    .today { display:grid; grid-template-columns:1.25fr 1fr; gap:44px; align-items:start; }
+    .today table.t td { font-size:30px; padding:12px 18px; }
+    .takeaway { background:var(--accent-soft); border-radius:18px; padding:28px 32px; }
+    .takeaway h3 { margin:0 0 16px; }
+    .takeaway ul { margin:0; padding-left:34px; font-size:30px; } .takeaway li { margin-bottom:14px; }
+
+    /* Barra de control (fuera del escenario) */
+    #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
+    #hud:hover { opacity:1; }
+    #hud button, #hud a { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; text-decoration:none; }
+    #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
+
+    @media print {
+      html, body { overflow:visible; background:#fff; height:auto; }
+      #viewport { position:static; display:block; }
+      #stage { transform:none !important; position:static; width:1600px; height:auto; }
+      .slide { display:flex !important; position:relative; width:1600px; height:900px; break-after:page; }
+      #hud, #progress { display:none; }
+      @page { size:1600px 900px; margin:0; }
+    }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 -->
+<section class="slide cover">
+  <p class="kicker">Curso Claude Code · Sesión 4 de 6</p>
+  <h1>Trabajar fuera de tu especialidad</h1>
+  <p>No se trata de saber hacerlo. Se trata de saber comprobarlo.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kicker">Dónde estamos</p>
+  <h2 style="margin-bottom:26px">El programa</h2>
+  <div class="prog">
+    <div class="row done"><div class="n">✓</div><div class="tt">Fundamentos y memoria de proyecto<small>Instalar y darle a Claude el contexto del proyecto</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Uso seguro y gobierno<small>Pasar de consejos a reglas: permisos y validaciones</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Skills, subagentes y MCP<small>Herramientas del equipo y reparto de tareas</small></div><div class="st">Hecho</div></div>
+    <div class="row now"><div class="n">4</div><div class="tt">Trabajar fuera de tu especialidad<small>Reglas por área y revisión antes de integrar</small></div><div class="st">Hoy</div></div>
+    <div class="row "><div class="n">5</div><div class="tt">Taller: vuestro caso real<small>Arrancar vuestra app, con vuestro stack</small></div><div class="st"></div></div>
+    <div class="row "><div class="n">6</div><div class="tt">Acompañamiento y cierre<small>Revisar, terminar y dejarlo listo para el equipo</small></div><div class="st"></div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kicker">Hoy</p>
+  <h2>Qué vemos hoy</h2>
+  <div class="today">
+    <table class="t">
+      <tr><td>12:00</td><td>Repaso y lo que no domináis</td></tr>
+      <tr><td>12:10</td><td>Explorar antes de tocar</td></tr>
+      <tr><td>12:32</td><td>Planes revisados</td></tr>
+      <tr><td>12:52</td><td>Reglas por área</td></tr>
+      <tr><td>13:12</td><td>Implementar por partes</td></tr>
+      <tr><td>13:35</td><td>Revisión antes de integrar</td></tr>
+      <tr><td>13:52</td><td>Cierre y vuestro caso real</td></tr>
+    </table>
+    <div class="takeaway"><h3>Al terminar tendrás</h3>
+      <ul>
+        <li>Reglas por zona en <code>.claude/rules/</code></li>
+        <li>Un plan revisado antes de implementar</li>
+        <li>Un flujo de revisión con tres revisores</li>
+        <li>Cadena de frío instalable y sin conexión</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>En cada paso:</b> primero lo hago yo en mi Cadena de frío, y después vosotros en la vuestra.</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <p class="kicker">Sesión 3</p>
+  <h2>De dónde venimos</h2>
+  <div class="grid3">
+    <div class="card"><h3>Skill</h3><p><code>nueva-funcionalidad</code>: el procedimiento del equipo</p></div>
+    <div class="card"><h3>Subagentes</h3><p><code>revisor</code> y <code>revisor-privacidad</code>, sin permiso para editar</p></div>
+    <div class="card"><h3>MCP</h3><p>Claude conectado con un sistema de fuera</p></div>
+  </div>
+  <div class="note"><b>Y en casa:</b> incidencias, lecturas anuladas, equipos, resumen y avisos a Teams, todo con la skill.</div>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#rescate" target="guia">📖 ¿No llegaste? Punto de partida de la sesión 3, en la guía</a></p>
+</section>
+
+<!-- 5 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Lo que no domináis</span><span class="dur">4 min</span></div>
+  <p class="big">En el chat, dos líneas:</p>
+  <ol class="steps">
+    <li>¿Qué tal la tarea con la skill? <b>¿Qué ha cazado un revisor?</b></li>
+    <li>Una parte de vuestro sistema que <b>no domináis</b> y os toca de vez en cuando</li>
+  </ol>
+  <p class="muted">Ejemplos: el front si sois de back · la base de datos · la infraestructura · el script que solo entiende una persona</p>
+</section>
+
+<!-- 6 -->
+<section class="slide section">
+  <div class="num">BLOQUE 1</div>
+  <h2>Explorar antes de tocar</h2>
+  <p>Entender primero, cambiar después</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <p class="kicker">El riesgo</p>
+  <h2>Si no sabes revisarlo, no sabes si está bien</h2>
+  <p>Fuera de tu especialidad, Claude escribe igual de rápido. Lo que cambia es que <b>tú no ves los errores</b>.</p>
+  <div class="flow" style="margin-top:20px">
+    <span class="s">Explorar</span><span class="a">→</span>
+    <span class="s">Plan revisado</span><span class="a">→</span>
+    <span class="s">Reglas de la zona</span><span class="a">→</span>
+    <span class="s">Por partes</span><span class="a">→</span>
+    <span class="s hl">Revisión</span>
+  </div>
+  <div class="note"><b>Hoy, el caso:</b> que Cadena de frío se instale en el móvil y funcione sin conexión. Seguramente no lo habéis hecho nunca.</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <p class="kicker">Explorar</p>
+  <h2>Pregunta antes de pedir</h2>
+  <div class="grid2">
+    <ul class="b">
+      <li>¿Qué hace esta parte y <b>en qué orden</b>?</li>
+      <li>¿Qué ficheros intervienen?</li>
+      <li>¿Qué palabras tendría que conocer?</li>
+    </ul>
+    <ul class="b">
+      <li>¿Cómo se prueba?</li>
+      <li><b>¿Qué puede salir mal?</b></li>
+      <li>¿Qué haría un experto que yo no haría?</li>
+    </ul>
+  </div>
+  <div class="note"><b>En plan mode</b> (<code>/plan</code> delante): lee y explica, sin cambiar nada.</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <p class="kicker">Con cuidado</p>
+  <h2>No te fíes: contrasta</h2>
+  <ul class="b">
+    <li>Pide <b>archivo y línea</b> de lo que afirma</li>
+    <li>Pide la <b>documentación oficial</b> (con MCP, la actual)</li>
+    <li>Pregunta: «¿Cómo lo compruebo yo, sin fiarme de ti?»</li>
+    <li>Y si es importante, <b>alguien que lo conozca</b></li>
+  </ul>
+  <p class="quote" style="font-size:40px;margin-top:30px">Claude explica muy bien. También cuando se equivoca.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Primero yo · en mi Cadena de frío</p>
+  <h2>Preguntar por lo que no conozco</h2>
+<pre style="font-size:26px">/plan Quiero que Cadena de frío se pueda instalar en el móvil como
+una app y que funcione sin conexión. Nunca he hecho algo así.
+Explícame qué hace falta, qué ficheros habría que crear, cómo se
+prueba y qué puede salir mal. No cambies nada.</pre>
+  <ol class="steps">
+    <li>Tres palabras que no conozco: «¿Qué es un service worker? En dos frases»</li>
+    <li>«¿Cómo lo compruebo yo, sin fiarme de ti? ¿Dónde lo dice la documentación oficial?»</li>
+  </ol>
+</section>
+
+<!-- 11 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Explorar antes de tocar</span><span class="dur">11 min</span></div>
+<pre style="font-size:26px">/plan Quiero que Cadena de frío se pueda instalar en el móvil como
+una app y que funcione sin conexión. Nunca he hecho algo así.
+Explícame qué hace falta, qué ficheros habría que crear, cómo se
+prueba y qué puede salir mal. No cambies nada.</pre>
+  <ol class="steps">
+    <li>Apunta <b>tres palabras nuevas</b> y pregúntale por ellas</li>
+    <li>Pregúntale: «¿Cómo lo compruebo yo?»</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-1" target="guia">📖 Guía del proyecto · Sesión 4, paso 1</a></p>
+</section>
+
+<!-- 12 -->
+<section class="slide section">
+  <div class="num">BLOQUE 2</div>
+  <h2>Planes revisados</h2>
+  <p>Decidir antes de escribir código</p>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <p class="kicker">El plan, en un fichero</p>
+  <h2>Un plan que se puede revisar</h2>
+  <div class="grid2">
+    <div class="card"><h3>En la conversación</h3><p>Se pierde con <code>/clear</code>. Solo lo ves tú.</p></div>
+    <div class="card good"><h3>En <code>docs/planes/</code></h3><p>Sobrevive al <code>/clear</code>, lo revisa otra persona y queda junto al código.</p></div>
+  </div>
+  <ul class="b" style="margin-top:30px">
+    <li>Dividido en <b>partes que se comprueban por separado</b></li>
+    <li><kbd>Ctrl</kbd>+<kbd>G</kbd> abre el plan en tu editor para cambiarlo</li>
+  </ul>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <p class="kicker">Revisarlo</p>
+  <h2>Qué mirar en un plan</h2>
+  <table class="t wrap">
+    <tr><td><b>Partes</b></td><td>¿Cada una se puede comprobar sola? ¿Dice cómo?</td></tr>
+    <tr><td><b>Ficheros</b></td><td>¿Toca algo que no esperabas?</td></tr>
+    <tr><td><b>Decisiones</b></td><td>¿Explica qué elige, por qué y <b>qué pega tiene</b>?</td></tr>
+    <tr><td><b>Fuera del plan</b></td><td>¿Dice qué no va a hacer?</td></tr>
+    <tr><td><b>Riesgos</b></td><td>¿Qué pasa con quien ya usa la app?</td></tr>
+  </table>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <p class="kicker">Para cambios grandes</p>
+  <h2>Que Claude te entreviste</h2>
+<pre style="font-size:27px">Quiero añadir &lt;la funcionalidad&gt;. Antes de proponer nada,
+hazme preguntas, una a una, sobre lo que no esté claro:
+casos límite, qué pasa con los datos que ya hay, cómo se
+comprueba. Cuando acabes, escribe la especificación.</pre>
+  <div class="note"><b>Recomendación de Anthropic:</b> en lo que no conoces, te pregunta lo que tú no sabrías preguntarte.</div>
+</section>
+
+<!-- 16 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Plan revisado</span><span class="dur">9 min</span></div>
+  <ol class="steps">
+    <li>Pídele el plan, <b>dividido en partes</b>, en <code>docs/planes/instalable.md</code>. Sin implementar</li>
+    <li>Ábrelo y repásalo con la lista de la diapositiva anterior</li>
+    <li>Si puedes, <b>pásaselo a un compañero</b> (por el chat o en pantalla) y revisad el suyo</li>
+    <li>Cambia lo que haga falta, y commit: el plan va junto al código</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-2" target="guia">📖 Guía del proyecto · Sesión 4, paso 2</a></p>
+</section>
+
+<!-- 17 -->
+<section class="slide section">
+  <div class="num">BLOQUE 3</div>
+  <h2>Reglas por área</h2>
+  <p>Lo que sabe el especialista, por escrito</p>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <p class="kicker">Tres sitios</p>
+  <h2>Cada regla, donde hace falta</h2>
+  <table class="t wrap">
+    <tr><th>Dónde</th><th>Se carga</th></tr>
+    <tr><td><code>CLAUDE.md</code></td><td>Siempre, al arrancar</td></tr>
+    <tr><td><code>.claude/rules/x.md</code> con <code>paths</code></td><td>Cuando Claude lee o edita ficheros de esas rutas</td></tr>
+    <tr><td><code>.claude/rules/x.md</code> sin <code>paths</code></td><td>Siempre, como el <code>CLAUDE.md</code></td></tr>
+    <tr><td><code>carpeta/CLAUDE.md</code></td><td>Cuando trabaja con ficheros de esa carpeta</td></tr>
+  </table>
+  <div class="note"><b>Así el <code>CLAUDE.md</code> se queda corto,</b> y cada zona trae sus reglas solo cuando se trabaja en ella.</div>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <p class="kicker">Anatomía</p>
+  <h2 style="margin-bottom:20px">Una regla con sus rutas</h2>
+  <p style="margin:0 0 6px;font-size:28px"><code>.claude/rules/servidor.md</code></p>
+<pre style="font-size:25px">---
+paths:
+  - "servidor.js"
+  - "src/servidor/**"
+---
+# Servidor y secretos
+- Los secretos solo se leen de process.env. Nunca en el código.
+- Una clave no se devuelve nunca al navegador, ni en un error,
+  ni en los logs.
+- Cada variable nueva, también en ejemplo.env, vacía.</pre>
+</section>
+
+<!-- 20 -->
+<section class="slide">
+  <p class="kicker">Qué escribir</p>
+  <h2>Lo que un experto sabe y tú no</h2>
+  <div class="grid2">
+    <div class="card"><h3>Sí</h3><p>Las trampas de la zona: «si cambias un fichero, sube <code>VERSION</code>; si no, nadie verá el cambio». Cómo se prueba ahí.</p></div>
+    <div class="card bad"><h3>No</h3><p>Lo que Claude ya sabe hacer bien, ni teoría general sobre la tecnología.</p></div>
+  </div>
+  <div class="note"><b>La mejor forma:</b> que Claude proponga la regla y la revise alguien que conozca esa zona.</div>
+</section>
+
+<!-- 21 -->
+<section class="slide">
+  <p class="kicker">Primero yo · en mi Cadena de frío</p>
+  <h2>¿Cuándo se carga una regla?</h2>
+  <ol class="steps">
+    <li>Le pido las tres reglas y reinicio</li>
+    <li><code>/context</code>: en «Memory files», todavía no está</li>
+    <li>«¿Qué hace enviarAviso, en src/servidor/avisos.js?»</li>
+    <li><code>/context</code> otra vez: ahora sí</li>
+  </ol>
+  <p class="quote" style="font-size:40px;margin-top:30px">Cada zona trae sus reglas cuando se trabaja en ella.</p>
+</section>
+
+<!-- 22 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Reglas por zona</span><span class="dur">8 min</span></div>
+  <ol class="steps">
+    <li><b>Pídele a Claude</b> las tres reglas: <code>instalable.md</code>, <code>logica.md</code> y <code>servidor.md</code> (petición en la guía)</li>
+    <li>Léelas: ¿dicen <b>las trampas</b> de cada zona, o solo generalidades?</li>
+    <li>Pregúntale qué regla aplicaría si tocara <code>sw.js</code></li>
+    <li>Commit</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-3" target="guia">📖 Guía del proyecto · Sesión 4, paso 3</a></p>
+</section>
+
+<!-- 23 -->
+<section class="slide section">
+  <div class="num">BLOQUE 4</div>
+  <h2>Implementar por partes</h2>
+  <p>Una cosa cada vez, y comprobada</p>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <p class="kicker">El ritmo</p>
+  <h2>Una parte, comprobada, guardada</h2>
+  <div class="flow" style="margin:10px 0 34px">
+    <span class="s">Implementa la parte N</span><span class="a">→</span>
+    <span class="s hl">Compruébala</span><span class="a">→</span>
+    <span class="s">Commit</span><span class="a">→</span>
+    <span class="s"><code>/clear</code></span><span class="a">→</span>
+    <span class="s">Parte N+1</span>
+  </div>
+  <ul class="b">
+    <li>El plan está en un fichero: el <code>/clear</code> no lo borra</li>
+    <li>Si una parte sale mal, vuelves al último commit, no al principio</li>
+    <li>Cada comprobación, <b>la que dice el plan</b>: no la que te parezca</li>
+  </ul>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <p class="kicker">Comprobar lo que no conoces</p>
+  <h2>Una app instalable se prueba así</h2>
+  <ol class="steps">
+    <li><code>npm start</code> y Chrome (o Edge) en <code>http://localhost:3000</code></li>
+    <li>En la barra de direcciones aparece el <b>icono de instalar</b></li>
+    <li><kbd>F12</kbd> → <b>Application</b> → <b>Service workers</b>: activo</li>
+    <li>Marca <b>Offline</b> y recarga: la app sigue funcionando</li>
+  </ol>
+  <div class="note"><b>No hace falta saber programarlo para saber comprobarlo.</b> Por eso la comprobación va en el plan.</div>
+</section>
+
+<!-- 26 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Implementar por partes</span><span class="dur">13 min</span></div>
+<pre style="font-size:26px">Implementa la parte 1 del plan de docs/planes/instalable.md
+y dime cómo comprobarla.</pre>
+  <ol class="steps">
+    <li>Compruébala tú, como dice el plan</li>
+    <li>Commit y <code>/clear</code></li>
+    <li>Siguiente parte. Las que no lleguéis, a casa</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-4" target="guia">📖 Guía del proyecto · Sesión 4, paso 4</a></p>
+</section>
+
+<!-- 27 -->
+<section class="slide section">
+  <div class="num">BLOQUE 5</div>
+  <h2>Revisión antes de integrar</h2>
+  <p>Revisores con rol y una persona que decide</p>
+</section>
+
+<!-- 28 -->
+<section class="slide">
+  <p class="kicker">Revisores con rol</p>
+  <h2>Cada uno mira una cosa</h2>
+  <table class="t wrap">
+    <tr><th>Subagente</th><th>Mira</th><th>Termina con</th></tr>
+    <tr><td><code>revisor</code></td><td>Especificación, <code>CLAUDE.md</code> y reglas</td><td>Hallazgos por gravedad</td></tr>
+    <tr><td><code>revisor-tests</code></td><td>Que cada cambio tenga sus tests y nada se haya debilitado</td><td>«Tests suficientes» o «Faltan tests»</td></tr>
+    <tr><td><code>revisor-privacidad</code></td><td>Que ningún dato salga del dispositivo</td><td>«Los datos no salen» o «Hay fugas»</td></tr>
+  </table>
+  <div class="note"><b>Un veredicto de una línea</b> hace que se vea de un vistazo si hay que mirar más.</div>
+</section>
+
+<!-- 29 -->
+<section class="slide">
+  <p class="kicker">Criterios de verificación</p>
+  <h2>«Hecho» quiere decir algo concreto</h2>
+  <ul class="b">
+    <li>Lo que pide el <b>«Hecho cuando»</b> de la especificación</li>
+    <li><code>npm test</code> en verde, con tests nuevos para lo nuevo</li>
+    <li>Lo comprobado <b>a mano</b>, y cómo</li>
+    <li>Y lo que <b>no</b> se ha podido comprobar, dicho en voz alta</li>
+  </ul>
+</section>
+
+<!-- 30 -->
+<section class="slide">
+  <p class="kicker">Primero yo · en mi Cadena de frío</p>
+  <h2>Tres revisores sobre mis cambios de hoy</h2>
+  <ol class="steps">
+    <li>Le pido el <code>revisor-tests</code></li>
+    <li>Trampa, a mano: un <code>test(</code> pasa a <code>test.skip(</code>. <code>npm test</code> sigue en verde</li>
+    <li>«Revisa los cambios para hacerla instalable con los subagentes revisor, revisor-tests y revisor-privacidad, en paralelo…»</li>
+  </ol>
+  <p class="muted">El hook no ve un test desactivado. ¿Lo ve algún revisor?</p>
+</section>
+
+<!-- 31 -->
+<section class="slide">
+  <p class="kicker">La última palabra</p>
+  <h2>La decisión es de una persona</h2>
+  <div class="grid2">
+    <div class="card"><h3>Los subagentes</h3><p>Filtran lo evidente y dejan los hallazgos ordenados</p></div>
+    <div class="card good"><h3>Una persona</h3><p>Lee el resumen, mira lo que importa y <b>decide si se integra</b></p></div>
+  </div>
+<pre style="font-size:25px;margin-top:26px">Escribe un resumen del cambio para quien lo tenga que aprobar: qué cambia,
+por qué, cómo se ha verificado y qué no se ha podido verificar.</pre>
+  <p class="muted">Va donde lo hagáis en vuestro equipo: una PR, una merge request, un ticket…</p>
+</section>
+
+<!-- 32 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Revisión antes de integrar</span><span class="dur">7 min</span></div>
+  <ol class="steps">
+    <li><b>Pídele</b> el subagente <code>revisor-tests</code>, de solo lectura</li>
+    <li>Revisa tus cambios con <b>los tres revisores en paralelo</b></li>
+    <li>Pídele el <b>resumen para quien aprueba</b></li>
+    <li>Léelo como si fueras tú quien aprueba: ¿lo integrarías?</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-5" target="guia">📖 Guía del proyecto · Sesión 4, paso 5</a></p>
+</section>
+
+<!-- 33 -->
+<section class="slide">
+  <p class="kicker">Sesiones 1 a 4</p>
+  <h2 style="margin-bottom:10px">El entorno de trabajo, completo</h2>
+  <div class="harness">
+    <div class="ring"></div>
+    <div class="core">El<br>modelo</div>
+    <div class="pill" style="left:50%;top:6%">Instrucciones · S1</div>
+    <div class="pill" style="left:100%;top:50%">Permisos y validaciones · S2</div>
+    <div class="pill" style="left:50%;top:94%">Herramientas y reparto · S3</div>
+    <div class="pill" style="left:0%;top:50%">Revisión · S4</div>
+  </div>
+</section>
+
+<!-- 34 -->
+<section class="slide">
+  <p class="kicker">Sesiones 5 y 6</p>
+  <h2>Ahora, vuestra app</h2>
+  <div class="grid2">
+    <div>
+      <h3>Lo que haremos</h3>
+      <ul class="b">
+        <li>Una <b>app nueva</b>, con vuestro stack</li>
+        <li>De vuestros documentos a una <b>especificación</b> y un <b>plan</b></li>
+        <li>Un <code>CLAUDE.md</code> que sepa <b>compilar y probar</b></li>
+        <li>Por partes, comprobada y revisada</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Traed definido</h3>
+      <ul class="b">
+        <li>Cómo colaboráis hoy en el código</li>
+        <li>Dónde se desarrolla: ficheros, namespace…</li>
+        <li>Cómo se compila y se prueba</li>
+        <li>Vuestras normas internas de uso de IA</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>Yo os guío el método.</b> El código y los datos se quedan en vuestro entorno.</div>
+</section>
+
+<!-- 35 -->
+<section class="slide">
+  <p class="kicker">Para la sesión 5</p>
+  <h2>Tarea</h2>
+  <ol class="steps">
+    <li>Termina las partes del plan que te falten y pasa la revisión</li>
+    <li>Con la skill y las reglas: <b>varios centros</b> (toca la forma de los datos: migración con test)</li>
+    <li>Opcional: instálala en tu móvil (hace falta https: un servidor de pruebas, a hablar con Sistemas)</li>
+    <li><b>Para vuestra app:</b> reunid la documentación y lo de la diapositiva anterior</li>
+  </ol>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/proyecto.html#s4-6" target="guia">📖 Guía del proyecto · Sesión 4, pasos 6 a 8</a></p>
+</section>
+
+<!-- 36 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">1 min</span></div>
+  <p class="big">En el chat, una línea:</p>
+  <p class="big" style="color:var(--act)">¿Qué os preocupa más de hacer vuestra app con Claude Code?</p>
+</section>
+
+<!-- 37 -->
+<section class="slide cover">
+  <p class="kicker">Sesión 4 · Cierre</p>
+  <h1 style="font-size:76px">No se trata de saber hacerlo.</h1>
+  <p>Se trata de saber comprobarlo: explorar, planificar, poner reglas y revisar antes de integrar.</p>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev" title="Anterior (←)">←</button>
+  <button id="next" title="Siguiente (→)">→</button>
+  <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+  <a href="https://kibomcg.github.io/aprende-claude-code/diapositivas/" title="Todas las sesiones y la web del curso">Índice</a>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var bar = document.getElementById('progress');
+  var i = 0;
+  var total = slides.length;
+
+  slides.forEach(function (s, n) {
+    var f = document.createElement('div');
+    f.className = 'foot';
+    f.innerHTML = '<span>Claude Code · Sesión 4</span><span>' + (n + 1) + ' / ' + total + '</span>';
+    s.appendChild(f);
+  });
+
+  function fit() {
+    var k = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    bar.style.width = ((i + 1) / total * 100) + '%';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); show(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(i - 1); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'f' || k === 'F') fullscreen();
+  });
+  document.getElementById('prev').onclick = function () { show(i - 1); };
+  document.getElementById('next').onclick = function () { show(i + 1); };
+  document.getElementById('fs').onclick = fullscreen;
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n && n - 1 !== i) show(n - 1);
+  });
+
+  fit();
+  var start = parseInt(location.hash.slice(1), 10);
+  show(start ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>
