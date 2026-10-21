@@ -46,7 +46,7 @@ kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--l
 .subnav a { font-weight: 600; color: var(--accent-strong); text-decoration: none; }
 .subnav a:hover { text-decoration: underline; }
 .step-head .diapo { font-size: 15px; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
-.step, .rescate { scroll-margin-top: 130px; }
+.step { scroll-margin-top: 130px; }
 .diapos { margin: 0 0 14px; } .diapos .diapo { margin-right: 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
 main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
 .hero { display: grid; gap: 14px; }
@@ -78,22 +78,14 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
 .queda[open] summary { margin-bottom: 10px; }
 .mano { background: var(--sunken); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 16px; display: grid; gap: 4px; }
 .mano strong { color: var(--accent-strong); }
-.rescate { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 8px; }
-.rescate-ses { display: flex; flex-wrap: wrap; gap: 8px; }
-.rescate-ses button { font: inherit; font-size: 16px; font-weight: 700; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
-.rescate-ses button[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: transparent; }
-.rescate-estado { font-size: 15px; margin: 0; }
-.rescate-estado.ok { color: var(--ok); } .rescate-estado.no { color: var(--amber); font-weight: 700; }
-.rescate details summary { cursor: pointer; font-weight: 700; }
-.rescate pre { white-space: pre-wrap; word-break: break-all; }
-@media (max-width: 700px) { .topbar { position: static; } .step, .rescate, .sesion { scroll-margin-top: 16px; } .app { grid-template-columns: repeat(2, minmax(0, 1fr)); } body { font-size: 17px; } .code pre { font-size: 14px; } }
+@media (max-width: 700px) { .topbar { position: static; } .step, .intro { display: grid; gap: 8px; }
 </style>
 </head>
 <body>
 <header class="topbar"><div class="topbar-inner">
   <a class="brand" href="index.html">Aprende Claude Code</a>
   <nav class="nav" aria-label="Secciones"><a href="index.html">Inicio</a><a href="instalacion.html">Instalación</a><a href="proyecto.html" aria-current="page">Proyecto</a><a href="entorno.html">Vuestro entorno</a><a href="diapositivas/">Diapositivas</a><a href="index.html#reto">Reto final</a><a href="index.html#referencia">Referencia</a></nav>
-  <nav class="subnav" aria-label="En esta guía"><span>En esta guía:</span><a href="#rescate">Si te quedas atrás</a><a href="#s1">Sesión 1</a><a href="#s2">Sesión 2</a><a href="#s3">Sesión 3</a><a href="#s4">Sesión 4</a></nav>
+  <nav class="subnav" aria-label="En esta guía"><span>En esta guía:</span><a href="#s1">Sesión 1</a><a href="#s2">Sesión 2</a><a href="#s3">Sesión 3</a><a href="#s4">Sesión 4</a></nav>
 </div></header>
 <main>
   <section class="hero">
@@ -106,18 +98,7 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
       <div><strong>Sesión 3</strong><span>Skill del equipo, revisores y exportar a CSV · en casa: incidencias, anular lecturas, avisos a Teams</span></div>
       <div><strong>Sesión 4</strong><span>Instalable y sin conexión, con reglas por zona · en casa: varios centros</span></div>
     </div>
-    <div class="rescate" id="rescate">
-      <h3>Si te quedas atrás</h3>
-      <p class="diapos">En las diapositivas: <a class="diapo" href="diapositivas/sesion-1.html#44" target="diapositivas">Diapositiva 44 · sesión 1 ↗</a><a class="diapo" href="diapositivas/sesion-2.html#4" target="diapositivas">Diapositiva 4 · sesión 2 ↗</a><a class="diapo" href="diapositivas/sesion-3.html#4" target="diapositivas">Diapositiva 4 · sesión 3 ↗</a><a class="diapo" href="diapositivas/sesion-4.html#4" target="diapositivas">Diapositiva 4 · sesión 4 ↗</a></p>
-      <p>Si al empezar una sesión no tienes terminada la anterior, descarga el punto de partida: el proyecto como quedó al final de esa sesión. Sale de esta misma web, con un comando: no hace falta que nadie te mande ningún fichero.</p>
-      <p><strong>1.</strong> ¿Qué sesión te falta por terminar?</p>
-      <div class="rescate-ses" role="group" aria-label="Sesión que te falta"><button type="button" data-s="s1" aria-pressed="true">Sesión 1</button><button type="button" data-s="s2" aria-pressed="false">Sesión 2</button><button type="button" data-s="s3" aria-pressed="false">Sesión 3</button><button type="button" data-s="s4" aria-pressed="false">Sesión 4</button></div>
-      <p class="rescate-estado" aria-live="polite"></p>
-      <p><strong>2.</strong> Abre una terminal en la carpeta donde guardas tus proyectos (no dentro de otro proyecto) y pega el comando. Crea la carpeta <code class="rescate-dir">cadena-de-frio-s1</code> con el proyecto y lo convierte en tu repositorio local.</p>
-      <div class="code"><div class="code-head"><span class="code-file">Terminal · Windows (PowerShell)</span><button class="copy" type="button">Copiar</button></div><pre class="rescate-win"></pre></div>
-      <details><summary>En macOS</summary><div class="code"><div class="code-head"><span class="code-file">Terminal · macOS</span><button class="copy" type="button">Copiar</button></div><pre class="rescate-mac"></pre></div></details>
-      <p><strong>3.</strong> Entra en la carpeta y arranca Claude Code desde ahí: <code class="rescate-cd">cd cadena-de-frio-s1</code>.</p>
-      <div class="mano"><strong>A mano, y por qué</strong><p>Claude Code se arranca dentro de la carpeta del proyecto, y aquí todavía no la tienes. Además, el comando copia los ficheros tal cual, sin que nadie los reescriba.</p></div>
+    <div class="intro">
       <p>Tu versión no tiene que ser igual a nadie: Claude no escribe dos veces el mismo código. Lo que importa es que funcione y que sepas por qué.</p>
       <p>Necesitas Node.js 22 o superior y Git, que aquí solo se usa en local, como punto de guardado del proyecto: no hace falta GitHub. No hay dependencias que instalar.</p>
       <p><strong>Cómo usar esta guía:</strong> casi todo se le pide a Claude, con la petición que verás en cada paso. Debajo, plegado, tienes cómo debería quedar el fichero, para comparar. Solo se hace a mano lo que tiene un motivo, y en esos casos se explica cuál.</p>
@@ -175,7 +156,7 @@ sirva en http://localhost:3000. No toques docs/especificacion.md.
 Hecho cuando: npm start arranca la app y los dos ejemplos de «Comportamiento
 esperado» dan exactamente ese estado.
 
-Entrega: la lista de ficheros creados y cómo has comprobado los ejemplos.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm start</code> y abre http://localhost:3000.</li><li>Da de alta una nevera de 2 a 8 °C: 5,1 °C sale en rango y 9,3 °C fuera de rango, por encima.</li><li>Da de alta un congelador de −25 a −15 °C: −20,5 °C sale en rango y −12 °C por encima.</li><li>Recarga la página: los datos siguen ahí.</li></ul></div><p class="note">Si no te da tiempo, no pasa nada: termínalo en casa. Si aun así no llegas, al empezar la sesión 2 tendrás el punto de partida para descargar (mira «Si te quedas atrás», arriba).</p></div></li><li class="step" id="s1-4"><div class="step-head"><span class="n">4</span><h3>CLAUDE.md</h3><a class="diapo" href="diapositivas/sesion-1.html#35" target="diapositivas">Diapositiva 35 ↗</a><span class="when">Actividad «Tu primer CLAUDE.md»</span></div><div class="step-body"><p>Lanza <code>/init</code>, lee el permiso y recorta lo que no pase la pregunta «si lo quito, ¿se equivocaría?». Después añade las secciones que <code>/init</code> no puede deducir. Puedes escribirlas tú en el editor o pedírselas a Claude: lo importante es que el contenido lo decides tú.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a CLAUDE.md estas secciones, cortas:
+Entrega: la lista de ficheros creados y cómo has comprobado los ejemplos.</pre></div><div class="check"><strong>Compruébalo</strong><ul><li><code>npm start</code> y abre http://localhost:3000.</li><li>Da de alta una nevera de 2 a 8 °C: 5,1 °C sale en rango y 9,3 °C fuera de rango, por encima.</li><li>Da de alta un congelador de −25 a −15 °C: −20,5 °C sale en rango y −12 °C por encima.</li><li>Recarga la página: los datos siguen ahí.</li></ul></div><p class="note">Si no te da tiempo, no pasa nada: termínalo en casa.</p></div></li><li class="step" id="s1-4"><div class="step-head"><span class="n">4</span><h3>CLAUDE.md</h3><a class="diapo" href="diapositivas/sesion-1.html#35" target="diapositivas">Diapositiva 35 ↗</a><span class="when">Actividad «Tu primer CLAUDE.md»</span></div><div class="step-body"><p>Lanza <code>/init</code>, lee el permiso y recorta lo que no pase la pregunta «si lo quito, ¿se equivocaría?». Después añade las secciones que <code>/init</code> no puede deducir. Puedes escribirlas tú en el editor o pedírselas a Claude: lo importante es que el contenido lo decides tú.</p><div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Añade a CLAUDE.md estas secciones, cortas:
 - «No tocar»: docs/especificacion.md (la cambia una persona; si crees que hay que
   cambiarla, dilo) y no añadir dependencias de npm sin preguntar.
 - «Convenciones»: código y nombres en español, nada de datos de pacientes (solo
@@ -488,31 +469,6 @@ document.addEventListener("click", function (e) {
   var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); reset("Seleccionado: Ctrl+C"); };
   try { navigator.clipboard.writeText(pre.innerText).then(function () { reset("Copiado"); }, fallback); } catch (err) { fallback(); }
 });
-</script>
-<script>
-(function () {
-  // Punto de partida: el JSON lo publica herramientas\preparar-sesion-N en rescate/ de esta web.
-  var caja = document.getElementById("rescate"); if (!caja) return;
-  function pinta(et) {
-    var url = new URL("rescate/cadena-de-frio-" + et + ".json", location.href).href;
-    var dir = "cadena-de-frio-" + et;
-    caja.querySelector(".rescate-win").textContent =
-      "$d = '" + dir + "'; $f = irm '" + url + "'; foreach ($p in $f.PSObject.Properties) { $r = Join-Path $d $p.Name; New-Item -Force -ItemType File $r | Out-Null; [IO.File]::WriteAllBytes((Resolve-Path $r).Path, [Convert]::FromBase64String($p.Value)) }; git -C $d init -q; git -C $d add -A; git -C $d commit -q -m 'Punto de partida'; Get-ChildItem $d";
-    caja.querySelector(".rescate-mac").textContent =
-      "curl -fsSL '" + url + "' | node -e \"let t='';process.stdin.on('data',c=>t+=c).on('end',()=>{const fs=require('fs'),p=require('path');for(const[n,b]of Object.entries(JSON.parse(t))){const r=p.join('" + dir + "',n);fs.mkdirSync(p.dirname(r),{recursive:true});fs.writeFileSync(r,Buffer.from(b,'base64'))}})\" && git -C " + dir + " init -q && git -C " + dir + " add -A && git -C " + dir + " commit -q -m 'Punto de partida' && ls " + dir;
-    caja.querySelectorAll(".rescate-dir").forEach(function (c) { c.textContent = dir; });
-    caja.querySelector(".rescate-cd").textContent = "cd " + dir;
-    caja.querySelectorAll(".rescate-ses button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.s === et ? "true" : "false"); });
-    var estado = caja.querySelector(".rescate-estado"); estado.textContent = ""; estado.className = "rescate-estado";
-    if (location.protocol.indexOf("http") !== 0 || !window.fetch) return;
-    fetch(url, { method: "HEAD", cache: "no-store" }).then(function (r) {
-      estado.textContent = r.ok ? "Disponible." : "Todavía no está publicado. Avisa al profesor.";
-      estado.className = "rescate-estado " + (r.ok ? "ok" : "no");
-    }, function () {});
-  }
-  caja.addEventListener("click", function (e) { var b = e.target.closest(".rescate-ses button"); if (b) pinta(b.dataset.s); });
-  pinta("s1");
-})();
 </script>
 </body>
 </html>

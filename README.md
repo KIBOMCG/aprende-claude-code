@@ -27,10 +27,3 @@ El progreso de cada persona se guarda en su propio navegador (`localStorage`).
 
 En el móvil hace falta https para instalar la app, así que la de cada asistente no se instala ahí. La del profesor sí: `herramientas\publicar-app.cmd` copia lo que ve el navegador de su `cadena-de-frio` del Escritorio (sin `servidor.js`, `.env`, tests ni `.claude`) a `app/` y publica la web. Se lanza durante la sesión 4 (13:45), nunca antes: es la solución. En la web no hay avisos a Teams.
 
-## Puntos de partida (`rescate/`)
-
-La guía del proyecto (`proyecto.html`, «Si te quedas atrás») da a cada asistente un comando que descarga el proyecto tal como quedó al final de una sesión. Sale de `rescate/cadena-de-frio-sN.json`. Así no hay que mandar zips por correo ni adjuntos por Teams, que la empresa puede bloquear.
-
-- Esos ficheros los genera `herramientas\preparar-sesion-N` a partir de la versión de referencia: el de la sesión anterior, nunca el de la que se va a dar.
-- Los sube `herramientas\publicar-web` junto con el resto de la web, antes de la sesión (mejor el día antes). En la guía, esa parte tiene que decir «Disponible».
-- Son las soluciones de las sesiones ya hechas: no subas ninguno antes de tiempo.
