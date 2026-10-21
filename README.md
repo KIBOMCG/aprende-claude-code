@@ -11,6 +11,7 @@ Todas las páginas comparten la misma barra: Inicio · Instalación · Proyecto 
 - `index.html`: el curso interactivo (lecciones, reto final y referencia).
 - `instalacion.html`: la guía de instalación. Es copia de `echevarne/guia-instalacion.html`: si cambias una, copia la otra.
 - `proyecto.html`: la guía del proyecto Cadena de frío. La genera `guion-locucion/fuente/build_proyecto.py`. Cada paso al que enlaza una diapositiva lleva el enlace de vuelta a esa diapositiva («Diapositiva 20 ↗»): se calcula solo, leyendo las diapositivas.
+- `entorno.html`: «Vuestro entorno», desde la sesión 4: las opciones para que Claude trabaje con el código de los asistentes (ficheros o IRIS) y las peticiones listas para pegar. Las diapositivas de la sesión 4 enlazan a sus pasos. Se escribe a mano.
 - `diapositivas/`: la crea `publicar-web` (no está en esta carpeta). `index.html` lista todas las diapositivas de cada sesión, para abrir cualquiera con un clic (`sesion-1.html#20`); lo genera `herramientas/indice-diapositivas.mjs`. En las diapositivas, el botón «Índice» de la barra de abajo vuelve aquí.
 
 Los enlaces de las diapositivas a la guía se abren siempre en la misma pestaña («guia») y los de la guía a las diapositivas en otra («diapositivas»): con dos pestañas vas y vuelves sin acumular ventanas. Solo carga las fuentes de Google Fonts y, si no están disponibles, usa fuentes del sistema.

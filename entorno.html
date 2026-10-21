@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vuestro entorno · Aprende Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+[hidden] { display: none !important; }
+:root {
+  --bg: #f3f6f6; --surface: #ffffff; --sunken: #e8efee; --text: #14211f; --muted: #4f5f5c; --line: #d3dedc;
+  --accent: #176b68; --accent-strong: #0d4f4d; --accent-soft: #dcf1ee; --amber: #a85a0c; --amber-soft: #fbeedd;
+  --ok: #1d7a3e; --ok-soft: #e1f4e7; --code-bg: #10201e; --code-fg: #d9efe9; --code-dim: #8fb3ab;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "SF Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1716; --surface: #152220; --sunken: #1b2b29; --text: #e6efed; --muted: #a3b6b2; --line: #2c403d;
+    --accent: #4fc2b8; --accent-strong: #8fded6; --accent-soft: #173a37; --amber: #f0a65a; --amber-soft: #3a2a17;
+    --ok: #6fd28f; --ok-soft: #173323; --code-bg: #08110f; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 18px; line-height: 1.62; }
+a { color: var(--accent-strong); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.7rem); font-weight: 800; }
+h2 { font-size: 1.7rem; font-weight: 800; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 6px; border-radius: 5px; overflow-wrap: anywhere; }
+kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 900px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 16px; padding: 6px 11px; border-radius: 8px; }
+.nav a:hover { background: var(--sunken); color: var(--text); }
+.nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-strong); }
+.subnav { flex-basis: 100%; display: flex; gap: 4px 14px; flex-wrap: wrap; align-items: baseline; font-size: 16px; padding-top: 6px; border-top: 1px solid var(--line); }
+.subnav span { color: var(--muted); }
+.subnav a { font-weight: 600; color: var(--accent-strong); text-decoration: none; }
+.subnav a:hover { text-decoration: underline; }
+.step-head .diapo { font-size: 15px; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
+.step, .rescate { scroll-margin-top: 130px; }
+.diapos { margin: 0 0 14px; } .diapos .diapo { margin-right: 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
+main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
+.hero { display: grid; gap: 14px; }
+.eyebrow { font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 66ch; }
+.app { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.app div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+.app strong { font-family: var(--font-display); color: var(--accent-strong); }
+.app span { font-size: 15px; color: var(--muted); }
+.sesion { display: grid; gap: 14px; scroll-margin-top: 130px; }
+.steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.step-head { display: flex; gap: 12px; align-items: center; padding: 12px 18px; background: var(--sunken); flex-wrap: wrap; }
+.step-head .n { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-weight: 700; flex: none; }
+.step-head h3 { flex: 1; min-width: 12ch; }
+.when { font-size: 15px; color: var(--muted); }
+.step-body { padding: 14px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.code { background: var(--code-bg); color: var(--code-fg); border-radius: 10px; min-width: 0; }
+.code-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px 0 16px; }
+.code-file { font-family: var(--font-mono); font-size: 14px; color: var(--code-dim); overflow-wrap: anywhere; }
+.copy { font: inherit; font-size: 14px; font-weight: 700; background: transparent; color: var(--code-fg); border: 1px solid var(--code-dim); border-radius: 7px; padding: 3px 10px; cursor: pointer; flex: none; }
+.code pre { margin: 0; padding: 10px 16px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 15px; line-height: 1.55; }
+.check { background: var(--ok-soft); border-radius: 10px; padding: 10px 16px; }
+.check strong { color: var(--ok); }
+.check ul { margin: 4px 0 0; padding-left: 22px; display: grid; gap: 4px; }
+.note { background: var(--amber-soft); border-radius: 10px; padding: 10px 16px; }
+.queda { border: 1px dashed var(--line); border-radius: 10px; padding: 8px 14px; }
+.queda summary { cursor: pointer; color: var(--muted); font-size: 16px; }
+.queda[open] summary { margin-bottom: 10px; }
+.mano { background: var(--sunken); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 16px; display: grid; gap: 4px; }
+.mano strong { color: var(--accent-strong); }
+.rescate { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 8px; }
+.rescate-ses { display: flex; flex-wrap: wrap; gap: 8px; }
+.rescate-ses button { font: inherit; font-size: 16px; font-weight: 700; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+.rescate-ses button[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: transparent; }
+.rescate-estado { font-size: 15px; margin: 0; }
+.rescate-estado.ok { color: var(--ok); } .rescate-estado.no { color: var(--amber); font-weight: 700; }
+.rescate details summary { cursor: pointer; font-weight: 700; }
+.rescate pre { white-space: pre-wrap; word-break: break-all; }
+@media (max-width: 700px) { .topbar { position: static; } .step, .rescate, .sesion { scroll-margin-top: 16px; } .app { grid-template-columns: repeat(2, minmax(0, 1fr)); } body { font-size: 17px; } .code pre { font-size: 14px; } }
+.caminos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.caminos div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; }
+.caminos strong { font-family: var(--font-display); color: var(--accent-strong); }
+.caminos span { font-size: 16px; color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+.tabla { width: 100%; border-collapse: collapse; font-size: 16px; }
+.tabla th { text-align: left; background: var(--accent-soft); color: var(--accent-strong); padding: 8px 12px; }
+.tabla td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.rec { display: inline-block; font-size: 14px; font-weight: 700; color: var(--ok); }
+.pasitos { margin: 0; padding-left: 24px; display: grid; gap: 4px; }
+.sources ul { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+@media (max-width: 700px) { .caminos { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+  <a class="brand" href="index.html">Aprende Claude Code</a>
+  <nav class="nav" aria-label="Secciones"><a href="index.html">Inicio</a><a href="instalacion.html">Instalación</a><a href="proyecto.html">Proyecto</a><a href="entorno.html" aria-current="page">Vuestro entorno</a><a href="diapositivas/">Diapositivas</a><a href="index.html#reto">Reto final</a><a href="index.html#referencia">Referencia</a></nav>
+  <nav class="subnav" aria-label="En esta guía"><span>En esta guía:</span><a href="#ajustes">Ajustes</a><a href="#ver">Ver el código</a><a href="#explorar">Explorar</a><a href="#claude-md">CLAUDE.md</a><a href="#comprobar">Comprobarse</a><a href="#produccion">Producción</a><a href="#regla">Reglas</a><a href="#fuentes">Fuentes</a></nav>
+</div></header>
+<main>
+<section class="hero">
+  <p class="eyebrow">Sesión 4 · en adelante</p>
+  <h1>Vuestro entorno</h1>
+  <p class="lead">Peticiones listas para pegar en <strong>vuestro</strong> Claude Code, en vuestro equipo. En cada paso, Claude os pregunta lo que necesita de vuestro entorno y os guía; vosotros decidís. Debajo de cada petición, por si queréis saber más, las opciones que ya están averiguadas.</p>
+  <p class="diapos"><a href="diapositivas/sesion-4.html" target="diapositivas">Diapositivas de la sesión 4 ↗</a></p>
+  <div class="caminos">
+    <div><strong>Código en ficheros</strong><span>Un repositorio en tu equipo. Sigue los pasos marcados «Ficheros».</span></div>
+    <div><strong>Código en IRIS</strong><span>Clases y rutinas dentro de la base de datos. Sigue los pasos marcados «IRIS».</span></div>
+  </div>
+  <p class="note">Lo que aparece entre <code>&lt; &gt;</code> lo cambias tú antes de pegarlo. Lo de IRIS está sacado de la documentación oficial de InterSystems y no se ha probado contra vuestro servidor: si algo no cuadra, pídele a Claude que lo ajuste y enséñale el error.</p>
+</section>
+
+<section class="sesion" id="ajustes">
+  <p class="eyebrow">Para todo</p>
+  <h2>Ajustes y flujos que recomienda Anthropic</h2>
+  <ol class="steps">
+    <li class="step" id="effort"><div class="step-head"><span class="n">1</span><h3>El esfuerzo: déjalo en medio</h3><a class="diapo" href="diapositivas/sesion-4.html#7" target="diapositivas">Diapositiva 7 ↗</a></div><div class="step-body">
+      <p>Cuánto piensa Claude antes de actuar. <code>medium</code> es el valor por defecto en los modelos actuales y sirve para casi todo. Para un turno difícil, no cambies el ajuste: escribe <code>ultrathink</code> en la petición.</p>
+      <div class="code"><div class="code-head"><span class="code-file">En Claude Code</span><button class="copy" type="button">Copiar</button></div><pre>/effort</pre></div>
+      <table class="tabla"><tr><th>Nivel</th><th>Para qué</th></tr><tr><td><code>low</code></td><td>Preguntas rápidas, renombrar</td></tr><tr><td><code>medium</code></td><td>Lo normal</td></tr><tr><td><code>high</code> · <code>xhigh</code></td><td>Cuando importa comprobar: un error difícil</td></tr><tr><td><code>max</code></td><td>Problemas muy difíciles; tiende a pensar de más</td></tr></table>
+    </div></li>
+    <li class="step" id="goal"><div class="step-head"><span class="n">2</span><h3>Que no pare hasta cumplirlo: <code>/goal</code></h3><a class="diapo" href="diapositivas/sesion-4.html#9" target="diapositivas">Diapositiva 9 ↗</a></div><div class="step-body">
+      <p>Después de cada turno, un modelo pequeño lee <strong>la conversación</strong> y decide si se cumple. No ejecuta nada: la condición tiene que verse en la conversación (una nota, la salida de un comando). Y ponle siempre un tope.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Mejorar con usuarios simulados</span><button class="copy" type="button">Copiar</button></div><pre>/goal Despacha 3 subagentes que actúen como usuarios de perfiles distintos:
+&lt;perfil 1&gt;, &lt;perfil 2&gt; y &lt;perfil 3&gt;. Cada uno revisa la aplicación como si la
+usara, la puntúa de 1 a 10 con los mismos criterios (claridad, rapidez para su
+tarea, errores) y propone los 3 cambios que más la mejorarían. Escribe la nota
+media inicial. Después, haz pases de mejora: aplica los cambios más repetidos,
+comprueba que los tests siguen pasando y vuelve a puntuar con subagentes nuevos.
+Escribe la nota de cada pase. Termina cuando la media haya subido al menos
+1 punto sobre la inicial, o tras 10 pases.</pre></div>
+      <p class="note">Las notas las pone el propio Claude: sirven para orientar, no como medida exacta. Por eso los <strong>mismos criterios</strong> en cada pase, <strong>subagentes nuevos</strong> cada vez (que no recuerden la nota anterior) y los <strong>tests en verde</strong>. Haz un commit antes de empezar: si no te gusta el resultado, vuelves atrás.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Más corto: que compile o que pase</span><button class="copy" type="button">Copiar</button></div><pre>/goal &lt;el cambio&gt; está hecho, &lt;compila / los tests pasan&gt; y me enseñas la
+salida. O para tras 10 turnos.</pre></div>
+      <p><code>/goal</code> sola enseña el estado; <code>/goal clear</code> lo quita.</p>
+    </div></li>
+    <li class="step" id="orquestador"><div class="step-head"><span class="n">3</span><h3>Claude como orquestador</h3><a class="diapo" href="diapositivas/sesion-4.html#10" target="diapositivas">Diapositiva 10 ↗</a></div><div class="step-body">
+      <p>El hilo principal reparte el trabajo entre subagentes, cada uno con su contexto, y solo recibe las conclusiones. Tu conversación no se llena.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Usa subagentes en paralelo para investigar &lt;tema 1&gt;, &lt;tema 2&gt; y &lt;tema 3&gt;.
+Dame solo un resumen de cada uno, con los ficheros o clases clave. No cambies nada.</pre></div>
+    </div></li>
+    <li class="step" id="contexto"><div class="step-head"><span class="n">4</span><h3>Cuida el contexto</h3><a class="diapo" href="diapositivas/sesion-4.html#11" target="diapositivas">Diapositiva 11 ↗</a></div><div class="step-body">
+      <table class="tabla"><tr><td><code>/clear</code></td><td>Entre tareas que no tienen nada que ver</td></tr><tr><td><code>/btw</code></td><td>Una pregunta al margen que no se queda en el historial</td></tr><tr><td><kbd>Esc</kbd></td><td>Corregir en cuanto se desvía; <kbd>Esc</kbd> <kbd>Esc</kbd> o <code>/rewind</code> para volver atrás</td></tr><tr><td><code>/context</code></td><td>Ver qué ocupa el contexto</td></tr></table>
+      <p>Si lo has corregido dos veces y sigue mal: <code>/clear</code> y una petición mejor.</p>
+    </div></li>
+    <li class="step" id="plan"><div class="step-head"><span class="n">5</span><h3>Un buen plan, aunque no seas experto</h3><a class="diapo" href="diapositivas/sesion-4.html#12" target="diapositivas">Diapositiva 12 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Que te entreviste</span><button class="copy" type="button">Copiar</button></div><pre>Quiero &lt;lo que quieres hacer&gt;. Antes de proponer nada, hazme preguntas, una a una,
+sobre lo que no esté claro: casos límite, datos que ya existen, cómo se comprueba.
+Cuando acabes, escribe la especificación en docs/especificacion.md.</pre></div>
+      <div class="code"><div class="code-head"><span class="code-file">Que otro revise el plan</span><button class="copy" type="button">Copiar</button></div><pre>Revisa el plan de &lt;fichero del plan&gt; con un subagente, como lo haría un experto
+en &lt;ObjectScript / React / …&gt;. ¿Qué falta, qué sobra y qué puede salir mal?
+No cambies el plan: dame la lista.</pre></div>
+      <p>Implementa después en una sesión nueva (<code>/clear</code>): el plan está en un fichero.</p>
+    </div></li>
+    <li class="step" id="revisar"><div class="step-head"><span class="n">6</span><h3>Revisar con ojos limpios</h3><a class="diapo" href="diapositivas/sesion-4.html#13" target="diapositivas">Diapositiva 13 ↗</a></div><div class="step-body">
+      <table class="tabla"><tr><td><code>/code-review</code></td><td>Busca errores en tus cambios. Con <code>low</code>, menos falsos avisos; con <code>--fix</code>, los arregla</td></tr><tr><td><code>/simplify</code></td><td>Limpieza del código. No busca errores</td></tr><tr><td><code>/security-review</code></td><td>Solo con un repositorio con remoto <code>origin</code></td></tr></table>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Revisa mis cambios de hoy con un subagente que no haya visto esta conversación.
+Que compruebe el CLAUDE.md y las reglas, y que termine con una línea:
+«Se puede integrar» o «Hay que cambiar algo», y por qué.</pre></div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="ver">
+  <p class="eyebrow">Paso 1</p>
+  <h2>Que Claude vea el código</h2>
+  <ol class="steps">
+    <li class="step" id="ver-ficheros"><div class="step-head"><span class="n">F</span><h3>Ficheros: abre la carpeta</h3><a class="diapo" href="diapositivas/sesion-4.html#16" target="diapositivas">Diapositiva 16 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">PowerShell</span><button class="copy" type="button">Copiar</button></div><pre>cd &lt;carpeta de tu proyecto&gt;; claude</pre></div>
+    </div></li>
+    <li class="step" id="ver-iris"><div class="step-head"><span class="n">I</span><h3>IRIS: elige cómo</h3><a class="diapo" href="diapositivas/sesion-4.html#16" target="diapositivas">Diapositiva 16 ↗</a></div><div class="step-body">
+      <p>Claude trabaja con ficheros y con la terminal. Si el código está dentro del servidor, primero hay que acercárselo. Que te guíe él:</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · en una carpeta nueva y vacía</span><button class="copy" type="button">Copiar</button></div><pre>Trabajo con InterSystems IRIS: el código de &lt;la zona&gt; está dentro del servidor,
+no en ficheros. Quiero que puedas leerlo. Guíame paso a paso, una cosa cada vez,
+para tenerlo en una carpeta de este equipo, con la extensión de VS Code que ya
+uso. Antes de nada, pregúntame lo que necesites saber de mi entorno. Asegúrate
+conmigo de que nada se sube al servidor sin que yo quiera. No cambies nada en
+el servidor.</pre></div>
+      <p>¿Te atascas? Pégale a Claude lo que te sale y pregúntale qué significa y qué haces.</p>
+      <details class="queda"><summary>Para saber más: las opciones que hay y cómo se exporta</summary>
+<p>Claude trabaja con ficheros y con la terminal. El código de IRIS está dentro de la base de datos, así que hay que acercárselo. Estas son las opciones:</p>
+      <div class="tablewrap"><table class="tabla"><tr><th>Opción</th><th>Para qué</th><th>Qué hace falta</th></tr>
+        <tr><td><strong>1. Exportar con VS Code</strong><br><span class="rec">Para empezar</span></td><td>Leer y explorar</td><td>La extensión InterSystems ObjectScript, que ya usáis</td></tr>
+        <tr><td><strong>2. API REST de IRIS</strong> (Atelier)<br><span class="rec">Para trabajar</span></td><td>Leer, guardar y compilar desde la terminal</td><td>Usuario con <code>%Development</code> y la aplicación <code>/api/atelier</code> habilitada (si VS Code os funciona, lo está)</td></tr>
+        <tr><td>3. Exportar desde el terminal de IRIS</td><td>Leer, si no tienes VS Code</td><td><code>$SYSTEM.OBJ.ExportUDL</code>, una clase cada vez</td></tr>
+        <tr><td>4. Un servidor MCP</td><td>Lo mismo que la 2, como herramientas de Claude</td><td>Los que hay son de la comunidad, sin soporte de InterSystems. Solo si la 2 se queda corta</td></tr>
+        <tr><td>5. Que Claude maneje la pantalla</td><td>—</td><td>Existe, pero es lento, frágil y difícil de controlar. No lo recomendamos para esto</td></tr>
+      </table></div>
+      <p><strong>Exportar con VS Code (opción 1):</strong></p>
+      <ol class="pasitos">
+        <li>Crea una carpeta nueva y ábrela en VS Code, con vuestra conexión de siempre.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <strong>ObjectScript: Export Code from Server</strong> → elige las clases de tu zona.</li>
+        <li>Quedan en <code>src/</code>, una carpeta por paquete (<code>src/Paquete/Clase.cls</code>).</li>
+        <li>En esa carpeta, en la terminal: <code>claude</code></li>
+      </ol>
+      <p class="note"><strong>Cuidado:</strong> en una carpeta conectada, al <strong>guardar</strong> un fichero en VS Code la extensión lo sube al servidor y lo compila (<code>objectscript.compileOnSave</code>, activado por defecto). Para explorar, no edites: usa plan mode.</p>
+    </details>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="explorar">
+  <p class="eyebrow">Paso 2</p>
+  <h2>Explorar antes de tocar</h2>
+  <ol class="steps">
+    <li class="step" id="explorar-zona"><div class="step-head"><span class="n">1</span><h3>Pregunta antes de pedir</h3><a class="diapo" href="diapositivas/sesion-4.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Voy a trabajar en &lt;la zona&gt;. Explícame qué hace y en qué orden, qué
+ficheros o clases intervienen, qué palabras tendría que conocer, cómo se compila
+y cómo se prueba, y qué puede salir mal. Dame archivo y línea de lo que afirmes.
+No cambies nada.</pre></div>
+      <div class="code"><div class="code-head"><span class="code-file">Para contrastar</span><button class="copy" type="button">Copiar</button></div><pre>¿Cómo lo compruebo yo, sin fiarme de ti? ¿Y dónde lo dice la documentación
+oficial? Dame los enlaces.</pre></div>
+      <p>¿Repositorio o carpeta grande? Usa el <a href="#orquestador">orquestador</a>: subagentes en paralelo, uno por zona.</p>
+    </div></li>
+    <li class="step" id="descubrimiento"><div class="step-head"><span class="n">2</span><h3>Guárdalo en un fichero</h3><a class="diapo" href="diapositivas/sesion-4.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Guarda lo que hemos visto en docs/descubrimiento.md: cómo funciona, palabras
+clave, cómo se compila y se prueba, riesgos y lo que no has podido comprobar.</pre></div>
+      <div class="check"><strong>Compruébalo</strong><ul><li>Hay una sección de riesgos con algo concreto, no generalidades.</li><li>Dice cómo se compila y se prueba, o que no lo sabe.</li><li>Añade tú lo que sepas y Claude no: es tu fichero.</li></ul></div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="claude-md">
+  <p class="eyebrow">Paso 3</p>
+  <h2>El <code>CLAUDE.md</code> de vuestro stack</h2>
+  <ol class="steps">
+    <li class="step" id="init"><div class="step-head"><span class="n">1</span><h3><code>/init</code> lo arranca, tú lo terminas</h3><a class="diapo" href="diapositivas/sesion-4.html#22" target="diapositivas">Diapositiva 22 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/init</pre></div>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude, después</span><button class="copy" type="button">Copiar</button></div><pre>Completa el CLAUDE.md con lo que no puedes adivinar. Hazme preguntas, una a una,
+sobre: cómo se compila, cómo se prueban los cambios, en qué entorno o namespace
+se desarrolla, nuestras convenciones y qué no se puede tocar. Mantenlo corto:
+lo de cada zona irá en .claude/rules/.</pre></div>
+      <details class="queda"><summary>Así debería quedar, más o menos · <code>CLAUDE.md</code> (IRIS)</summary><div class="code"><div class="code-head"><span class="code-file">CLAUDE.md</span><button class="copy" type="button">Copiar</button></div><pre># &lt;Nombre de la aplicación&gt;
+
+&lt;Qué hace, en dos líneas.&gt;
+
+## Dónde está el código
+- Clases exportadas en src/ (una carpeta por paquete). La versión que vale es la
+  del servidor: exporta de nuevo antes de empezar.
+- Namespace de desarrollo: &lt;NAMESPACE&gt;. Nunca trabajes en &lt;producción&gt;.
+
+## Comandos
+- Compilar una clase: &lt;cómo, cuando esté resuelto&gt;
+- Tests: &lt;cómo, cuando esté resuelto&gt;
+
+## Convenciones
+- &lt;nombres, paquetes, estilo&gt;
+
+## No tocar
+- &lt;paquetes, clases o globales que no se cambian&gt;
+- Credenciales: solo de las variables de entorno IRIS_USER e IRIS_PASS.
+  Nunca en ficheros, ni en la salida.
+
+## Verificación antes de dar algo por terminado
+1. Compila y enseña la respuesta.
+2. Lanza los tests y enseña la salida.
+3. Di qué no has podido verificar.</pre></div></details>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="comprobar">
+  <p class="eyebrow">Paso 4</p>
+  <h2>Que Claude compile y pruebe solo</h2>
+  <p>Es el consejo número uno de Anthropic: si Claude puede comprobar su trabajo, arregla él sus errores. Si no, los compruebas tú cada vez.</p>
+  <ol class="steps">
+    <li class="step" id="comprobar-ficheros"><div class="step-head"><span class="n">F</span><h3>Ficheros: vuestros comandos</h3><a class="diapo" href="diapositivas/sesion-4.html#26" target="diapositivas">Diapositiva 26 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>¿Cuáles son los comandos para compilar y para lanzar los tests de este proyecto
+(unitarios, de componentes, e2e)? Ejecútalos y enséñame la salida. Los que
+funcionen, ponlos en el CLAUDE.md, en una sección «Comandos». Si alguno necesita
+algo que no hay (un navegador, una base de datos), dímelo y no lo instales.</pre></div>
+    </div></li>
+    <li class="step" id="iris-guia"><div class="step-head"><span class="n">I</span><h3>IRIS: que Claude te guíe para compilar</h3><a class="diapo" href="diapositivas/sesion-4.html#23" target="diapositivas">Diapositiva 23 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Quiero que puedas compilar tú las clases de IRIS y leer los errores, desde la
+terminal y sin instalar nada: IRIS tiene una API REST (Atelier), la misma que usa
+VS Code. Guíame paso a paso y pregúntame lo que necesites de mi entorno, una cosa
+cada vez. Siempre en el entorno de desarrollo, nunca en producción. Las
+credenciales las pondré yo a mano en variables de entorno: dime cómo, pero no me
+pidas la contraseña ni la escribas en ningún fichero. Empieza por comprobar la
+conexión sin cambiar nada. Antes de compilar, pregúntame si el namespace es solo
+de desarrollo o lo compartimos con otros (o es producción): si no es solo de
+desarrollo, no compiles; quédate en leer y apunta en el CLAUDE.md que falta
+decidir dónde se compila. Si lo es, compila una clase que yo elija y enséñame la
+respuesta, y apunta en el CLAUDE.md cómo se compila.</pre></div>
+      <p>Los pasos siguientes son lo mismo, más detallado: úsalos si Claude se pierde o si quieres saber qué está haciendo.</p>
+    </div></li>
+    <li class="step" id="credenciales"><div class="step-head"><span class="n">I</span><h3>IRIS, más detalle: las credenciales, a mano</h3><a class="diapo" href="diapositivas/sesion-4.html#24" target="diapositivas">Diapositiva 24 ↗</a></div><div class="step-body">
+      <div class="mano"><strong>Esto, a mano y fuera de Claude</strong><span>Es un secreto: no se lo des a Claude ni lo escribas en un fichero del proyecto. Queda en tu usuario de Windows. Cierra la terminal y ábrela de nuevo antes de arrancar <code>claude</code>.</span></div>
+      <div class="code"><div class="code-head"><span class="code-file">PowerShell (cambia lo que va entre &lt; &gt;)</span><button class="copy" type="button">Copiar</button></div><pre>[Environment]::SetEnvironmentVariable("IRIS_URL", "https://&lt;servidor&gt;:&lt;puerto&gt;/api/atelier/v1/&lt;NAMESPACE_DESARROLLO&gt;", "User")
+[Environment]::SetEnvironmentVariable("IRIS_USER", "&lt;tu usuario&gt;", "User")
+[Environment]::SetEnvironmentVariable("IRIS_PASS", "&lt;tu contraseña&gt;", "User")</pre></div>
+      <p>La dirección es la misma que usa VS Code (servidor, puerto y, si lo hay, el prefijo), más <code>/api/atelier/v1/</code> y el namespace.</p>
+    </div></li>
+    <li class="step" id="api-probar"><div class="step-head"><span class="n">I</span><h3>IRIS, más detalle: probar la conexión y compilar</h3><a class="diapo" href="diapositivas/sesion-4.html#23" target="diapositivas">Diapositiva 23 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Usa la API REST de IRIS (Atelier) con Invoke-RestMethod y autenticación básica.
+La dirección del namespace de desarrollo está en la variable de entorno IRIS_URL,
+y el usuario y la contraseña en IRIS_USER e IRIS_PASS. Léelas del entorno y no
+enseñes nunca la contraseña.
+1. GET a la raíz de la API (IRIS_URL sin "/v1/&lt;namespace&gt;") para ver la versión
+   y los namespaces.
+2. Lista las clases del paquete &lt;Paquete&gt;: GET {IRIS_URL}/docnames/CLS
+3. Compila &lt;Paquete.Clase&gt;.cls: POST {IRIS_URL}/action/compile con el cuerpo
+   ["&lt;Paquete.Clase&gt;.cls"] en JSON, y enséñame la respuesta.
+No guardes ni cambies ninguna clase. Si algo falla, dime el código de error y
+qué significa.</pre></div>
+      <div class="tablewrap"><table class="tabla"><tr><th>Error</th><th>Lo más probable</th></tr>
+        <tr><td><code>401</code></td><td>Usuario o contraseña, o la terminal no ha cargado las variables: ábrela de nuevo</td></tr>
+        <tr><td><code>403</code></td><td>Al usuario le falta el recurso <code>%Development</code> (rol <code>%Developer</code>): quien administra IRIS</td></tr>
+        <tr><td><code>404</code></td><td>La dirección, o la aplicación web <code>/api/atelier</code> deshabilitada</td></tr>
+        <tr><td><code>409</code></td><td>Al guardar: alguien cambió la clase en el servidor desde que la leíste. No lo fuerces: vuelve a leerla</td></tr>
+      </table></div>
+    </div></li>
+    <li class="step" id="api-script"><div class="step-head"><span class="n">I</span><h3>IRIS: un script para el día a día</h3><a class="diapo" href="diapositivas/sesion-4.html#23" target="diapositivas">Diapositiva 23 ↗</a></div><div class="step-body">
+      <p>Cuando la conexión funcione, que Claude se escriba su propia herramienta. Así no tiene que acordarse de la API cada vez.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Escribe herramientas/iris.ps1 con tres órdenes, usando la API Atelier y las
+variables IRIS_URL, IRIS_USER e IRIS_PASS (nunca escribas la contraseña):
+- traer &lt;Clase&gt;: GET {IRIS_URL}/doc/&lt;Clase&gt;.cls y guárdala en src/ (una carpeta
+  por paquete). Guarda también la marca de tiempo que devuelve.
+- subir &lt;Clase&gt;: PUT {IRIS_URL}/doc/&lt;Clase&gt;.cls con el contenido del fichero.
+  Envía la marca de tiempo de la última lectura para que, si alguien la ha
+  cambiado en el servidor, falle con 409 en vez de pisarla. Nunca uses
+  ignoreConflict.
+- compilar &lt;Clase&gt;: POST {IRIS_URL}/action/compile y enseña los errores.
+Pruébalo con traer y compilar sobre &lt;una clase que no importe&gt;. No uses subir
+hasta que yo te lo diga. Después, explica en el CLAUDE.md cómo usarlo.</pre></div>
+      <p class="note">Antes de dejar que Claude <strong>suba</strong> cambios, comprobad con quien administra IRIS que los cambios que entran por la API quedan registrados en vuestro control de cambios, igual que los de VS Code.</p>
+    </div></li>
+    <li class="step" id="tests-iris"><div class="step-head"><span class="n">I</span><h3>IRIS: los tests</h3></div><div class="step-body">
+      <p>La API Atelier no tiene una orden para lanzar <code>%UnitTest</code>. Hay que decidir cómo con quien administra IRIS. Las opciones que conocemos (ninguna probada en el curso):</p>
+      <ul>
+        <li>Un método de clase que llame a <code>##class(%UnitTest.Manager).RunTest(...)</code>, expuesto como procedimiento SQL, que Claude llame con <code>POST {IRIS_URL}/action/query</code>.</li>
+        <li>Un pequeño servicio REST propio, solo en el namespace de desarrollo, que lance los tests y devuelva el resultado.</li>
+        <li>Mientras tanto: Claude compila, y los tests los lanzáis vosotros como hoy y le pegáis el resultado.</li>
+      </ul>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan En IRIS lanzamos los tests así: &lt;cómo lo hacéis hoy&gt;. Quiero que tú
+puedas lanzarlos y leer el resultado. La API Atelier no tiene una orden para
+%UnitTest. Compara estas opciones para nuestro caso, con sus riesgos:
+(a) un método que llame a %UnitTest.Manager.RunTest expuesto como procedimiento
+SQL y llamado con action/query; (b) un servicio REST propio en el namespace de
+desarrollo. Dame enlaces a la documentación oficial. No cambies nada.</pre></div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="produccion">
+  <p class="eyebrow">Paso 5</p>
+  <h2>Producción, fuera de su alcance</h2>
+  <ol class="steps">
+    <li class="step" id="deny"><div class="step-head"><span class="n">1</span><h3>Primero el usuario, después las reglas</h3><a class="diapo" href="diapositivas/sesion-4.html#24" target="diapositivas">Diapositiva 24 ↗</a></div><div class="step-body">
+      <p>La mejor protección no depende de Claude: si tu usuario no tiene permisos en producción, Claude tampoco. Las reglas <code>deny</code> o un hook, como en la sesión 2, son la segunda capa.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Ayúdame a que no puedas tocar producción. Pregúntame qué es producción en
+nuestro entorno (servidores, namespaces, carpetas). Dime primero qué permisos
+debería tener mi usuario, para pedírselo a quien administra. Después propón
+reglas deny en .claude/settings.json y, si no bastan, un hook. Explícame qué
+bloquea cada cosa y qué no.</pre></div>
+      <div class="check"><strong>Compruébalo</strong><ul><li>Pídele que haga una petición de solo lectura a producción: tiene que pararse.</li><li>Pregunta a quien administra IRIS qué permisos tiene tu usuario en cada namespace.</li></ul></div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="regla">
+  <p class="eyebrow">Paso 6</p>
+  <h2>Reglas por zona</h2>
+  <ol class="steps">
+    <li class="step" id="regla-zona"><div class="step-head"><span class="n">1</span><h3>Las trampas, por escrito</h3><a class="diapo" href="diapositivas/sesion-4.html#25" target="diapositivas">Diapositiva 25 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Con lo que hay en docs/descubrimiento.md, crea una regla en .claude/rules/ para
+&lt;la zona&gt;, con su cabecera paths. Solo las trampas que un experto sabría y yo
+no, y cómo se comprueba ahí. Nada de teoría general.</pre></div>
+      <details class="queda"><summary>Así debería quedar, más o menos · <code>.claude/rules/clases.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/rules/clases.md</span><button class="copy" type="button">Copiar</button></div><pre>---
+paths:
+  - "src/**/*.cls"
+---
+# Clases de ObjectScript
+- Después de cada cambio, compila y lee los errores (ver Comandos en CLAUDE.md).
+- Nunca en el namespace de producción.
+- Antes de cambiar una clase, tráela de nuevo del servidor: alguien puede
+  haberla cambiado.
+- &lt;la trampa que os haya salido al explorar&gt;</pre></div></details>
+      <p>Que la regla la revise alguien que conozca la zona: así lo que sabe queda por escrito para todo el equipo.</p>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion sources" id="fuentes">
+  <p class="eyebrow">Referencias</p>
+  <h2>Fuentes oficiales</h2>
+  <ul>
+    <li>Buenas prácticas de Claude Code: <a href="https://code.claude.com/docs/en/best-practices">code.claude.com/docs/en/best-practices</a></li>
+    <li>Esfuerzo y modelo: <a href="https://code.claude.com/docs/en/model-config">code.claude.com/docs/en/model-config</a> · <code>/goal</code>: <a href="https://code.claude.com/docs/en/goal">code.claude.com/docs/en/goal</a></li>
+    <li>Flujos habituales: <a href="https://code.claude.com/docs/en/common-workflows">code.claude.com/docs/en/common-workflows</a> · Subagentes: <a href="https://code.claude.com/docs/en/sub-agents">code.claude.com/docs/en/sub-agents</a></li>
+    <li>Memoria, <code>CLAUDE.md</code> y reglas: <a href="https://code.claude.com/docs/en/memory">code.claude.com/docs/en/memory</a> · Permisos: <a href="https://code.claude.com/docs/en/permissions">code.claude.com/docs/en/permissions</a></li>
+    <li><code>/code-review</code>: <a href="https://code.claude.com/docs/en/code-review-local">code.claude.com/docs/en/code-review-local</a></li>
+    <li>Extensión ObjectScript de VS Code: <a href="https://docs.intersystems.com/components/csp/docbook/DocBook.UI.Page.cls?KEY=GVSCO">docs.intersystems.com (GVSCO)</a> · <a href="https://github.com/intersystems-community/vscode-objectscript">github.com/intersystems-community/vscode-objectscript</a></li>
+    <li>API REST de IRIS (Atelier): <a href="https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=GSCF_ref">docs.intersystems.com (GSCF_ref)</a></li>
+    <li><code>%UnitTest.Manager</code>: <a href="https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&amp;CLASSNAME=%25UnitTest.Manager">docs.intersystems.com (Documatic)</a> · <code>$SYSTEM.OBJ</code>: <a href="https://docs.intersystems.com/irislatest/csp/documatic/%25CSP.Documatic.cls?LIBRARY=%25SYS&amp;CLASSNAME=%25SYSTEM.OBJ">docs.intersystems.com (Documatic)</a></li>
+  </ul>
+</section>
+</main>
+<script>
+document.addEventListener("click", function (e) {
+  var b = e.target.closest(".copy"); if (!b) return;
+  var pre = b.closest(".code").querySelector("pre");
+  var reset = function (t) { b.textContent = t; setTimeout(function () { b.textContent = "Copiar"; }, 1800); };
+  var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); reset("Seleccionado: Ctrl+C"); };
+  try { navigator.clipboard.writeText(pre.innerText).then(function () { reset("Copiado"); }, fallback); } catch (err) { fallback(); }
+});
+</script>
+</body>
+</html>
