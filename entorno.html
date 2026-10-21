@@ -171,7 +171,7 @@ Que compruebe el CLAUDE.md y las reglas, y que termine con una línea:
     </div></li>
     <li class="step" id="ver-iris"><div class="step-head"><span class="n">I</span><h3>IRIS: elige cómo</h3><a class="diapo" href="diapositivas/sesion-4.html#16" target="diapositivas">Diapositiva 16 ↗</a></div><div class="step-body">
       <p>Claude trabaja con ficheros y con la terminal. Si el código está dentro del servidor, primero hay que acercárselo. Que te guíe él:</p>
-      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · en una carpeta nueva y vacía</span><button class="copy" type="button">Copiar</button></div><pre>Trabajo con InterSystems IRIS: el código de &lt;la zona&gt; está dentro del servidor,
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude · en una carpeta nueva y vacía</span><button class="copy" type="button">Copiar</button></div><pre>Trabajo con InterSystems IRIS: el código de &lt;la parte en la que vas a trabajar, por ejemplo: la reserva de citas&gt; está dentro del servidor,
 no en ficheros. Quiero que puedas leerlo. Guíame paso a paso, una cosa cada vez,
 para tenerlo en una carpeta de este equipo, con la extensión de VS Code que ya
 uso. Antes de nada, pregúntame lo que necesites saber de mi entorno. Asegúrate
@@ -190,7 +190,7 @@ el servidor.</pre></div>
       <p><strong>Exportar con VS Code (opción 1):</strong></p>
       <ol class="pasitos">
         <li>Crea una carpeta nueva y ábrela en VS Code, con vuestra conexión de siempre.</li>
-        <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <strong>ObjectScript: Export Code from Server</strong> → elige las clases de tu zona.</li>
+        <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → <strong>ObjectScript: Export Code from Server</strong> → elige las clases de la parte en la que vas a trabajar.</li>
         <li>Quedan en <code>src/</code>, una carpeta por paquete (<code>src/Paquete/Clase.cls</code>).</li>
         <li>En esa carpeta, en la terminal: <code>claude</code></li>
       </ol>
@@ -204,14 +204,14 @@ el servidor.</pre></div>
   <p class="eyebrow">Paso 2</p>
   <h2>Explorar antes de tocar</h2>
   <ol class="steps">
-    <li class="step" id="explorar-zona"><div class="step-head"><span class="n">1</span><h3>Pregunta antes de pedir</h3><a class="diapo" href="diapositivas/sesion-4.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
-      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Voy a trabajar en &lt;la zona&gt;. Explícame qué hace y en qué orden, qué
+    <li class="step" id="explorar-parte"><div class="step-head"><span class="n">1</span><h3>Pregunta antes de pedir</h3><a class="diapo" href="diapositivas/sesion-4.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Voy a trabajar en &lt;una parte de la app, por ejemplo: la reserva de citas&gt;. Explícame qué hace y en qué orden, qué
 ficheros o clases intervienen, qué palabras tendría que conocer, cómo se compila
 y cómo se prueba, y qué puede salir mal. Dame archivo y línea de lo que afirmes.
 No cambies nada.</pre></div>
       <div class="code"><div class="code-head"><span class="code-file">Para contrastar</span><button class="copy" type="button">Copiar</button></div><pre>¿Cómo lo compruebo yo, sin fiarme de ti? ¿Y dónde lo dice la documentación
 oficial? Dame los enlaces.</pre></div>
-      <p>¿Repositorio o carpeta grande? Usa el <a href="#orquestador">orquestador</a>: subagentes en paralelo, uno por zona.</p>
+      <p>¿Repositorio o carpeta grande? Usa el <a href="#orquestador">orquestador</a>: subagentes en paralelo, uno por cada parte.</p>
     </div></li>
     <li class="step" id="descubrimiento"><div class="step-head"><span class="n">2</span><h3>Guárdalo en un fichero</h3><a class="diapo" href="diapositivas/sesion-4.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Guarda lo que hemos visto en docs/descubrimiento.md: cómo funciona, palabras
@@ -230,7 +230,7 @@ clave, cómo se compila y se prueba, riesgos y lo que no has podido comprobar.</
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude, después</span><button class="copy" type="button">Copiar</button></div><pre>Completa el CLAUDE.md con lo que no puedes adivinar. Hazme preguntas, una a una,
 sobre: cómo se compila, cómo se prueban los cambios, en qué entorno o namespace
 se desarrolla, nuestras convenciones y qué no se puede tocar. Mantenlo corto:
-lo de cada zona irá en .claude/rules/.</pre></div>
+lo de cada parte del código irá en .claude/rules/.</pre></div>
       <details class="queda"><summary>Así debería quedar, más o menos · <code>CLAUDE.md</code> (IRIS)</summary><div class="code"><div class="code-head"><span class="code-file">CLAUDE.md</span><button class="copy" type="button">Copiar</button></div><pre># &lt;Nombre de la aplicación&gt;
 
 &lt;Qué hace, en dos líneas.&gt;
@@ -361,12 +361,14 @@ bloquea cada cosa y qué no.</pre></div>
 
 <section class="sesion" id="regla">
   <p class="eyebrow">Paso 6</p>
-  <h2>Reglas por zona</h2>
+  <h2>Reglas para una parte del código</h2>
   <ol class="steps">
-    <li class="step" id="regla-zona"><div class="step-head"><span class="n">1</span><h3>Las trampas, por escrito</h3><a class="diapo" href="diapositivas/sesion-4.html#25" target="diapositivas">Diapositiva 25 ↗</a></div><div class="step-body">
+    <li class="step" id="regla-parte"><div class="step-head"><span class="n">1</span><h3>Las trampas, por escrito</h3><a class="diapo" href="diapositivas/sesion-4.html#25" target="diapositivas">Diapositiva 25 ↗</a></div><div class="step-body">
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Con lo que hay en docs/descubrimiento.md, crea una regla en .claude/rules/ para
-&lt;la zona&gt;, con su cabecera paths. Solo las trampas que un experto sabría y yo
-no, y cómo se comprueba ahí. Nada de teoría general.</pre></div>
+&lt;la parte en la que vas a trabajar&gt;, con una cabecera paths que diga a qué
+ficheros afecta, para que solo se cargue cuando trabajes en ellos. Solo las
+trampas que un experto sabría y yo no, y cómo se comprueba ahí. Nada de teoría
+general.</pre></div>
       <details class="queda"><summary>Así debería quedar, más o menos · <code>.claude/rules/clases.md</code></summary><div class="code"><div class="code-head"><span class="code-file">.claude/rules/clases.md</span><button class="copy" type="button">Copiar</button></div><pre>---
 paths:
   - "src/**/*.cls"
@@ -377,7 +379,7 @@ paths:
 - Antes de cambiar una clase, tráela de nuevo del servidor: alguien puede
   haberla cambiado.
 - &lt;la trampa que os haya salido al explorar&gt;</pre></div></details>
-      <p>Que la regla la revise alguien que conozca la zona: así lo que sabe queda por escrito para todo el equipo.</p>
+      <p>Que la regla la revise alguien que conozca esa parte: así lo que sabe queda por escrito para todo el equipo.</p>
     </div></li>
   </ol>
 </section>

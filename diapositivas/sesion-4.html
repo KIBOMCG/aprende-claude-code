@@ -172,7 +172,7 @@
     <div class="takeaway"><h3>Al terminar tendrás</h3>
       <ul>
         <li>Los ajustes y flujos que recomienda Anthropic</li>
-        <li>Un <code>docs/descubrimiento.md</code> de vuestra zona</li>
+        <li>Un <code>docs/descubrimiento.md</code> de la parte en la que vais a trabajar</li>
         <li>El <code>CLAUDE.md</code> de vuestro stack</li>
         <li>Claude compilando y probando <b>él solo</b>, o la lista de lo que falta</li>
       </ul>
@@ -312,7 +312,7 @@ incidencias. Dame solo un resumen de cada uno.</pre>
   <h2>Tres ajustes, en directo</h2>
   <ol class="steps">
     <li><code>/effort</code>: dónde lo tengo y cómo se cambia</li>
-    <li>Subagentes en paralelo: tres zonas, tres resúmenes</li>
+    <li>Subagentes en paralelo: tres partes de la app, tres resúmenes</li>
     <li><code>/goal</code>: tres usuarios simulados puntúan la app, y pases de mejora hasta subir un punto</li>
   </ol>
   <p class="muted">Fijaos en qué ve el evaluador del <code>/goal</code>: las notas, en la conversación.</p>
@@ -376,7 +376,7 @@ funciona, palabras clave, cómo se prueba y riesgos.</pre>
   <div class="actbar"><span>⚡ Actividad · Explorar vuestro entorno</span><span class="dur">15 min</span></div>
   <ol class="steps">
     <li>Abre Claude en tu código: el repositorio, o la carpeta exportada de IRIS</li>
-    <li>En plan mode, pregúntale por <b>la zona con la que vas a trabajar</b> (petición en el chat)</li>
+    <li>En plan mode, pregúntale por <b>la parte en la que vas a trabajar</b> (petición en el chat)</li>
     <li>Tres palabras nuevas, «¿qué puede salir mal?» y «¿cómo lo compruebo yo?»</li>
     <li>Guárdalo en <code>docs/descubrimiento.md</code></li>
   </ol>
@@ -400,7 +400,7 @@ funciona, palabras clave, cómo se prueba y riesgos.</pre>
     <tr><td><b>2</b></td><td>Claude <b>compila y prueba él solo</b>, y lee los errores</td></tr>
     <tr><td><b>3</b></td><td>Las credenciales, en variables de entorno</td></tr>
     <tr><td><b>4</b></td><td>Producción, fuera de su alcance</td></tr>
-    <tr><td><b>5</b></td><td>Reglas por zona, con las trampas de cada una</td></tr>
+    <tr><td><b>5</b></td><td>Reglas para cada parte del código, con sus trampas</td></tr>
   </table>
   <div class="note"><b>Lo que hoy no quede hecho</b> es lo primero de la sesión 5. Mejor saber qué falta que creer que está.</div>
 </section>
@@ -413,7 +413,7 @@ funciona, palabras clave, cómo se prueba y riesgos.</pre>
     <div class="card"><h3><code>/init</code> lo arranca</h3><p>Lee lo que hay y escribe un primer borrador.</p></div>
     <div class="card good"><h3>Vosotros lo termináis</h3><p>Cómo se compila y se prueba, el namespace de desarrollo, las convenciones, lo que no se toca.</p></div>
   </div>
-  <div class="note"><b>Corto:</b> lo que Claude necesita para trabajar con seguridad. Lo de cada zona, a las reglas.</div>
+  <div class="note"><b>Corto:</b> lo que Claude necesita para trabajar con seguridad. Lo de cada parte del código, a las reglas.</div>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/entorno.html#claude-md" target="guia">📖 Petición y ejemplo de CLAUDE.md, en la web</a></p>
 </section>
 
@@ -449,7 +449,7 @@ funciona, palabras clave, cómo se prueba y riesgos.</pre>
 
 <!-- 25 -->
 <section class="slide">
-  <p class="kicker">5 · Reglas por zona</p>
+  <p class="kicker">5 · Reglas para una parte del código</p>
   <h2>Lo que un experto sabe y tú no</h2>
 <pre style="font-size:25px">---
 paths:
@@ -459,7 +459,7 @@ paths:
 - Compila después de cada cambio y lee los errores.
 - Nunca en el namespace de producción.
 - &lt;la trampa que os haya salido al explorar&gt;</pre>
-  <p class="muted">Se carga solo cuando Claude toca esos ficheros. Que la proponga Claude y la revise quien conoce la zona.</p>
+  <p class="muted">Se carga solo cuando Claude toca esos ficheros. Que la proponga Claude y la revise quien conoce esa parte.</p>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/entorno.html#regla" target="guia">📖 Petición y ejemplo de regla, en la web</a></p>
 </section>
 
@@ -471,7 +471,7 @@ paths:
     <li>Código en IRIS: credenciales en variables de entorno, <b>a mano</b></li>
     <li>Pídele que <b>compile</b> (y pruebe, si se puede), y que te enseñe la salida</li>
     <li>Producción fuera de su alcance</li>
-    <li>Una regla de zona, con la trampa que encontraste</li>
+    <li>Una regla para tu parte del código, con la trampa que encontraste</li>
   </ol>
   <p class="muted">Lo resolvemos juntos: si algo se atasca, decidlo en el chat.</p>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/entorno.html#comprobar" target="guia">📖 Todos los pasos del setup, en la web</a></p>
