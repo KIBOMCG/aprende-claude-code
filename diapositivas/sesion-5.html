@@ -235,7 +235,7 @@
     <tr><td>Tope de rondas</td><td>Tres rondas sin pasar: se para y se replantea</td></tr>
     <tr><td>Personas según el riesgo</td><td>Más personas cuanto más grave el fallo, no según quién lo hizo</td></tr>
   </table>
-  <p class="guia" style="margin-top:12px"><a href="https://claude.dev/blog/solving-code-review-at-anthropic/" target="guia">📖 El artículo original, de Anthropic (en inglés)</a></p>
+  <p class="guia" style="margin-top:12px"><a href="https://kibomcg.github.io/aprende-claude-code/construir.html#revisor-review" target="guia">📖 La petición para vuestro revisor, en la web</a> <span style="margin:0 18px;color:var(--muted)">·</span> <a href="https://claude.dev/blog/solving-code-review-at-anthropic/" target="guia">📖 El artículo original (en inglés)</a></p>
 </section>
 
 <!-- 9 -->
@@ -530,20 +530,32 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
 
 <!-- 31 -->
 <section class="slide">
+  <p class="kicker">Nos lo habéis preguntado</p>
+  <h2 style="margin-bottom:26px">Claude en producción: sí, con el mismo arnés</h2>
+  <div class="grid3">
+    <div class="card"><h3>Tickets</h3><p style="font-size:29px">Crear un conector (MCP) para vuestro sistema. Primero lee, resume y <b>propone</b>; responde una persona. Luego, automatizar solo lo de bajo riesgo</p></div>
+    <div class="card"><h3>Outlook</h3><p style="font-size:29px">El conector de Microsoft 365 lee el correo y, si lo activáis, redacta. Claude prepara <b>borradores</b>; el envío, vuestro</p></div>
+    <div class="card"><h3>Programas antiguos</h3><p style="font-size:29px"><i>Computer use</i>: ve la pantalla y usa teclado y ratón. Para explorar y escribir pruebas, <b>nunca en producción</b></p></div>
+  </div>
+  <div class="note"><b>Antes de conectar nada a producción:</b> protección de datos valida qué datos pueden pasar. Lo vemos con calma en la sesión 6.</div>
+</section>
+
+<!-- 32 -->
+<section class="slide">
   <p class="kicker">Sesión 6</p>
   <h2>Vuestras preguntas</h2>
   <p class="big" style="margin-top:30px">Sobre lo que estéis construyendo: lo que haya funcionado, y sobre todo lo que no.</p>
   <p class="muted" style="font-size:32px;margin-top:24px">Hasta entonces, seguid con vuestra parte. Lo que os cueste, apuntadlo y traedlo.</p>
 </section>
 
-<!-- 32 -->
+<!-- 33 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">2 min</span></div>
   <p class="big">En el chat, una línea:</p>
   <p class="big" style="color:var(--act)">¿Qué fichero del arnés te llevas primero, y por qué?</p>
 </section>
 
-<!-- 33 -->
+<!-- 34 -->
 <section class="slide cover">
   <p class="kicker">Sesión 5 · Cierre</p>
   <h1 style="font-size:76px">Claude construye lo que entiende.</h1>

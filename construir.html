@@ -46,7 +46,7 @@ kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--l
 .subnav a { font-weight: 600; color: var(--accent-strong); text-decoration: none; }
 .subnav a:hover { text-decoration: underline; }
 .step-head .diapo { font-size: 15px; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
-.step { scroll-margin-top: 200px; }
+.step, #revisor-review { scroll-margin-top: 200px; }
 .diapos { margin: 0 0 14px; } .diapos .diapo { margin-right: 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
 main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
 .hero { display: grid; gap: 14px; }
@@ -137,6 +137,15 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
     <tr><td>Tope de rondas</td><td>Tres rondas sin pasar: se para y se replantea</td></tr>
     <tr><td>Personas según el riesgo</td><td>Más personas cuanto más grave puede ser el fallo, no según quién lo hizo</td></tr>
   </table></div>
+  <div id="revisor-review"><p><strong>La petición: un revisor que lee vuestro <code>REVIEW.md</code>.</strong> Si el fichero aún no existe, Claude os entrevista y lo escribe antes de crear el revisor. Es la versión corta de la <a href="#revisor">pieza 10</a>.</p>
+  <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un subagente revisor en .claude/agents/revisor.md que, antes de revisar nada,
+lea docs/REVIEW.md: ahí está qué es grave aquí, qué no hace falta revisar y cuántos
+comentarios menores como mucho. Si al revisar ese fichero no existe, que no revise y
+me lo diga. Que revise solo los cambios nuevos, contra docs/REVIEW.md y contra
+docs/especificacion.md, docs/glosario.md y docs/decisiones/ si existen. Que dé
+archivo y línea de cada hallazgo, no repita lo ya dicho y termine con un veredicto
+de una línea. Que solo pueda leer, no editar. Si docs/REVIEW.md todavía no existe,
+antes de crear el revisor entrevístame (una pregunta cada vez) y escríbelo.</pre></div></div>
   <p><strong>En resumen:</strong> un revisor solo caza lo que va contra algo escrito: qué se quería, con qué palabras, qué se decidió. Eso es lo que montan las piezas de abajo.</p>
   <p class="diapos"><a href="diapositivas/sesion-5.html#5" target="diapositivas">Diapositivas 5 a 9 ↗</a> <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">El artículo original (en inglés)</a></p>
 </section>
