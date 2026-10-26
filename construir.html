@@ -119,26 +119,33 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
 <section class="sesion" id="novedad">
   <p class="eyebrow">Novedad · 15 de octubre de 2026</p>
   <h2>Cómo revisa código el equipo de Claude Code</h2>
-  <p>Anthropic publicó cómo revisa el código que escribe Claude (en torno al 90 % del de Claude Code). La idea: ya no da tiempo a leerlo todo, así que la pregunta pasa de «¿lo ha leído una persona?» a «<strong>¿qué puede salir mal, y qué control lo caza?</strong>».</p>
+  <p><strong>El caso.</strong> Anthropic publicó cómo revisa el código que escribe Claude: en torno al 90 % del de Claude Code, con más de 30.000 cambios al día. Ya no da tiempo a leerlo todo y, aun así, deshacen un 40 % menos de cambios.</p>
   <div class="tablewrap"><table class="tabla">
-    <tr><th>Capa</th><th>Qué hace</th></tr>
-    <tr><td>1</td><td>Claude se comprueba antes de enseñar nada (tests, compilación) y un subagente revisa con contexto limpio</td></tr>
-    <tr><td>2</td><td>Revisión de IA: varios agentes buscan errores y otros votan si cada uno es real</td></tr>
-    <tr><td>3</td><td>Revisión de seguridad: con algo abierto, no se integra</td></tr>
-    <tr><td>4</td><td>Lint, tipos, tests y compilación</td></tr>
-    <tr><td>5</td><td>Personas según el riesgo del cambio: 0, 1 o 2. La aprobación de un agente nunca cuenta como la de una persona</td></tr>
-    <tr><td>6</td><td>Cola de integración y salida por fases; debajo, deshacer rápido</td></tr>
+    <tr><th>Idea</th><th>Cómo lo hacen</th></tr>
+    <tr><td>La pregunta</td><td>No «¿lo ha leído una persona?», sino «<strong>¿qué puede salir mal, y qué control lo caza?</strong>»</td></tr>
+    <tr><td>Capas</td><td>Claude se comprueba, otros agentes revisan, seguridad, tests… y debajo, deshacer rápido</td></tr>
+    <tr><td>Personas</td><td>Según el riesgo del cambio: 0, 1 o 2. La aprobación de un agente nunca cuenta como la de una persona</td></tr>
+    <tr><td><code>REVIEW.md</code></td><td>Qué importa al revisar: qué es grave aquí, qué no revisar, archivo y línea en cada hallazgo</td></tr>
   </table></div>
-  <p><strong>El <code>REVIEW.md</code></strong> dice qué importa al revisar: qué es grave aquí, un tope de comentarios menores, qué no revisar y que cada hallazgo traiga archivo y línea. Lo lee el servicio Code Review en GitHub (planes Team y Enterprise); el <code>/code-review</code> de vuestro terminal lee el <code>CLAUDE.md</code>, no el <code>REVIEW.md</code>. Sin GitHub, esos criterios van en vuestro revisor (<a href="#revisor">pieza 10</a>) o en el <code>CLAUDE.md</code>.</p>
   <p class="note"><strong>La anécdota:</strong> un cambio pasó más de 50 rondas de «revisa, corrige, revisa» en una noche; el 59 % de lo que marcaba el revisor era código antiguo. Desde entonces: tope de 3 rondas y, después, replantear. Los cambios que pasan a la primera subieron del 65 % al 78 %.</p>
-  <p class="diapos"><a href="diapositivas/sesion-5.html#5" target="diapositivas">Diapositivas 5 a 14 ↗</a> <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">El artículo original (en inglés)</a></p>
+  <h3>En vuestro caso, sin GitHub</h3>
+  <div class="tablewrap"><table class="tabla">
+    <tr><th>Ellos</th><th>Vosotros</th></tr>
+    <tr><td>Claude se comprueba</td><td>Que compile y pruebe, y os enseñe la salida (sesión 4)</td></tr>
+    <tr><td>Agentes que revisan</td><td>Vuestro subagente revisor, que no puede editar (sesión 3 y <a href="#revisor">pieza 10</a>)</td></tr>
+    <tr><td>El <code>REVIEW.md</code></td><td>Lo lee su servicio Code Review en GitHub, y el <code>/code-review</code> del terminal no lo lee (lee el <code>CLAUDE.md</code>). Guardadlo en <code>docs/REVIEW.md</code> y que vuestro revisor lo lea antes de revisar</td></tr>
+    <tr><td>Tope de rondas</td><td>Tres rondas sin pasar: se para y se replantea</td></tr>
+    <tr><td>Personas según el riesgo</td><td>Más personas cuanto más grave puede ser el fallo, no según quién lo hizo</td></tr>
+  </table></div>
+  <p><strong>En resumen:</strong> un revisor solo caza lo que va contra algo escrito: qué se quería, con qué palabras, qué se decidió. Eso es lo que montan las piezas de abajo.</p>
+  <p class="diapos"><a href="diapositivas/sesion-5.html#5" target="diapositivas">Diapositivas 5 a 9 ↗</a> <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">El artículo original (en inglés)</a></p>
 </section>
 
 <section class="sesion" id="antes">
   <p class="eyebrow">Bloque 1</p>
   <h2>Antes del código: que Claude sepa qué construir</h2>
   <ol class="steps">
-    <li class="step" id="especificacion"><div class="step-head"><span class="n">1</span><h3>La especificación, con entrevista</h3><a class="diapo" href="diapositivas/sesion-5.html#17" target="diapositivas">Diapositiva 17 ↗</a></div><div class="step-body">
+    <li class="step" id="especificacion"><div class="step-head"><span class="n">1</span><h3>La especificación, con entrevista</h3><a class="diapo" href="diapositivas/sesion-5.html#12" target="diapositivas">Diapositiva 12 ↗</a></div><div class="step-body">
       <p>Todo documento de requisitos tiene huecos. Si le dices a Claude «haz esto», los rellena a su manera. Si le pides que te entreviste primero, salen a la luz: lo que sabes va a la especificación; lo que no, a <strong>«Preguntas abiertas»</strong>, para quien sí lo sepa.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Lee &lt;el documento de requisitos, por ejemplo: docs/borrador.pdf&gt;. Voy a
 construir &lt;tu parte de la app, por ejemplo: la reserva de citas&gt;. Antes de proponer
@@ -150,7 +157,7 @@ abiertas» con lo que yo no haya sabido contestar.</pre></div>
       <div class="check"><strong>Está bien si…</strong><ul><li>Claude te ha hecho preguntas antes de escribir nada</li><li>Los casos límite llevan ejemplos con datos concretos</li><li>Lo que no sabías está en «Preguntas abiertas», no inventado</li></ul></div>
       <p class="note">El <code>/plan</code> tiene que ir al principio del mensaje. Si escribe el fichero sin preguntar: <kbd>Esc</kbd>, <code>/rewind</code> y otra vez. Cuando quiera escribir, acepta salir de plan mode.</p>
     </div></li>
-    <li class="step" id="glosario"><div class="step-head"><span class="n">2</span><h3>El glosario: una cosa, un nombre</h3><a class="diapo" href="diapositivas/sesion-5.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
+    <li class="step" id="glosario"><div class="step-head"><span class="n">2</span><h3>El glosario: una cosa, un nombre</h3><a class="diapo" href="diapositivas/sesion-5.html#14" target="diapositivas">Diapositiva 14 ↗</a></div><div class="step-body">
       <p>Si el documento llama a lo mismo de dos formas (cliente y paciente, delegación y centro, calendario y agenda), Claude pondrá nombres distintos en cada parte del código. El glosario dice qué significa cada término aquí y cómo se llama en el código.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Con &lt;el documento de requisitos&gt; y docs/especificacion.md si existe, escribe
 docs/glosario.md: cada término del negocio, qué significa aquí, cómo se llamará en
@@ -158,7 +165,7 @@ el código y con qué no hay que confundirlo. Señala los términos que el docum
 usa de dos formas distintas y pregúntame cuál es la buena. Añade al CLAUDE.md una
 línea para que uses el glosario al nombrar cualquier cosa.</pre></div>
     </div></li>
-    <li class="step" id="decisiones"><div class="step-head"><span class="n">3</span><h3>Las decisiones, en un fichero corto</h3><a class="diapo" href="diapositivas/sesion-5.html#20" target="diapositivas">Diapositiva 20 ↗</a></div><div class="step-body">
+    <li class="step" id="decisiones"><div class="step-head"><span class="n">3</span><h3>Las decisiones, en un fichero corto</h3><a class="diapo" href="diapositivas/sesion-5.html#15" target="diapositivas">Diapositiva 15 ↗</a></div><div class="step-body">
       <p>Lo ya decidido, numerado: contexto, decisión, alternativas descartadas y consecuencias. Sin esto, Claude leerá «enviar SMS» y programará un envío de SMS aunque se haya decidido que lo envía el sistema actual.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Apunta esta decisión en docs/decisiones/, en un fichero corto con número:
 &lt;la decisión, por ejemplo: los avisos por email y SMS no los envía la app; manda
@@ -179,7 +186,7 @@ Consecuencia: el registro guarda la orden, no el resultado.</pre></div></details
   <p class="eyebrow">Bloque 2</p>
   <h2>Construir en equipo: que todo encaje</h2>
   <ol class="steps" start="4">
-    <li class="step" id="design"><div class="step-head"><span class="n">4</span><h3>El <code>DESIGN.md</code>: cómo se ve</h3><a class="diapo" href="diapositivas/sesion-5.html#23" target="diapositivas">Diapositiva 23 ↗</a></div><div class="step-body">
+    <li class="step" id="design"><div class="step-head"><span class="n">4</span><h3>El <code>DESIGN.md</code>: cómo se ve</h3><a class="diapo" href="diapositivas/sesion-5.html#18" target="diapositivas">Diapositiva 18 ↗</a></div><div class="step-body">
       <p>Lo que el <code>CLAUDE.md</code> es para el código, el <code>DESIGN.md</code> lo es para las pantallas: colores con su uso, tipografía, espaciado, qué componente se usa para qué y lo que no se hace. Es un formato propuesto por Google (con su herramienta Stitch) que leen Claude Code y otros agentes. Es Markdown: no hay que instalar nada. Si tenéis guía de estilo, el <code>DESIGN.md</code> es esa guía, resumida para Claude.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Quiero un DESIGN.md en la raíz para que todas las pantallas de esta app salgan
 coherentes, las haga quien las haga. Antes, pregúntame lo que necesites, una cosa
@@ -199,7 +206,7 @@ no se hace. Añade al CLAUDE.md que lo siga en cualquier pantalla.</pre></div>
 ## No
 - Ventanas emergentes para confirmar una cita</pre></div></details>
     </div></li>
-    <li class="step" id="integraciones"><div class="step-head"><span class="n">5</span><h3>Integraciones, simuladas</h3><a class="diapo" href="diapositivas/sesion-5.html#25" target="diapositivas">Diapositiva 25 ↗</a></div><div class="step-body">
+    <li class="step" id="integraciones"><div class="step-head"><span class="n">5</span><h3>Integraciones, simuladas</h3><a class="diapo" href="diapositivas/sesion-5.html#20" target="diapositivas">Diapositiva 20 ↗</a></div><div class="step-body">
       <p>Todo lo que la app necesita del sistema actual, o le da, en <code>docs/integraciones.md</code>: qué se pide, qué vuelve, un ejemplo con datos inventados y qué pasa si no responde. Lo que no se sepa, «a confirmar». Para desarrollar, un simulador que responde con esos datos. El sistema real, cuando toque, con quien lo administra.</p>
       <div class="code"><div class="code-head"><span class="code-file">1 · El documento</span><button class="copy" type="button">Copiar</button></div><pre>Lee &lt;el documento de requisitos&gt; y escribe docs/integraciones.md con todo lo que
 &lt;tu parte de la app&gt; necesita del sistema actual o le da a él: listas,
@@ -214,7 +221,7 @@ con un comando, y que nunca se conecte al sistema real. Antes, pregúntame en qu
 stack y dónde lo quiero. Apunta en el CLAUDE.md cómo se arranca y que se usa
 siempre el simulador mientras desarrollamos.</pre></div>
     </div></li>
-    <li class="step" id="compartir"><div class="step-head"><span class="n">6</span><h3>Qué se comparte, y dónde</h3><a class="diapo" href="diapositivas/sesion-5.html#26" target="diapositivas">Diapositiva 26 ↗</a></div><div class="step-body">
+    <li class="step" id="compartir"><div class="step-head"><span class="n">6</span><h3>Qué se comparte, y dónde</h3><a class="diapo" href="diapositivas/sesion-5.html#21" target="diapositivas">Diapositiva 21 ↗</a></div><div class="step-body">
       <div class="tablewrap"><table class="tabla"><tr><th>De todo el equipo</th><th>Solo tuyo</th><th>Nunca sale del equipo</th></tr><tr><td><code>CLAUDE.md</code>, especificación, glosario, decisiones, <code>DESIGN.md</code>, reglas y revisores</td><td>Tus preferencias: <code>~/.claude/</code> o <code>CLAUDE.local.md</code></td><td>Credenciales y datos</td></tr></table></div>
       <p>Lo compartido va junto al código, donde lo guardéis hoy. Cambiarlo cambia cómo trabajan todos los Claude del equipo: se revisa como el código.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Mira los ficheros de instrucciones de este proyecto (CLAUDE.md, .claude/, docs/,
@@ -230,7 +237,7 @@ guardar lo compartido según eso. No muevas nada.</pre></div>
   <p class="eyebrow">Bloque 3</p>
   <h2>Una parte cada vez: pequeña, comprobada y apuntada</h2>
   <ol class="steps" start="7">
-    <li class="step" id="plan"><div class="step-head"><span class="n">7</span><h3>El plan por partes</h3><a class="diapo" href="diapositivas/sesion-5.html#29" target="diapositivas">Diapositiva 29 ↗</a></div><div class="step-body">
+    <li class="step" id="plan"><div class="step-head"><span class="n">7</span><h3>El plan por partes</h3><a class="diapo" href="diapositivas/sesion-5.html#24" target="diapositivas">Diapositiva 24 ↗</a></div><div class="step-body">
       <p>Partes que se pueden terminar, cada una con <strong>qué incluye, cuándo está hecha y cómo se comprueba</strong>. Primero lo que no depende del sistema actual: por ejemplo, calcular los huecos libres de un calendario. Cada parte, en una sesión limpia (<code>/clear</code> entre una y otra).</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Con docs/especificacion.md, divide &lt;tu parte de la app&gt; en partes pequeñas
 que se puedan terminar y comprobar una a una. Primero las que no dependen del
@@ -238,7 +245,7 @@ sistema actual. Para cada parte: qué incluye, cuándo está hecha y cómo se
 comprueba. Guárdalo en docs/plan.md. No implementes nada.</pre></div>
       <p class="note">¿Una parte enorme, como «hacer las reservas»? Pídele que la divida. Sin «cuándo está hecha», ni el revisor ni tú sabéis cuándo parar.</p>
     </div></li>
-    <li class="step" id="ejemplos"><div class="step-head"><span class="n">8</span><h3>Ejemplos antes que código</h3><a class="diapo" href="diapositivas/sesion-5.html#31" target="diapositivas">Diapositiva 31 ↗</a></div><div class="step-body">
+    <li class="step" id="ejemplos"><div class="step-head"><span class="n">8</span><h3>Ejemplos antes que código</h3><a class="diapo" href="diapositivas/sesion-5.html#26" target="diapositivas">Diapositiva 26 ↗</a></div><div class="step-body">
       <p>Antes de programar una parte, una tabla de ejemplos. Tú revisas la tabla, no el código. Después Claude la convierte en tests, comprueba que fallan (aún no hay código) y programa hasta que pasan.</p>
       <div class="tablewrap"><table class="tabla"><tr><th>Calendario</th><th>Ya hay</th><th>Primera hora libre</th></tr><tr><td>9:00–11:00, cada 30 min</td><td>Cita a las 9:00</td><td>9:30</td></tr><tr><td>Máximo 3 al día</td><td>3 citas</td><td>Ninguna</td></tr><tr><td>Día bloqueado</td><td>Nada</td><td>Ninguna</td></tr><tr><td>Prueba con espera de una semana</td><td>La anterior, hace 5 días</td><td>No se puede</td></tr></table></div>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Para la primera parte de docs/plan.md, escribe una tabla de ejemplos concretos:
@@ -248,21 +255,22 @@ conviértela en tests con la forma de probar que hay en el CLAUDE.md, ejecútalo
 enséñame que fallan, porque aún no hay código. Después implementa hasta que pasen,
 sin cambiar los tests.</pre></div>
     </div></li>
-    <li class="step" id="progreso"><div class="step-head"><span class="n">9</span><h3>El progreso: retomar sin empezar de cero</h3><a class="diapo" href="diapositivas/sesion-5.html#32" target="diapositivas">Diapositiva 32 ↗</a></div><div class="step-body">
+    <li class="step" id="progreso"><div class="step-head"><span class="n">9</span><h3>El progreso: retomar sin empezar de cero</h3><a class="diapo" href="diapositivas/sesion-5.html#27" target="diapositivas">Diapositiva 27 ↗</a></div><div class="step-body">
       <p>Una app no se construye en una conversación, y mañana Claude no se acuerda de nada. Con esta regla, apunta al terminar cada parte y lo lee al empezar. Lo puede leer también un compañero.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea docs/progreso.md y añade al CLAUDE.md esta regla: al terminar cada parte,
 actualiza docs/progreso.md con qué está hecho, qué falta, qué has decidido y qué
 ha fallado; y al empezar una sesión nueva, léelo junto con docs/plan.md antes de
 hacer nada. Enséñame cómo queda la regla.</pre></div>
     </div></li>
-    <li class="step" id="revisor"><div class="step-head"><span class="n">10</span><h3>Un revisor con vuestras reglas</h3><a class="diapo" href="diapositivas/sesion-5.html#33" target="diapositivas">Diapositiva 33 ↗</a></div><div class="step-body">
-      <p>Como los de la sesión 3, pero revisa contra lo escrito: especificación, glosario y decisiones. Sabe qué es grave en vuestra app, da archivo y línea, no repite y no puede editar. Y el tope de Anthropic: tres rondas sin pasar, se para y se replantea.</p>
+    <li class="step" id="revisor"><div class="step-head"><span class="n">10</span><h3>Un revisor con vuestras reglas</h3><a class="diapo" href="diapositivas/sesion-5.html#28" target="diapositivas">Diapositiva 28 ↗</a></div><div class="step-body">
+      <p>Como los de la sesión 3, pero revisa contra lo escrito: especificación, glosario y decisiones. Sabe qué es grave en vuestra app, porque lo pone en <code>docs/REVIEW.md</code> (el fichero de la novedad, sin GitHub), da archivo y línea, no repite y no puede editar. Y el tope de Anthropic: tres rondas sin pasar, se para y se replantea.</p>
       <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un subagente revisor para esta app (o amplía el que ya tengo) que revise los
 cambios contra docs/especificacion.md, docs/glosario.md y docs/decisiones/ si
 existen. Pregúntame qué es grave en mi parte (por ejemplo: dos citas en el mismo
-hueco, ver datos de otra delegación). Que dé archivo y línea de cada hallazgo, como
-mucho cinco comentarios menores, no repita lo ya dicho y termine con un veredicto
-de una línea. Que no pueda editar. Añade al CLAUDE.md: si una parte no pasa la
+hueco, ver datos de otra delegación) y escríbelo en docs/REVIEW.md, con qué no hace
+falta revisar; que el revisor lea ese fichero antes de revisar. Que dé archivo y
+línea de cada hallazgo, como mucho cinco comentarios menores, no repita lo ya dicho
+y termine con un veredicto de una línea. Que no pueda editar. Añade al CLAUDE.md: si una parte no pasa la
 revisión tras tres rondas, para y pregúntame.</pre></div>
       <p class="mano"><strong>La decisión de integrar es de una persona.</strong> <span>La aprobación de un agente nunca cuenta como la tuya.</span></p>
     </div></li>

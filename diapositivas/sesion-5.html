@@ -165,7 +165,7 @@
     <table class="t">
       <tr><td>12:00</td><td>Vuestro punto de partida</td></tr>
       <tr><td>12:07</td><td>Novedad: cómo revisa Anthropic</td></tr>
-      <tr><td>12:20</td><td>Antes del código</td></tr>
+      <tr><td>12:15</td><td>Antes del código</td></tr>
       <tr><td>12:52</td><td>Construir en equipo</td></tr>
       <tr><td>13:20</td><td>Una parte cada vez</td></tr>
       <tr><td>13:48</td><td>Cierre</td></tr>
@@ -193,14 +193,14 @@
 
 <!-- 5 -->
 <section class="slide section">
-  <div class="num">NOVEDAD</div>
+  <div class="num">NOVEDAD · UN CASO DE ÉXITO</div>
   <h2>Cómo revisa código el equipo de Claude Code</h2>
   <p>Lo publicó Anthropic el 15 de octubre</p>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <p class="kicker">El problema</p>
+  <p class="kicker">El caso</p>
   <h2>Ya no da tiempo a leerlo todo</h2>
   <div class="grid3">
     <div class="card"><h3>~90 %</h3><p>del código de Claude Code lo escribe Claude</p></div>
@@ -212,133 +212,48 @@
 
 <!-- 7 -->
 <section class="slide">
-  <p class="kicker">La idea</p>
-  <h2>Cambia la pregunta</h2>
-  <div class="grid2">
-    <div class="card bad"><h3>Antes</h3><p>¿Lo ha leído una persona?</p></div>
-    <div class="card good"><h3>Ahora</h3><p>¿Qué puede salir mal con este cambio, y <b>qué control</b> lo caza: uno automático o una persona?</p></div>
-  </div>
-  <ul class="b" style="margin-top:34px">
-    <li>La revisión ya no es un paso al final: va <b>desde la primera petición</b>, como el corrector ortográfico</li>
-    <li>Objetivo: el mínimo tiempo humano <b>sin que suban los errores en producción</b></li>
-  </ul>
+  <p class="kicker">Cómo lo hacen</p>
+  <h2 style="margin-bottom:22px">Cuatro ideas</h2>
+  <table class="t">
+    <tr><td><b>La pregunta</b></td><td>No «¿lo ha leído una persona?», sino <b>«¿qué puede salir mal, y qué control lo caza?»</b></td></tr>
+    <tr><td><b>Capas</b></td><td>Claude se comprueba, otros agentes revisan, seguridad, tests… y debajo, <b>deshacer rápido</b></td></tr>
+    <tr><td><b>Personas</b></td><td>Según el riesgo del cambio: 0, 1 o 2. La aprobación de un agente <b>nunca cuenta</b> como la de una persona</td></tr>
+    <tr><td><b><code>REVIEW.md</code></b></td><td>Un fichero con <b>qué importa al revisar</b>: qué es grave aquí, qué no revisar, archivo y línea en cada hallazgo</td></tr>
+  </table>
+  <div class="note"><b>La anécdota:</b> un cambio pasó más de 50 rondas de «revisa, corrige» en una noche; el 59 % era código antiguo. Ahora, <b>tope de 3 rondas</b>: los que pasan a la primera subieron del 65 % al 78 %.</div>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <p class="kicker">Su sistema</p>
-  <h2 style="margin-bottom:22px">Seis capas, y deshacer por debajo</h2>
-  <table class="t wrap">
-    <tr><td><b>1</b></td><td><b>Claude se comprueba</b> antes de enseñar nada: tests, compilación, la salida. Y un subagente revisa con contexto limpio</td></tr>
-    <tr><td><b>2</b></td><td>Revisión de IA: varios agentes buscan errores y <b>otros votan</b> si cada uno es real</td></tr>
-    <tr><td><b>3</b></td><td>Revisión de seguridad. Con algo abierto, no se integra</td></tr>
-    <tr><td><b>4</b></td><td>Lo de siempre: lint, tipos, tests, compilación</td></tr>
-    <tr><td><b>5</b></td><td>Personas, <b>según el riesgo</b> del cambio</td></tr>
-    <tr><td><b>6</b></td><td>Cola de integración y salida por fases: primero dentro de casa</td></tr>
+  <p class="kicker">En vuestro caso</p>
+  <h2 style="margin-bottom:12px">Sin GitHub, lo mismo con lo que ya tenéis</h2>
+  <table class="t wrap" style="font-size:27px">
+    <tr><th style="padding:10px 20px">Ellos</th><th style="padding:10px 20px">Vosotros</th></tr>
+    <tr><td>Claude se comprueba</td><td>Que compile y pruebe (sesión 4)</td></tr>
+    <tr><td>Agentes que revisan</td><td>Vuestro subagente revisor, que no puede editar (sesión 3)</td></tr>
+    <tr><td>El <code>REVIEW.md</code></td><td>Lo lee su servicio en GitHub. Vosotros: <code>docs/REVIEW.md</code>, y que <b>vuestro revisor lo lea</b></td></tr>
+    <tr><td>Tope de rondas</td><td>Tres rondas sin pasar: se para y se replantea</td></tr>
+    <tr><td>Personas según el riesgo</td><td>Más personas cuanto más grave el fallo, no según quién lo hizo</td></tr>
   </table>
-  <div class="note"><b>Y debajo, deshacer rápido:</b> funciones que se apagan sin desplegar. Pocas cosas pasan las seis capas; lo que pasa, se deshace.</div>
+  <p class="guia" style="margin-top:12px"><a href="https://claude.dev/blog/solving-code-review-at-anthropic/" target="guia">📖 El artículo original, de Anthropic (en inglés)</a></p>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <p class="kicker">Capa 5</p>
-  <h2>El riesgo decide cuántas personas</h2>
-  <div class="grid3">
-    <div class="card good"><h3>Bajo · 0</h3><p style="font-size:30px">Textos, documentación, cosas nuevas que están apagadas</p></div>
-    <div class="card"><h3>Normal · 1</h3><p style="font-size:30px">El trabajo de producto de cada día</p></div>
-    <div class="card bad"><h3>Alto · 2</h3><p style="font-size:30px">Lo más delicado. Facturación, actualizaciones y CI, siempre con personas</p></div>
-  </div>
-  <ul class="b" style="margin-top:30px;font-size:31px">
-    <li>El nivel lo marca <b>el cambio</b>, no quién lo hace</li>
-    <li>La aprobación de un agente <b>nunca cuenta</b> como la de una persona</li>
-    <li>Quien le pidió el cambio a Claude <b>responde de él</b>, como si lo hubiera escrito</li>
-  </ul>
+  <p class="kicker">En resumen</p>
+  <h2>Revisar bien empieza antes</h2>
+  <p class="big" style="margin-top:20px">Un revisor solo caza lo que va contra algo escrito: qué se quería, con qué palabras, qué se decidió.</p>
+  <p class="muted" style="font-size:32px;margin-top:24px">Eso es lo que montamos hoy, antes y durante el código. El revisor, en el bloque 3.</p>
 </section>
 
 <!-- 10 -->
-<section class="slide">
-  <p class="kicker">La novedad del título</p>
-  <h2>El <code>REVIEW.md</code></h2>
-  <div class="grid2">
-    <div>
-      <p><code>CLAUDE.md</code>: cómo es el proyecto.<br><code>REVIEW.md</code>: <b>qué importa al revisar</b>. Lo escribe quien conoce esa parte.</p>
-      <ul class="b" style="font-size:30px">
-        <li>Qué es un fallo grave aquí</li>
-        <li>Un tope de comentarios menores</li>
-        <li>Qué no revisar</li>
-        <li>Pedir archivo y línea como prueba</li>
-      </ul>
-    </div>
-<pre style="font-size:24px"># Instrucciones de revisión
-## Grave aquí
-Lógica incorrecta, datos personales
-en los logs, consultas sin filtrar.
-Estilo y nombres: menor, como mucho.
-## Como mucho, 5 comentarios menores
-## No revisar
-- Lo que ya comprueba el lint
-- Ficheros generados
-## Comprobar siempre
-- Cada ruta nueva tiene su test</pre>
-  </div>
-  <div class="note"><b>Ojo:</b> el <code>REVIEW.md</code> lo lee el servicio Code Review en GitHub (planes Team y Enterprise). El <code>/code-review</code> de vuestro terminal lee el <code>CLAUDE.md</code>, no el <code>REVIEW.md</code>.</div>
-</section>
-
-<!-- 11 -->
-<section class="slide">
-  <p class="kicker">La anécdota</p>
-  <h2>Más de 50 rondas en una noche</h2>
-  <p>Un cambio pasó más de cincuenta rondas de «revisa, corrige, revisa» hasta que su autor lo paró. Al mirar qué marcaba el revisor: <b>el 59 % era código antiguo</b>. Cada ronda encontraba algún fallo viejo más, no fallos nuevos.</p>
-  <div class="grid2">
-    <div class="card"><h3>Qué cambiaron</h3><ul class="b" style="font-size:28px"><li>Tope de 3 rondas: después, replantear</li><li>Luego, revisar solo lo nuevo</li><li>Señalar el tipo de fallo, no una línea</li><li>No repetir lo ya dicho</li></ul></div>
-    <div class="card good"><h3>Resultado</h3><ul class="b" style="font-size:28px"><li>Pasan a la primera: 65 % → 78 %</li><li>5 rondas o más: 8,9 % → 1,5 %</li></ul></div>
-  </div>
-</section>
-
-<!-- 12 -->
-<section class="slide">
-  <p class="kicker">Sesiones 1 a 4</p>
-  <h2>Esto ya lo habéis montado</h2>
-  <table class="t wrap">
-    <tr><th>Ellos</th><th>Vosotros</th></tr>
-    <tr><td>Claude se comprueba antes de enseñar nada</td><td>«Dale una forma de comprobarse»: compilar y probar, sesión 4</td></tr>
-    <tr><td>Subagente revisor con contexto limpio</td><td>Vuestros revisores, sesión 3</td></tr>
-    <tr><td>Controles que bloquean</td><td>Permisos y validaciones, sesión 2</td></tr>
-    <tr><td>Tope de rondas</td><td>El <code>/goal</code> siempre con tope, sesión 4</td></tr>
-    <tr><td>Una persona decide</td><td>«La decisión de integrar es de una persona»</td></tr>
-  </table>
-</section>
-
-<!-- 13 -->
-<section class="slide">
-  <p class="kicker">Para vuestro proyecto</p>
-  <h2>Lo que podéis copiar ya</h2>
-  <ol class="steps">
-    <li>Que Claude <b>compile y pruebe</b>, y os enseñe la salida</li>
-    <li>Lo que importa al revisar, <b>por escrito</b>: en vuestro revisor o en el <code>CLAUDE.md</code></li>
-    <li>Si el revisor repite lo mismo, <b>conviértelo en regla</b></li>
-    <li>Más personas cuanto más grave puede ser el fallo, <b>no según quién lo hizo</b></li>
-    <li>Un tope de rondas. Si no converge, cambiad el enfoque</li>
-  </ol>
-  <p class="guia"><a href="https://claude.dev/blog/solving-code-review-at-anthropic/" target="guia">📖 El artículo original, de Anthropic (en inglés)</a><span class="url">claude.dev/blog/solving-code-review-at-anthropic</span></p>
-</section>
-
-<!-- 14 -->
-<section class="slide">
-  <p class="kicker">Hoy</p>
-  <h2>Revisar bien empieza antes</h2>
-  <p class="big" style="margin-top:20px">Un revisor solo caza lo que va contra algo escrito: qué se quería, con qué palabras, qué se decidió.</p>
-  <p class="muted" style="font-size:32px;margin-top:24px">Eso es lo que montamos hoy, antes y durante el código.</p>
-</section>
-
-<!-- 15 -->
 <section class="slide section">
   <div class="num">BLOQUE 1</div>
   <h2>Antes del código</h2>
   <p>Que Claude sepa qué construir</p>
 </section>
 
-<!-- 16 -->
+<!-- 11 -->
 <section class="slide">
   <p class="kicker">El mapa de hoy</p>
   <h2 style="margin-bottom:20px">El arnés para construir</h2>
@@ -353,7 +268,7 @@ Estilo y nombres: menor, como mucho.
   <div class="note"><b>No hacen falta todos.</b> Son piezas: cada una ayuda sola. Empezad por la que os falte.</div>
 </section>
 
-<!-- 17 -->
+<!-- 12 -->
 <section class="slide">
   <p class="kicker">1 · La especificación</p>
   <h2>Que te entreviste antes de escribir</h2>
@@ -367,7 +282,7 @@ Estilo y nombres: menor, como mucho.
   </ul>
 </section>
 
-<!-- 18 -->
+<!-- 13 -->
 <section class="slide">
   <p class="kicker">Primero yo · en vuestro borrador</p>
   <h2>La especificación, con entrevista</h2>
@@ -379,7 +294,7 @@ sección «Preguntas abiertas».</pre>
   <p class="muted">Fijaos en las preguntas: son los huecos del documento. Y yo no sé las respuestas.</p>
 </section>
 
-<!-- 19 -->
+<!-- 14 -->
 <section class="slide">
   <p class="kicker">2 · El glosario</p>
   <h2>Una cosa, un nombre</h2>
@@ -392,7 +307,7 @@ sección «Preguntas abiertas».</pre>
   <div class="note"><b>Si vosotros dudáis, Claude también:</b> y pondrá nombres distintos en cada parte. <code>docs/glosario.md</code>: el término, qué significa aquí y cómo se llama en el código.</div>
 </section>
 
-<!-- 20 -->
+<!-- 15 -->
 <section class="slide">
   <p class="kicker">3 · Las decisiones</p>
   <h2>Lo decidido, en un fichero corto</h2>
@@ -405,9 +320,9 @@ Consecuencia: el registro guarda la orden, no el resultado.</pre>
   <p class="muted">Sin esto, Claude programará un envío de SMS en cuanto lea «enviar SMS».</p>
 </section>
 
-<!-- 21 -->
+<!-- 16 -->
 <section class="slide activity">
-  <div class="actbar"><span>⚡ Actividad · Antes del código</span><span class="dur">15 min</span></div>
+  <div class="actbar"><span>⚡ Actividad · Antes del código</span><span class="dur">20 min</span></div>
   <p class="big">Elige una, para tu parte de la app:</p>
   <ol class="steps">
     <li><b>La especificación</b>, con entrevista y preguntas abiertas (si no tienes ninguna, esta)</li>
@@ -418,14 +333,14 @@ Consecuencia: el registro guarda la orden, no el resultado.</pre>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/construir.html#antes" target="guia">📖 Las peticiones, en la web</a></p>
 </section>
 
-<!-- 22 -->
+<!-- 17 -->
 <section class="slide section">
   <div class="num">BLOQUE 2</div>
   <h2>Construir en equipo</h2>
   <p>Que todo encaje, lo haga quien lo haga</p>
 </section>
 
-<!-- 23 -->
+<!-- 18 -->
 <section class="slide">
   <p class="kicker">4 · Las pantallas</p>
   <h2>El <code>DESIGN.md</code></h2>
@@ -455,7 +370,7 @@ Consecuencia: el registro guarda la orden, no el resultado.</pre>
   <div class="note"><b>Un formato propuesto por Google</b> (Stitch) que leen Claude Code y otros agentes. Es Markdown: sin instalar nada.</div>
 </section>
 
-<!-- 24 -->
+<!-- 19 -->
 <section class="slide">
   <p class="kicker">Primero yo · en vuestro borrador</p>
   <h2>Un <code>DESIGN.md</code> en cinco minutos</h2>
@@ -467,7 +382,7 @@ cualquier pantalla.</pre>
   <p class="muted">Vosotros sí tenéis respuestas: vuestra guía de estilo, vuestros componentes.</p>
 </section>
 
-<!-- 25 -->
+<!-- 20 -->
 <section class="slide">
   <p class="kicker">5 · El sistema actual</p>
   <h2>Integraciones, simuladas</h2>
@@ -484,7 +399,7 @@ cualquier pantalla.</pre>
   <div class="danger"><b>Nunca datos reales para construir:</b> ni pacientes, ni citas, ni copias de producción.</div>
 </section>
 
-<!-- 26 -->
+<!-- 21 -->
 <section class="slide">
   <p class="kicker">6 · Qué se comparte</p>
   <h2>Del equipo, mío, o de nadie</h2>
@@ -498,7 +413,7 @@ cualquier pantalla.</pre>
   </ul>
 </section>
 
-<!-- 27 -->
+<!-- 22 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Construir en equipo</span><span class="dur">15 min</span></div>
   <p class="big">Elige una:</p>
@@ -511,14 +426,14 @@ cualquier pantalla.</pre>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/construir.html#equipo" target="guia">📖 Las peticiones, en la web</a></p>
 </section>
 
-<!-- 28 -->
+<!-- 23 -->
 <section class="slide section">
   <div class="num">BLOQUE 3</div>
   <h2>Una parte cada vez</h2>
   <p>Pequeña, comprobada, y apuntada</p>
 </section>
 
-<!-- 29 -->
+<!-- 24 -->
 <section class="slide">
   <p class="kicker">7 · El plan</p>
   <h2>Partes que se pueden terminar</h2>
@@ -534,7 +449,7 @@ cualquier pantalla.</pre>
   </ul>
 </section>
 
-<!-- 30 -->
+<!-- 25 -->
 <section class="slide">
   <p class="kicker">Primero yo · en vuestro borrador</p>
   <h2>El plan por partes</h2>
@@ -545,7 +460,7 @@ sistema actual. Para cada parte: qué incluye, cuándo está
 hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
 </section>
 
-<!-- 31 -->
+<!-- 26 -->
 <section class="slide">
   <p class="kicker">8 · Ejemplos antes que código</p>
   <h2>La tabla que se convierte en tests</h2>
@@ -559,7 +474,7 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
   <div class="note"><b>Tú revisas la tabla, no el código.</b> Después, Claude la convierte en tests y comprueba que fallan antes de programar.</div>
 </section>
 
-<!-- 32 -->
+<!-- 27 -->
 <section class="slide">
   <p class="kicker">9 · El progreso</p>
   <h2>Retomar sin empezar de cero</h2>
@@ -570,7 +485,7 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
   <div class="note"><b>Es una regla del <code>CLAUDE.md</code>:</b> se pide una vez y se cumple siempre. Y lo puede leer un compañero.</div>
 </section>
 
-<!-- 33 -->
+<!-- 28 -->
 <section class="slide">
   <p class="kicker">10 · La revisión</p>
   <h2>Un revisor con vuestras reglas</h2>
@@ -579,11 +494,12 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
     <li>Sabe qué es grave aquí: <b>dos citas en el mismo hueco</b>, ver lo de otra delegación</li>
     <li>Archivo y línea en cada hallazgo; pocos comentarios menores</li>
     <li>No puede editar, como los de la sesión 3</li>
+    <li>Vuestros criterios, en <code>docs/REVIEW.md</code>: lo lee antes de revisar</li>
   </ul>
   <p class="quote" style="font-size:40px;margin-top:30px">Tres rondas sin pasar: se para y se replantea.</p>
 </section>
 
-<!-- 34 -->
+<!-- 29 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Actividad · Una parte cada vez</span><span class="dur">15 min</span></div>
   <p class="big">Elige una:</p>
@@ -596,7 +512,7 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
   <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/construir.html#partes" target="guia">📖 Las peticiones, en la web</a></p>
 </section>
 
-<!-- 35 -->
+<!-- 30 -->
 <section class="slide">
   <p class="kicker">Hoy</p>
   <h2 style="margin-bottom:10px">Lo que rodea vuestra app</h2>
@@ -612,7 +528,7 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
   </div>
 </section>
 
-<!-- 36 -->
+<!-- 31 -->
 <section class="slide">
   <p class="kicker">Sesión 6</p>
   <h2>Vuestras preguntas</h2>
@@ -620,14 +536,14 @@ hecha y cómo se comprueba. Guárdalo en docs/plan.md.</pre>
   <p class="muted" style="font-size:32px;margin-top:24px">Hasta entonces, seguid con vuestra parte. Lo que os cueste, apuntadlo y traedlo.</p>
 </section>
 
-<!-- 37 -->
+<!-- 32 -->
 <section class="slide activity">
   <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">2 min</span></div>
   <p class="big">En el chat, una línea:</p>
   <p class="big" style="color:var(--act)">¿Qué fichero del arnés te llevas primero, y por qué?</p>
 </section>
 
-<!-- 38 -->
+<!-- 33 -->
 <section class="slide cover">
   <p class="kicker">Sesión 5 · Cierre</p>
   <h1 style="font-size:76px">Claude construye lo que entiende.</h1>
