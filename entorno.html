@@ -46,7 +46,7 @@ kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--l
 .subnav a { font-weight: 600; color: var(--accent-strong); text-decoration: none; }
 .subnav a:hover { text-decoration: underline; }
 .step-head .diapo { font-size: 15px; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
-.step { scroll-margin-top: 130px; }
+.step { scroll-margin-top: 200px; }
 .diapos { margin: 0 0 14px; } .diapos .diapo { margin-right: 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
 main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
 .hero { display: grid; gap: 14px; }
@@ -56,7 +56,7 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
 .app div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
 .app strong { font-family: var(--font-display); color: var(--accent-strong); }
 .app span { font-size: 15px; color: var(--muted); }
-.sesion { display: grid; gap: 14px; scroll-margin-top: 130px; }
+.sesion { display: grid; gap: 14px; scroll-margin-top: 200px; }
 .steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
 .step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .step-head { display: flex; gap: 12px; align-items: center; padding: 12px 18px; background: var(--sunken); flex-wrap: wrap; }
@@ -78,7 +78,8 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
 .queda[open] summary { margin-bottom: 10px; }
 .mano { background: var(--sunken); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 16px; display: grid; gap: 4px; }
 .mano strong { color: var(--accent-strong); }
-@media (max-width: 700px) { .topbar { position: static; } .step, .caminos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 700px) { .topbar { position: static; } }
+.caminos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .caminos div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; }
 .caminos strong { font-family: var(--font-display); color: var(--accent-strong); }
 .caminos span { font-size: 16px; color: var(--muted); }
@@ -95,7 +96,7 @@ main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36
 <body>
 <header class="topbar"><div class="topbar-inner">
   <a class="brand" href="index.html">Aprende Claude Code</a>
-  <nav class="nav" aria-label="Secciones"><a href="index.html">Inicio</a><a href="instalacion.html">Instalación</a><a href="proyecto.html">Proyecto</a><a href="entorno.html" aria-current="page">Vuestro entorno</a><a href="diapositivas/">Diapositivas</a><a href="index.html#reto">Reto final</a><a href="index.html#referencia">Referencia</a></nav>
+  <nav class="nav" aria-label="Secciones"><a href="index.html">Inicio</a><a href="instalacion.html">Instalación</a><a href="proyecto.html">Proyecto</a><a href="entorno.html" aria-current="page">Vuestro entorno</a><a href="construir.html">Construir vuestra app</a><a href="diapositivas/">Diapositivas</a><a href="index.html#reto">Reto final</a><a href="index.html#referencia">Referencia</a></nav>
   <nav class="subnav" aria-label="En esta guía"><span>En esta guía:</span><a href="#ajustes">Ajustes</a><a href="#ver">Ver el código</a><a href="#explorar">Explorar</a><a href="#claude-md">CLAUDE.md</a><a href="#comprobar">Comprobarse</a><a href="#produccion">Producción</a><a href="#regla">Reglas</a><a href="#fuentes">Fuentes</a></nav>
 </div></header>
 <main>

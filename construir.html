@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Construir vuestra app · Aprende Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+[hidden] { display: none !important; }
+:root {
+  --bg: #f3f6f6; --surface: #ffffff; --sunken: #e8efee; --text: #14211f; --muted: #4f5f5c; --line: #d3dedc;
+  --accent: #176b68; --accent-strong: #0d4f4d; --accent-soft: #dcf1ee; --amber: #a85a0c; --amber-soft: #fbeedd;
+  --ok: #1d7a3e; --ok-soft: #e1f4e7; --code-bg: #10201e; --code-fg: #d9efe9; --code-dim: #8fb3ab;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "SF Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1716; --surface: #152220; --sunken: #1b2b29; --text: #e6efed; --muted: #a3b6b2; --line: #2c403d;
+    --accent: #4fc2b8; --accent-strong: #8fded6; --accent-soft: #173a37; --amber: #f0a65a; --amber-soft: #3a2a17;
+    --ok: #6fd28f; --ok-soft: #173323; --code-bg: #08110f; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 18px; line-height: 1.62; }
+a { color: var(--accent-strong); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.7rem); font-weight: 800; }
+h2 { font-size: 1.7rem; font-weight: 800; }
+h3 { font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--accent-soft); color: var(--accent-strong); padding: 1px 6px; border-radius: 5px; overflow-wrap: anywhere; }
+kbd { font-family: var(--font-mono); font-size: .82em; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; background: var(--surface); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 900px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 16px; padding: 6px 11px; border-radius: 8px; }
+.nav a:hover { background: var(--sunken); color: var(--text); }
+.nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-strong); }
+.subnav { flex-basis: 100%; display: flex; gap: 4px 14px; flex-wrap: wrap; align-items: baseline; font-size: 16px; padding-top: 6px; border-top: 1px solid var(--line); }
+.subnav span { color: var(--muted); }
+.subnav a { font-weight: 600; color: var(--accent-strong); text-decoration: none; }
+.subnav a:hover { text-decoration: underline; }
+.step-head .diapo { font-size: 15px; font-weight: 700; color: var(--accent-strong); white-space: nowrap; }
+.step { scroll-margin-top: 200px; }
+.diapos { margin: 0 0 14px; } .diapos .diapo { margin-right: 14px; } .diapos a { font-weight: 700; font-size: 17px; color: var(--accent-strong); }
+main { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 36px 90px; display: grid; gap: 48px; }
+.hero { display: grid; gap: 14px; }
+.eyebrow { font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.lead { font-size: 1.15rem; color: var(--muted); max-width: 66ch; }
+.app { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.app div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+.app strong { font-family: var(--font-display); color: var(--accent-strong); }
+.app span { font-size: 15px; color: var(--muted); }
+.sesion { display: grid; gap: 14px; scroll-margin-top: 200px; }
+.steps { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.step-head { display: flex; gap: 12px; align-items: center; padding: 12px 18px; background: var(--sunken); flex-wrap: wrap; }
+.step-head .n { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-weight: 700; flex: none; }
+.step-head h3 { flex: 1; min-width: 12ch; }
+.when { font-size: 15px; color: var(--muted); }
+.step-body { padding: 14px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.code { background: var(--code-bg); color: var(--code-fg); border-radius: 10px; min-width: 0; }
+.code-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px 0 16px; }
+.code-file { font-family: var(--font-mono); font-size: 14px; color: var(--code-dim); overflow-wrap: anywhere; }
+.copy { font: inherit; font-size: 14px; font-weight: 700; background: transparent; color: var(--code-fg); border: 1px solid var(--code-dim); border-radius: 7px; padding: 3px 10px; cursor: pointer; flex: none; }
+.code pre { margin: 0; padding: 10px 16px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 15px; line-height: 1.55; }
+.check { background: var(--ok-soft); border-radius: 10px; padding: 10px 16px; }
+.check strong { color: var(--ok); }
+.check ul { margin: 4px 0 0; padding-left: 22px; display: grid; gap: 4px; }
+.note { background: var(--amber-soft); border-radius: 10px; padding: 10px 16px; }
+.queda { border: 1px dashed var(--line); border-radius: 10px; padding: 8px 14px; }
+.queda summary { cursor: pointer; color: var(--muted); font-size: 16px; }
+.queda[open] summary { margin-bottom: 10px; }
+.mano { background: var(--sunken); border-left: 4px solid var(--accent); border-radius: 10px; padding: 10px 16px; display: grid; gap: 4px; }
+.mano strong { color: var(--accent-strong); }
+@media (max-width: 700px) { .topbar { position: static; } }
+.caminos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.caminos div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; }
+.caminos strong { font-family: var(--font-display); color: var(--accent-strong); }
+.caminos span { font-size: 16px; color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+.tabla { width: 100%; border-collapse: collapse; font-size: 16px; }
+.tabla th { text-align: left; background: var(--accent-soft); color: var(--accent-strong); padding: 8px 12px; }
+.tabla td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.rec { display: inline-block; font-size: 14px; font-weight: 700; color: var(--ok); }
+.pasitos { margin: 0; padding-left: 24px; display: grid; gap: 4px; }
+.sources ul { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+@media (max-width: 700px) { .caminos { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .app { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 420px) { .app { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+  <a class="brand" href="index.html">Aprende Claude Code</a>
+  <nav class="nav" aria-label="Secciones"><a href="index.html">Inicio</a><a href="instalacion.html">Instalación</a><a href="proyecto.html">Proyecto</a><a href="entorno.html">Vuestro entorno</a><a href="construir.html" aria-current="page">Construir vuestra app</a><a href="diapositivas/">Diapositivas</a><a href="index.html#reto">Reto final</a><a href="index.html#referencia">Referencia</a></nav>
+  <nav class="subnav" aria-label="En esta guía"><span>En esta guía:</span><a href="#novedad">Novedad</a><a href="#antes">Antes del código</a><a href="#equipo">En equipo</a><a href="#partes">Una parte cada vez</a><a href="#fuentes">Fuentes</a></nav>
+</div></header>
+<main>
+<section class="hero">
+  <p class="eyebrow">Sesión 5 · en adelante</p>
+  <h1>Construir vuestra app</h1>
+  <p class="lead">Las piezas que rodean a Claude cuando construye algo nuevo: ficheros, casi todos en <code>docs/</code>, que Claude lee cuando trabaja. No hacen falta todas, ni en este orden: cada una ayuda sola. Empezad por la que os falte, en vuestra parte de la app.</p>
+  <p class="diapos"><a href="diapositivas/sesion-5.html" target="diapositivas">Diapositivas de la sesión 5 ↗</a></p>
+  <div class="app">
+    <div><strong>Especificación</strong><span>Qué se construye, con los huecos a la vista</span></div>
+    <div><strong>Glosario y decisiones</strong><span>Las mismas palabras; lo ya decidido</span></div>
+    <div><strong>DESIGN.md e integraciones</strong><span>Pantallas coherentes; el sistema actual, simulado</span></div>
+    <div><strong>Plan, ejemplos, progreso y revisor</strong><span>Una parte cada vez, comprobada</span></div>
+  </div>
+  <p class="note">Lo que aparece entre <code>&lt; &gt;</code> lo cambias tú antes de pegarlo. <strong>Nunca datos reales para construir</strong>: ni pacientes, ni citas, ni copias de producción. El sistema actual, siempre simulado con datos inventados.</p>
+</section>
+
+<section class="sesion" id="novedad">
+  <p class="eyebrow">Novedad · 15 de octubre de 2026</p>
+  <h2>Cómo revisa código el equipo de Claude Code</h2>
+  <p>Anthropic publicó cómo revisa el código que escribe Claude (en torno al 90 % del de Claude Code). La idea: ya no da tiempo a leerlo todo, así que la pregunta pasa de «¿lo ha leído una persona?» a «<strong>¿qué puede salir mal, y qué control lo caza?</strong>».</p>
+  <div class="tablewrap"><table class="tabla">
+    <tr><th>Capa</th><th>Qué hace</th></tr>
+    <tr><td>1</td><td>Claude se comprueba antes de enseñar nada (tests, compilación) y un subagente revisa con contexto limpio</td></tr>
+    <tr><td>2</td><td>Revisión de IA: varios agentes buscan errores y otros votan si cada uno es real</td></tr>
+    <tr><td>3</td><td>Revisión de seguridad: con algo abierto, no se integra</td></tr>
+    <tr><td>4</td><td>Lint, tipos, tests y compilación</td></tr>
+    <tr><td>5</td><td>Personas según el riesgo del cambio: 0, 1 o 2. La aprobación de un agente nunca cuenta como la de una persona</td></tr>
+    <tr><td>6</td><td>Cola de integración y salida por fases; debajo, deshacer rápido</td></tr>
+  </table></div>
+  <p><strong>El <code>REVIEW.md</code></strong> dice qué importa al revisar: qué es grave aquí, un tope de comentarios menores, qué no revisar y que cada hallazgo traiga archivo y línea. Lo lee el servicio Code Review en GitHub (planes Team y Enterprise); el <code>/code-review</code> de vuestro terminal lee el <code>CLAUDE.md</code>, no el <code>REVIEW.md</code>. Sin GitHub, esos criterios van en vuestro revisor (<a href="#revisor">pieza 10</a>) o en el <code>CLAUDE.md</code>.</p>
+  <p class="note"><strong>La anécdota:</strong> un cambio pasó más de 50 rondas de «revisa, corrige, revisa» en una noche; el 59 % de lo que marcaba el revisor era código antiguo. Desde entonces: tope de 3 rondas y, después, replantear. Los cambios que pasan a la primera subieron del 65 % al 78 %.</p>
+  <p class="diapos"><a href="diapositivas/sesion-5.html#5" target="diapositivas">Diapositivas 5 a 14 ↗</a> <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">El artículo original (en inglés)</a></p>
+</section>
+
+<section class="sesion" id="antes">
+  <p class="eyebrow">Bloque 1</p>
+  <h2>Antes del código: que Claude sepa qué construir</h2>
+  <ol class="steps">
+    <li class="step" id="especificacion"><div class="step-head"><span class="n">1</span><h3>La especificación, con entrevista</h3><a class="diapo" href="diapositivas/sesion-5.html#17" target="diapositivas">Diapositiva 17 ↗</a></div><div class="step-body">
+      <p>Todo documento de requisitos tiene huecos. Si le dices a Claude «haz esto», los rellena a su manera. Si le pides que te entreviste primero, salen a la luz: lo que sabes va a la especificación; lo que no, a <strong>«Preguntas abiertas»</strong>, para quien sí lo sepa.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Lee &lt;el documento de requisitos, por ejemplo: docs/borrador.pdf&gt;. Voy a
+construir &lt;tu parte de la app, por ejemplo: la reserva de citas&gt;. Antes de proponer
+nada, entrevístame: una pregunta cada vez, sobre lo que el documento no dice o
+deja ambiguo (casos límite, reglas, quién puede hacer qué, qué pasa si algo
+falla). Después escribe docs/especificacion.md con: qué hace, reglas, casos
+límite con ejemplos concretos, qué queda fuera, y una sección «Preguntas
+abiertas» con lo que yo no haya sabido contestar.</pre></div>
+      <div class="check"><strong>Está bien si…</strong><ul><li>Claude te ha hecho preguntas antes de escribir nada</li><li>Los casos límite llevan ejemplos con datos concretos</li><li>Lo que no sabías está en «Preguntas abiertas», no inventado</li></ul></div>
+      <p class="note">El <code>/plan</code> tiene que ir al principio del mensaje. Si escribe el fichero sin preguntar: <kbd>Esc</kbd>, <code>/rewind</code> y otra vez. Cuando quiera escribir, acepta salir de plan mode.</p>
+    </div></li>
+    <li class="step" id="glosario"><div class="step-head"><span class="n">2</span><h3>El glosario: una cosa, un nombre</h3><a class="diapo" href="diapositivas/sesion-5.html#19" target="diapositivas">Diapositiva 19 ↗</a></div><div class="step-body">
+      <p>Si el documento llama a lo mismo de dos formas (cliente y paciente, delegación y centro, calendario y agenda), Claude pondrá nombres distintos en cada parte del código. El glosario dice qué significa cada término aquí y cómo se llama en el código.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Con &lt;el documento de requisitos&gt; y docs/especificacion.md si existe, escribe
+docs/glosario.md: cada término del negocio, qué significa aquí, cómo se llamará en
+el código y con qué no hay que confundirlo. Señala los términos que el documento
+usa de dos formas distintas y pregúntame cuál es la buena. Añade al CLAUDE.md una
+línea para que uses el glosario al nombrar cualquier cosa.</pre></div>
+    </div></li>
+    <li class="step" id="decisiones"><div class="step-head"><span class="n">3</span><h3>Las decisiones, en un fichero corto</h3><a class="diapo" href="diapositivas/sesion-5.html#20" target="diapositivas">Diapositiva 20 ↗</a></div><div class="step-body">
+      <p>Lo ya decidido, numerado: contexto, decisión, alternativas descartadas y consecuencias. Sin esto, Claude leerá «enviar SMS» y programará un envío de SMS aunque se haya decidido que lo envía el sistema actual.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Apunta esta decisión en docs/decisiones/, en un fichero corto con número:
+&lt;la decisión, por ejemplo: los avisos por email y SMS no los envía la app; manda
+una orden al sistema actual y la registra&gt;. Escribe el contexto, la decisión, las
+alternativas descartadas y las consecuencias. Añade al CLAUDE.md que leas
+docs/decisiones/ antes de cambiar algo a lo que afecten.</pre></div>
+      <details class="queda"><summary>Así queda (ejemplo)</summary><div class="code"><div class="code-head"><span class="code-file">docs/decisiones/0001-avisos.md</span></div><pre># 0001 · Los avisos los envía el sistema actual
+Contexto: email y SMS ya tienen sus mecanismos.
+Decisión: la app no envía nada. Manda una orden con el contenido y los
+  destinatarios, y la registra.
+Descartado: enviar desde la app.
+Consecuencia: el registro guarda la orden, no el resultado.</pre></div></details>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="equipo">
+  <p class="eyebrow">Bloque 2</p>
+  <h2>Construir en equipo: que todo encaje</h2>
+  <ol class="steps" start="4">
+    <li class="step" id="design"><div class="step-head"><span class="n">4</span><h3>El <code>DESIGN.md</code>: cómo se ve</h3><a class="diapo" href="diapositivas/sesion-5.html#23" target="diapositivas">Diapositiva 23 ↗</a></div><div class="step-body">
+      <p>Lo que el <code>CLAUDE.md</code> es para el código, el <code>DESIGN.md</code> lo es para las pantallas: colores con su uso, tipografía, espaciado, qué componente se usa para qué y lo que no se hace. Es un formato propuesto por Google (con su herramienta Stitch) que leen Claude Code y otros agentes. Es Markdown: no hay que instalar nada. Si tenéis guía de estilo, el <code>DESIGN.md</code> es esa guía, resumida para Claude.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Quiero un DESIGN.md en la raíz para que todas las pantallas de esta app salgan
+coherentes, las haga quien las haga. Antes, pregúntame lo que necesites, una cosa
+cada vez: si hay una guía de estilo o una aplicación de la empresa a la que deba
+parecerse (si la hay, la tomamos como base), colores, tipografía, componentes o
+librerías que ya usamos y requisitos de accesibilidad. Después escribe: colores
+con su uso, tipografía, espaciado, componentes y cuándo se usa cada uno, y lo que
+no se hace. Añade al CLAUDE.md que lo siga en cualquier pantalla.</pre></div>
+      <details class="queda"><summary>Así queda (fragmento de ejemplo)</summary><div class="code"><div class="code-head"><span class="code-file">DESIGN.md</span></div><pre># Diseño
+## Colores
+- Principal: #13706B (botones, enlaces)
+- Error: #A8201A (solo errores)
+## Texto
+- Base 16 px. Nunca menos de 14
+## Componentes
+- Fechas: siempre el selector del calendario, nunca texto libre
+## No
+- Ventanas emergentes para confirmar una cita</pre></div></details>
+    </div></li>
+    <li class="step" id="integraciones"><div class="step-head"><span class="n">5</span><h3>Integraciones, simuladas</h3><a class="diapo" href="diapositivas/sesion-5.html#25" target="diapositivas">Diapositiva 25 ↗</a></div><div class="step-body">
+      <p>Todo lo que la app necesita del sistema actual, o le da, en <code>docs/integraciones.md</code>: qué se pide, qué vuelve, un ejemplo con datos inventados y qué pasa si no responde. Lo que no se sepa, «a confirmar». Para desarrollar, un simulador que responde con esos datos. El sistema real, cuando toque, con quien lo administra.</p>
+      <div class="code"><div class="code-head"><span class="code-file">1 · El documento</span><button class="copy" type="button">Copiar</button></div><pre>Lee &lt;el documento de requisitos&gt; y escribe docs/integraciones.md con todo lo que
+&lt;tu parte de la app&gt; necesita del sistema actual o le da a él: listas,
+comprobaciones, órdenes de envío, consultas. Para cada una: qué se pide, qué se
+recibe, un ejemplo con datos inventados y qué pasa si no responde. Lo que no
+sepamos, márcalo «a confirmar» y no lo inventes. Al final, propón en pocas líneas
+cómo simularlas para desarrollar sin tocar el sistema real. No implementes nada
+todavía.</pre></div>
+      <div class="code"><div class="code-head"><span class="code-file">2 · El simulador, cuando lo necesites</span><button class="copy" type="button">Copiar</button></div><pre>Con docs/integraciones.md, crea un simulador del sistema actual para desarrollar:
+que responda con los datos inventados de los ejemplos, que se arranque y se pare
+con un comando, y que nunca se conecte al sistema real. Antes, pregúntame en qué
+stack y dónde lo quiero. Apunta en el CLAUDE.md cómo se arranca y que se usa
+siempre el simulador mientras desarrollamos.</pre></div>
+    </div></li>
+    <li class="step" id="compartir"><div class="step-head"><span class="n">6</span><h3>Qué se comparte, y dónde</h3><a class="diapo" href="diapositivas/sesion-5.html#26" target="diapositivas">Diapositiva 26 ↗</a></div><div class="step-body">
+      <div class="tablewrap"><table class="tabla"><tr><th>De todo el equipo</th><th>Solo tuyo</th><th>Nunca sale del equipo</th></tr><tr><td><code>CLAUDE.md</code>, especificación, glosario, decisiones, <code>DESIGN.md</code>, reglas y revisores</td><td>Tus preferencias: <code>~/.claude/</code> o <code>CLAUDE.local.md</code></td><td>Credenciales y datos</td></tr></table></div>
+      <p>Lo compartido va junto al código, donde lo guardéis hoy. Cambiarlo cambia cómo trabajan todos los Claude del equipo: se revisa como el código.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Mira los ficheros de instrucciones de este proyecto (CLAUDE.md, .claude/, docs/,
+DESIGN.md) y hazme una tabla: qué es de todo el equipo y debería compartirse, qué
+es solo mío, y qué no debe salir nunca de este equipo (credenciales, datos).
+Antes, pregúntame cómo compartimos hoy el código en el equipo, y propón dónde
+guardar lo compartido según eso. No muevas nada.</pre></div>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion" id="partes">
+  <p class="eyebrow">Bloque 3</p>
+  <h2>Una parte cada vez: pequeña, comprobada y apuntada</h2>
+  <ol class="steps" start="7">
+    <li class="step" id="plan"><div class="step-head"><span class="n">7</span><h3>El plan por partes</h3><a class="diapo" href="diapositivas/sesion-5.html#29" target="diapositivas">Diapositiva 29 ↗</a></div><div class="step-body">
+      <p>Partes que se pueden terminar, cada una con <strong>qué incluye, cuándo está hecha y cómo se comprueba</strong>. Primero lo que no depende del sistema actual: por ejemplo, calcular los huecos libres de un calendario. Cada parte, en una sesión limpia (<code>/clear</code> entre una y otra).</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>/plan Con docs/especificacion.md, divide &lt;tu parte de la app&gt; en partes pequeñas
+que se puedan terminar y comprobar una a una. Primero las que no dependen del
+sistema actual. Para cada parte: qué incluye, cuándo está hecha y cómo se
+comprueba. Guárdalo en docs/plan.md. No implementes nada.</pre></div>
+      <p class="note">¿Una parte enorme, como «hacer las reservas»? Pídele que la divida. Sin «cuándo está hecha», ni el revisor ni tú sabéis cuándo parar.</p>
+    </div></li>
+    <li class="step" id="ejemplos"><div class="step-head"><span class="n">8</span><h3>Ejemplos antes que código</h3><a class="diapo" href="diapositivas/sesion-5.html#31" target="diapositivas">Diapositiva 31 ↗</a></div><div class="step-body">
+      <p>Antes de programar una parte, una tabla de ejemplos. Tú revisas la tabla, no el código. Después Claude la convierte en tests, comprueba que fallan (aún no hay código) y programa hasta que pasan.</p>
+      <div class="tablewrap"><table class="tabla"><tr><th>Calendario</th><th>Ya hay</th><th>Primera hora libre</th></tr><tr><td>9:00–11:00, cada 30 min</td><td>Cita a las 9:00</td><td>9:30</td></tr><tr><td>Máximo 3 al día</td><td>3 citas</td><td>Ninguna</td></tr><tr><td>Día bloqueado</td><td>Nada</td><td>Ninguna</td></tr><tr><td>Prueba con espera de una semana</td><td>La anterior, hace 5 días</td><td>No se puede</td></tr></table></div>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Para la primera parte de docs/plan.md, escribe una tabla de ejemplos concretos:
+datos de entrada, resultado esperado y por qué, con los casos límite de
+docs/especificacion.md. Revísala conmigo antes de seguir. Cuando la apruebe,
+conviértela en tests con la forma de probar que hay en el CLAUDE.md, ejecútalos y
+enséñame que fallan, porque aún no hay código. Después implementa hasta que pasen,
+sin cambiar los tests.</pre></div>
+    </div></li>
+    <li class="step" id="progreso"><div class="step-head"><span class="n">9</span><h3>El progreso: retomar sin empezar de cero</h3><a class="diapo" href="diapositivas/sesion-5.html#32" target="diapositivas">Diapositiva 32 ↗</a></div><div class="step-body">
+      <p>Una app no se construye en una conversación, y mañana Claude no se acuerda de nada. Con esta regla, apunta al terminar cada parte y lo lee al empezar. Lo puede leer también un compañero.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea docs/progreso.md y añade al CLAUDE.md esta regla: al terminar cada parte,
+actualiza docs/progreso.md con qué está hecho, qué falta, qué has decidido y qué
+ha fallado; y al empezar una sesión nueva, léelo junto con docs/plan.md antes de
+hacer nada. Enséñame cómo queda la regla.</pre></div>
+    </div></li>
+    <li class="step" id="revisor"><div class="step-head"><span class="n">10</span><h3>Un revisor con vuestras reglas</h3><a class="diapo" href="diapositivas/sesion-5.html#33" target="diapositivas">Diapositiva 33 ↗</a></div><div class="step-body">
+      <p>Como los de la sesión 3, pero revisa contra lo escrito: especificación, glosario y decisiones. Sabe qué es grave en vuestra app, da archivo y línea, no repite y no puede editar. Y el tope de Anthropic: tres rondas sin pasar, se para y se replantea.</p>
+      <div class="code"><div class="code-head"><span class="code-file">Pídeselo a Claude</span><button class="copy" type="button">Copiar</button></div><pre>Crea un subagente revisor para esta app (o amplía el que ya tengo) que revise los
+cambios contra docs/especificacion.md, docs/glosario.md y docs/decisiones/ si
+existen. Pregúntame qué es grave en mi parte (por ejemplo: dos citas en el mismo
+hueco, ver datos de otra delegación). Que dé archivo y línea de cada hallazgo, como
+mucho cinco comentarios menores, no repita lo ya dicho y termine con un veredicto
+de una línea. Que no pueda editar. Añade al CLAUDE.md: si una parte no pasa la
+revisión tras tres rondas, para y pregúntame.</pre></div>
+      <p class="mano"><strong>La decisión de integrar es de una persona.</strong> <span>La aprobación de un agente nunca cuenta como la tuya.</span></p>
+    </div></li>
+  </ol>
+</section>
+
+<section class="sesion sources" id="fuentes">
+  <p class="eyebrow">Referencias</p>
+  <h2>Fuentes</h2>
+  <ul>
+    <li>Cómo revisa código el equipo de Claude Code (Anthropic, 15-10-2026): <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">claude.dev/blog/solving-code-review-at-anthropic</a></li>
+    <li>Code Review y <code>REVIEW.md</code>: <a href="https://code.claude.com/docs/en/code-review">code.claude.com/docs/en/code-review</a> · <a href="https://code.claude.com/docs/en/code-review-customize">code-review-customize</a></li>
+    <li>Buenas prácticas de Claude Code: <a href="https://code.claude.com/docs/en/best-practices">code.claude.com/docs/en/best-practices</a></li>
+    <li>Trabajo en muchas sesiones (fichero de progreso): <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">anthropic.com/engineering/effective-harnesses-for-long-running-agents</a></li>
+    <li>Memoria, <code>CLAUDE.md</code> y <code>CLAUDE.local.md</code>: <a href="https://code.claude.com/docs/en/memory">code.claude.com/docs/en/memory</a> · Subagentes: <a href="https://code.claude.com/docs/en/sub-agents">code.claude.com/docs/en/sub-agents</a></li>
+  </ul>
+</section>
+</main>
+<script>
+document.addEventListener("click", function (e) {
+  var b = e.target.closest(".copy"); if (!b) return;
+  var pre = b.closest(".code").querySelector("pre");
+  var reset = function (t) { b.textContent = t; setTimeout(function () { b.textContent = "Copiar"; }, 1800); };
+  var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); reset("Seleccionado: Ctrl+C"); };
+  try { navigator.clipboard.writeText(pre.innerText).then(function () { reset("Copiado"); }, fallback); } catch (err) { fallback(); }
+});
+</script>
+</body>
+</html>
