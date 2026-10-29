@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sesión 6 · Claude Code</title>
+  <style>
+    :root {
+      --bg:#eef2f5; --paper:#ffffff; --ink:#132029; --muted:#4f5d6b; --line:#d5dde5;
+      --accent:#13706b; --accent-strong:#0b4f4b; --accent-soft:#dcf1ee;
+      --act:#b8430f; --act-soft:#fff1e8;
+      --warn:#7a4f00; --warn-soft:#fff3d6;
+      --red:#a8201a; --red-soft:#fde4e2; --green:#1d6b37; --green-soft:#e5f5ea;
+      --code-bg:#0e1621; --code-ink:#e9f2f3; --code-dim:#8fa3b3;
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; height:100%; background:#1c2630; overflow:hidden; }
+    body { font-family:"Segoe UI", Inter, system-ui, -apple-system, sans-serif; color:var(--ink); }
+
+    /* Escenario fijo 1600x900 escalado al tamaño de la ventana */
+    #viewport { position:fixed; inset:0; overflow:hidden; }
+    #stage { width:1600px; height:900px; position:absolute; left:50%; top:50%; transform-origin:center center; }
+    .slide { position:absolute; inset:0; background:var(--paper); padding:70px 96px 80px; display:none; flex-direction:column; overflow:hidden; font-size:34px; line-height:1.4; }
+    .slide.on { display:flex; }
+    .slide h2 { font-size:58px; line-height:1.12; margin:0 0 34px; letter-spacing:-.01em; }
+    .slide h3 { font-size:38px; margin:0 0 14px; color:var(--accent-strong); }
+    .slide p { margin:0 0 20px; }
+    .kicker { font-size:24px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 14px; }
+    .muted { color:var(--muted); }
+    .guia { margin:22px 0 0; font-size:28px; font-weight:700; }
+    .guia a { color:var(--accent-strong); text-decoration:underline; text-underline-offset:5px; }
+    .guia .url { display:block; font-family:"Cascadia Code", Consolas, monospace; font-size:26px; font-weight:400; color:var(--muted); margin-top:6px; }
+    
+    ul.b { margin:0; padding-left:40px; } ul.b li { margin:0 0 18px; }
+    ul.b li::marker { color:var(--accent); }
+    code, pre, kbd { font-family:"Cascadia Code", Consolas, "JetBrains Mono", ui-monospace, monospace; }
+    :not(pre) > code { background:var(--accent-soft); color:var(--accent-strong); padding:2px 10px; border-radius:8px; font-size:.88em; }
+    pre { background:var(--code-bg); color:var(--code-ink); border-radius:16px; padding:26px 32px; margin:0 0 22px; font-size:29px; line-height:1.45; white-space:pre-wrap; }
+    pre .c { color:var(--code-dim); }
+    kbd { font-size:.82em; background:#fff; border:2px solid var(--line); border-bottom-width:4px; border-radius:10px; padding:2px 12px; }
+    .foot { position:absolute; left:96px; right:96px; bottom:28px; display:flex; justify-content:space-between; font-size:20px; color:var(--muted); }
+
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+    .card { background:var(--bg); border-radius:18px; padding:28px 32px; }
+    .card h3 { font-size:34px; }
+    .card.good { background:var(--green-soft); } .card.good h3 { color:var(--green); }
+    .card.bad { background:var(--red-soft); } .card.bad h3 { color:var(--red); }
+
+    table.t { width:100%; border-collapse:collapse; font-size:29px; }
+    table.t th { text-align:left; font-size:22px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong); background:var(--accent-soft); padding:14px 20px; }
+    table.t td { padding:14px 20px; border-bottom:2px solid var(--line); vertical-align:top; }
+    table.t td:first-child { white-space:nowrap; }
+    table.t.wrap td:first-child { white-space:normal; }
+
+    .big { font-size:52px; line-height:1.25; font-weight:700; }
+    .quote { font-size:52px; line-height:1.25; font-weight:700; border-left:12px solid var(--accent); padding-left:40px; margin:auto 0; }
+    .quote small { display:block; font-size:28px; font-weight:400; color:var(--muted); margin-top:24px; }
+
+    /* Portada y separadores */
+    .slide.cover { background:linear-gradient(135deg,#0b4f4b,#13706b 60%,#1b8c85); color:#fff; justify-content:center; }
+    .slide.cover h1 { font-size:96px; line-height:1.02; margin:0 0 26px; letter-spacing:-.02em; }
+    .slide.cover p { font-size:40px; opacity:.92; }
+    .slide.cover .kicker { color:#bfeee8; }
+    .slide.cover .foot { color:#bfeee8; }
+    .slide.section { background:var(--accent-strong); color:#fff; justify-content:center; }
+    .slide.section .num { font-size:30px; font-weight:800; letter-spacing:.1em; color:#9fe0d8; margin-bottom:18px; }
+    .slide.section h2 { font-size:92px; margin:0 0 20px; }
+    .slide.section p { font-size:38px; color:#d6f3ef; }
+    .slide.section .foot { color:#9fe0d8; }
+
+    /* Actividades */
+    .slide.activity { background:var(--act-soft); }
+    .actbar { display:flex; justify-content:space-between; align-items:center; background:var(--act); color:#fff; margin:-70px -96px 40px; padding:24px 96px; font-size:30px; font-weight:800; letter-spacing:.04em; }
+    .actbar .dur { background:rgba(255,255,255,.22); padding:4px 18px; border-radius:999px; }
+    ol.steps { margin:0; padding-left:48px; } ol.steps li { margin:0 0 16px; padding-left:8px; }
+    ol.steps li::marker { color:var(--act); font-weight:800; }
+    .check { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 40px; font-size:31px; }
+    .check div { background:#fff; border-radius:14px; padding:14px 22px; }
+    .check b { color:var(--act); margin-right:10px; }
+
+    /* Diagrama del harness */
+    .harness { position:relative; width:640px; height:560px; margin:0 auto; }
+    .harness .core { position:absolute; left:50%; top:50%; width:220px; height:220px; margin:-110px 0 0 -110px; border-radius:50%; background:var(--accent); color:#fff; display:grid; place-items:center; font-size:38px; font-weight:800; text-align:center; line-height:1.1; }
+    .harness .ring { position:absolute; inset:20px 50px; border:4px dashed #9cc9c4; border-radius:50%; }
+    .harness .pill { position:absolute; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); border-radius:999px; padding:10px 24px; font-size:27px; font-weight:700; white-space:nowrap; transform:translate(-50%,-50%); }
+
+    .flow { display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:34px; font-weight:700; }
+    .flow span.s { background:var(--accent-soft); color:var(--accent-strong); padding:16px 26px; border-radius:16px; }
+    .flow span.s.hl { background:var(--warn-soft); color:var(--warn); outline:3px solid var(--warn); }
+    .flow span.a { color:var(--muted); }
+
+    .term { display:inline-block; background:var(--code-bg); color:var(--code-ink); border-radius:12px; padding:10px 22px; font-family:Consolas, monospace; font-size:30px; }
+
+    .note { background:var(--warn-soft); border-left:10px solid var(--warn); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .note b { color:var(--warn); }
+    .danger { background:var(--red-soft); border-left:10px solid var(--red); border-radius:12px; padding:20px 28px; font-size:30px; margin-top:auto; }
+    .danger b { color:var(--red); }
+
+    /* Programa y agenda */
+    .prog { display:flex; flex-direction:column; gap:12px; }
+    .prog .row { display:grid; grid-template-columns:64px 1fr auto; gap:22px; align-items:center; background:var(--bg); border-radius:16px; padding:12px 26px; }
+    .prog .row .n { width:52px; height:52px; border-radius:50%; background:#fff; border:3px solid var(--accent); color:var(--accent-strong); display:grid; place-items:center; font-weight:800; font-size:26px; }
+    .prog .row .tt { font-size:30px; font-weight:700; line-height:1.15; }
+    .prog .row .tt small { display:block; font-size:24px; font-weight:400; color:var(--muted); margin-top:2px; }
+    .prog .row .st { font-size:22px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .prog .row.done { opacity:.55; }
+    .prog .row.done .n { background:var(--accent); color:#fff; }
+    .prog .row.now { background:var(--accent); color:#fff; }
+    .prog .row.now .n { background:#fff; border-color:#fff; }
+    .prog .row.now .tt small { color:#d6f3ef; }
+    .prog .row.now .st { color:#fff; background:rgba(255,255,255,.2); padding:4px 14px; border-radius:999px; }
+    .today { display:grid; grid-template-columns:1.25fr 1fr; gap:44px; align-items:start; }
+    .today table.t td { font-size:30px; padding:12px 18px; }
+    .takeaway { background:var(--accent-soft); border-radius:18px; padding:28px 32px; }
+    .takeaway h3 { margin:0 0 16px; }
+    .takeaway ul { margin:0; padding-left:34px; font-size:30px; } .takeaway li { margin-bottom:14px; }
+
+    /* Barra de control (fuera del escenario) */
+    #hud { position:fixed; left:50%; transform:translateX(-50%); bottom:10px; display:flex; gap:10px; align-items:center; font:16px "Segoe UI", system-ui, sans-serif; color:#cbd6df; z-index:5; opacity:.2; transition:opacity .2s; }
+    #hud:hover { opacity:1; }
+    #hud button, #hud a { font:inherit; font-size:16px; background:#2c3946; color:#fff; border:0; border-radius:8px; padding:8px 14px; cursor:pointer; text-decoration:none; }
+    #progress { position:fixed; left:0; top:0; height:5px; background:#36b3a8; z-index:5; transition:width .2s; }
+
+    @media print {
+      html, body { overflow:visible; background:#fff; height:auto; }
+      #viewport { position:static; display:block; }
+      #stage { transform:none !important; position:static; width:1600px; height:auto; }
+      .slide { display:flex !important; position:relative; width:1600px; height:900px; break-after:page; }
+      #hud, #progress { display:none; }
+      @page { size:1600px 900px; margin:0; }
+    }
+
+    /* Tablero de preguntas (S6): casillas que saltan a su diapositiva */
+    .tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .tiles a { display:flex; flex-direction:column; gap:8px; background:var(--accent-soft); color:var(--accent-strong); border:3px solid transparent; border-radius:18px; padding:30px 30px; text-decoration:none; }
+    .tiles a:hover { border-color:var(--accent); }
+    .tiles a b { font-size:36px; line-height:1.15; }
+    .tiles a span { font-size:28px; color:var(--muted); }
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 -->
+<section class="slide cover">
+  <p class="kicker">Curso Claude Code · Sesión 6 de 6</p>
+  <h1>Vuestras preguntas</h1>
+  <p>Lo que os ha funcionado, lo que os cuesta y lo que os lleváis.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <p class="kicker">Dónde estamos</p>
+  <h2 style="margin-bottom:26px">El programa</h2>
+  <div class="prog">
+    <div class="row done"><div class="n">✓</div><div class="tt">Fundamentos y memoria de proyecto<small>Instalar y darle a Claude el contexto del proyecto</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Uso seguro y gobierno<small>Pasar de consejos a reglas: permisos y validaciones</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Skills, subagentes y MCP<small>Herramientas del equipo y reparto de tareas</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Vuestro entorno, listo<small>Cómo trabajar con Claude y el setup de vuestro proyecto</small></div><div class="st">Hecho</div></div>
+    <div class="row done"><div class="n">✓</div><div class="tt">Taller: vuestro caso real<small>De los requisitos a la primera parte, con el arnés para construir</small></div><div class="st">Hecho</div></div>
+    <div class="row now"><div class="n">6</div><div class="tt">Acompañamiento y cierre<small>Vuestras preguntas, sobre lo que estéis haciendo</small></div><div class="st">Hoy</div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <p class="kicker">Hoy</p>
+  <h2>Cómo funciona hoy</h2>
+  <div class="today">
+    <table class="t">
+      <tr><td>12:00</td><td>Qué os funciona y qué os cuesta</td></tr>
+      <tr><td>12:10</td><td>Vuestras preguntas</td></tr>
+      <tr><td>13:00</td><td>Pausa</td></tr>
+      <tr><td>13:10</td><td>Más preguntas</td></tr>
+      <tr><td>13:45</td><td>Cierre</td></tr>
+    </table>
+    <div class="takeaway"><h3>Al terminar tendrás</h3>
+      <ul>
+        <li>Respuesta a lo que os <b>frena</b> en vuestra parte</li>
+        <li>Trucos para el día a día, <b>vistos en directo</b></li>
+        <li>Qué dejar configurado y <b>cómo mantenerlo</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>Vosotros preguntáis.</b> Lo resolvemos en directo, con Claude. Entre pregunta y pregunta, trucos de tres minutos.</div>
+</section>
+
+<!-- 4 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Actividad · Lo que os funciona, lo que os cuesta</span><span class="dur">5 min</span></div>
+  <p class="big">En el chat, dos líneas:</p>
+  <ol class="steps">
+    <li><b>Algo que os haya funcionado</b> esta semana con Claude</li>
+    <li><b>Algo que os cueste</b>, os haya salido mal o no sepáis cómo pedir</li>
+  </ol>
+  <div class="note"><b>Lo segundo es lo que más nos sirve.</b> Con eso empezamos.</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <p class="kicker">Si no sabéis por dónde empezar</p>
+  <h2 style="margin-bottom:30px">Elegid una casilla</h2>
+  <div class="tiles">
+    <a href="#7"><b>Datos y seguridad</b><span>Qué sale de vuestro equipo</span></a>
+    <a href="#8"><b>Consumo</b><span>Cuánto gasto y cómo lo controlo</span></a>
+    <a href="#10"><b>Revisar antes de integrar</b><span>Quién decide y con qué</span></a>
+    <a href="#17"><b>Sesiones largas</b><span>Retomar mañana sin perder el hilo</span></a>
+    <a href="#21"><b>Vuestro código</b><span>Explicar, comprobar, registrar</span></a>
+    <a href="#11"><b>El equipo</b><span>Qué dejar configurado y cómo mantenerlo</span></a>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide section">
+  <div class="num">PREGUNTAS QUE SUELEN SALIR</div>
+  <h2>Lo que nos preguntan casi siempre</h2>
+  <p>Datos, consumo, otras herramientas, revisión y mantenimiento</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <p class="kicker">Datos y seguridad</p>
+  <h2 style="margin-bottom:24px">¿Qué sale de vuestro equipo?</h2>
+  <table class="t wrap">
+    <tr><td style="width:300px"><b>Qué viaja</b></td><td>Vuestras peticiones, las respuestas y <b>todo lo que Claude lee</b> para responder. Cifrado en el envío</td></tr>
+    <tr><td><b>Entrenamiento</b></td><td>Cuenta de empresa (Team, Enterprise, API): <b>no se entrena</b> con vuestro código. Cuenta personal (Pro, Max): depende de un ajuste. Revisadlo</td></tr>
+    <tr><td><b>Cuánto se guarda</b></td><td>Empresa: 30 días. Con Enterprise se puede pedir <b>retención cero</b>. Personal: 30 días, o 5 años si permitís el entrenamiento</td></tr>
+    <tr><td><b>En vuestro PC</b></td><td>Las conversaciones, 30 días en <code>~/.claude/projects</code>. Se puede cambiar</td></tr>
+  </table>
+  <div class="danger"><b>Datos de pacientes:</b> lo decide vuestro responsable de protección de datos, antes. Y las reglas <code>deny</code> de la sesión 2 impiden que Claude lea lo que no debe salir.</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <p class="kicker">Consumo</p>
+  <h2>¿Cuánto gasto y cómo lo controlo?</h2>
+  <div class="grid2">
+    <div class="card"><h3>Mirarlo</h3>
+      <p><code>/usage</code>: lo que lleva la sesión y cuánto os queda del plan</p>
+      <p><code>/context</code>: qué ocupa la cabeza de Claude ahora mismo</p>
+    </div>
+    <div class="card good"><h3>Gastar menos</h3>
+      <p><code>/clear</code> entre tareas que no tienen nada que ver</p>
+      <p>Peticiones concretas: qué, dónde y cómo se comprueba</p>
+      <p><code>/effort</code> medio para el día a día</p>
+    </div>
+  </div>
+  <div class="note"><b>Lo que más gasta:</b> conversaciones eternas, varios subagentes a la vez y repetir lo mismo porque la primera petición era vaga.</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <p class="kicker">Otras herramientas</p>
+  <h2>¿Y si mañana usamos otra herramienta?</h2>
+  <p class="big" style="font-size:44px">Lo que habéis construido es <span style="color:var(--accent)">método y ficheros</span>, no un truco de Claude Code.</p>
+  <ul class="b" style="margin-top:20px">
+    <li>Especificación, glosario, decisiones, tests y revisor: sirven en cualquier herramienta</li>
+    <li>Muchas herramientas leen <code>AGENTS.md</code>. Claude Code lo lee si no hay <code>CLAUDE.md</code>, o lo importa con <code>@AGENTS.md</code></li>
+  </ul>
+  <div class="note"><b>Un solo fichero de instrucciones para todo el equipo</b>, uses lo que uses.</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <p class="kicker">Antes de integrar</p>
+  <h2>Revisa Claude, decide una persona</h2>
+  <div class="flow" style="margin:10px 0 36px">
+    <span class="s">Claude se comprueba</span><span class="a">→</span>
+    <span class="s">El revisor, con ojos limpios</span><span class="a">→</span>
+    <span class="s hl">Una persona decide</span><span class="a">→</span>
+    <span class="s">Vuestro registro de cambios</span>
+  </div>
+  <ul class="b">
+    <li>Pruebas que pasan y salida a la vista, no «ya está»</li>
+    <li>El revisor de la sesión 5, con <code>docs/REVIEW.md</code></li>
+    <li>Cuántas personas revisan, según el riesgo del cambio</li>
+  </ul>
+  <div class="note"><b>La aprobación de un agente nunca cuenta</b> como la de una persona.</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <p class="kicker">El equipo</p>
+  <h2 style="margin-bottom:24px">Qué dejar configurado y cómo mantenerlo</h2>
+  <table class="t wrap">
+    <tr><td style="width:330px"><b><code>CLAUDE.md</code></b></td><td>Menos de 200 líneas. Cada error que se repite, <b>una línea</b>. Lo que ya no sirve, fuera</td></tr>
+    <tr><td><b>Reglas y permisos</b></td><td>En el proyecto, para todos. Lo personal, en vuestra carpeta de usuario</td></tr>
+    <tr><td><b>Skills y revisores</b></td><td>Son ficheros: se pasan, se leen antes y se mejoran</td></tr>
+    <tr><td><b>Un responsable</b></td><td>Alguien que lo revisa <b>una vez al mes</b>: qué falla, qué sobra</td></tr>
+  </table>
+  <div class="note"><b>Si nadie lo cuida, se queda viejo</b> y Claude sigue instrucciones que ya no son verdad.</div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <p class="kicker">Seguir al día</p>
+  <h2>Claude Code cambia cada semana</h2>
+  <table class="t">
+    <tr><td><code>/release-notes</code></td><td>Qué ha cambiado en cada versión</td></tr>
+    <tr><td><code>/powerup</code></td><td>Lecciones cortas, dentro de Claude Code</td></tr>
+    <tr><td><code>/insights</code></td><td>Un informe de cómo lo usas: dónde se tuerce, qué probar</td></tr>
+    <tr><td><code>claude --version</code></td><td>Qué versión tienes. Se actualiza sola</td></tr>
+  </table>
+  <p class="guia"><a href="https://code.claude.com/docs" target="guia">📖 La documentación oficial</a><span class="url">code.claude.com/docs</span></p>
+</section>
+
+<!-- 13 -->
+<section class="slide section">
+  <div class="num">PÍLDORAS</div>
+  <h2>Tres minutos, un truco</h2>
+  <p>Os lo enseño en directo y lo probáis cuando queráis</p>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <p class="kicker">Píldora · Imágenes</p>
+  <h2>Pégale una captura</h2>
+  <div class="grid2">
+    <div>
+      <p>Copia la pantalla y, en Claude Code:</p>
+      <p class="big"><kbd>Alt</kbd> + <kbd>V</kbd> <span class="muted" style="font-size:30px;font-weight:400">en Windows</span></p>
+      <pre>[Image #1] ¿Qué significa este error
+y por dónde empiezo?</pre>
+    </div>
+    <div class="card"><h3>Cuándo</h3>
+      <p>Un error en una pantalla, una página que no se ve bien, un diseño de referencia</p>
+    </div>
+  </div>
+  <div class="note"><b>Antes de pegarla,</b> mira que no salgan datos de nadie.</div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <p class="kicker">Píldora · Probar sin miedo</p>
+  <h2>Otro camino, sin perder este</h2>
+  <table class="t">
+    <tr><td><kbd>Esc</kbd> <kbd>Esc</kbd> o <code>/rewind</code></td><td>Vuelve atrás: código, conversación o las dos cosas</td></tr>
+    <tr><td><code>/branch</code></td><td>Copia la conversación aquí y prueba otra idea. La original sigue en <code>/resume</code></td></tr>
+  </table>
+  <div class="card" style="margin-top:34px"><h3>Cuándo</h3>
+    <p>«No sé si hacerlo así o así»: pruebas las dos y te quedas con la buena</p>
+  </div>
+  <div class="note"><b>Lo que pasa fuera de los ficheros,</b> como compilar en el servidor o enviar algo, no se deshace.</div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <p class="kicker">Píldora · Sesiones</p>
+  <h2>Ponle nombre a la sesión</h2>
+  <table class="t">
+    <tr><td><code>/rename calendarios</code></td><td>La sesión se llama así</td></tr>
+    <tr><td><code>/resume calendarios</code></td><td>Vuelves a ella otro día</td></tr>
+    <tr><td><code>claude -c</code></td><td>Sigue con la última, al abrir la terminal</td></tr>
+  </table>
+  <div class="card" style="margin-top:34px"><h3>Cuándo</h3>
+    <p>Llevas varias cosas a la vez: una sesión por tarea, con su nombre</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <p class="kicker">Píldora · Sesiones largas</p>
+  <h2>Retomar mañana sin perder el hilo</h2>
+  <div class="grid2">
+    <div class="card"><h3>Seguir en la misma</h3>
+      <p><code>/compact</code> con instrucciones:</p>
+      <pre style="font-size:26px">/compact quédate con las decisiones
+y lo que falta por hacer</pre>
+    </div>
+    <div class="card good"><h3>Empezar limpio</h3>
+      <p>«Actualiza <code>docs/progreso.md</code>: qué está hecho, qué falta y qué decidimos»</p>
+      <p>Luego <code>/clear</code>, y mañana: «lee <code>docs/progreso.md</code> y sigue»</p>
+    </div>
+  </div>
+  <div class="note"><b>Volviste y no recuerdas en qué estabas:</b> <code>/recap</code> te lo dice en una línea.</div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <p class="kicker">Píldora · Peticiones largas</p>
+  <h2>Escribe cómodo</h2>
+  <table class="t">
+    <tr><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td><td>Abre la petición en tu editor. Guardas y cierras, y vuelve</td></tr>
+    <tr><td><kbd>Shift</kbd> + <kbd>Enter</kbd></td><td>Salto de línea sin enviar</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Aparta lo que estabas escribiendo. Otra vez, y vuelve</td></tr>
+  </table>
+  <div class="card" style="margin-top:34px"><h3>Cuándo</h3>
+    <p>Peticiones con pasos, ejemplos o criterios. O cuando te surge una pregunta a mitad de escribir</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide">
+  <p class="kicker">Píldora · Lo que ya pediste</p>
+  <h2>No lo escribas otra vez</h2>
+  <table class="t">
+    <tr><td><kbd>Ctrl</kbd> + <kbd>R</kbd></td><td>Busca entre tus peticiones anteriores</td></tr>
+    <tr><td><code>/copy</code></td><td>Copia la última respuesta, o solo un bloque de código</td></tr>
+    <tr><td><code>/export</code></td><td>Guarda la conversación en un fichero de texto</td></tr>
+  </table>
+  <div class="note"><b>Si la buscas mucho,</b> no es una petición: es una skill. Lo vemos en un momento.</div>
+</section>
+
+<!-- 20 -->
+<section class="slide">
+  <p class="kicker">Píldora · Ver qué hace</p>
+  <h2>Qué está haciendo y cuánto lleva</h2>
+  <table class="t">
+    <tr><td><kbd>Ctrl</kbd> + <kbd>O</kbd></td><td>Todo lo que ha hecho, paso a paso</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>T</kbd></td><td>Su lista de tareas</td></tr>
+    <tr><td><code>/context</code></td><td>Qué ocupa su cabeza</td></tr>
+    <tr><td><code>/usage</code></td><td>Cuánto lleva la sesión</td></tr>
+  </table>
+  <div class="note"><b>Cuando dudes de lo que dice,</b> mira lo que ha hecho.</div>
+</section>
+
+<!-- 21 -->
+<section class="slide">
+  <p class="kicker">Píldora · Código heredado</p>
+  <h2>Que te lo explique</h2>
+  <pre>Explícame esta clase como a alguien que acaba de
+llegar al equipo: para qué sirve, quién la usa,
+qué datos toca y qué podría romperse si la cambio.
+Con un diagrama sencillo. No cambies nada.</pre>
+  <div class="note"><b>Antes de tocar algo que nadie recuerda.</b> Y lo que aprendas, a una línea del <code>CLAUDE.md</code> o a <code>docs/</code>.</div>
+</section>
+
+<!-- 22 -->
+<section class="slide">
+  <p class="kicker">Píldora · Que no se repita</p>
+  <h2>Una corrección, una línea</h2>
+  <pre>Lo que te acabo de corregir, conviértelo en una
+línea para el CLAUDE.md del proyecto. Enséñamela
+antes de añadirla.</pre>
+  <div class="card" style="margin-top:20px"><h3>Cuándo</h3>
+    <p>Le has corregido lo mismo <b>dos veces</b></p>
+  </div>
+  <div class="note"><b>Una línea, no un párrafo.</b> Y si es solo para una parte del código, una regla para esa parte.</div>
+</section>
+
+<!-- 23 -->
+<section class="slide">
+  <p class="kicker">Píldora · Comprobar</p>
+  <h2>No me digas que funciona: enséñamelo</h2>
+  <pre>Antes de decirme que está hecho: compílalo, pasa
+las pruebas y enséñame la salida. Si algo falla,
+dímelo tal cual, no lo arregles a escondidas.</pre>
+  <div class="note"><b>La prueba la tienes que ver tú</b>, en la conversación. «Ya está» no es una prueba.</div>
+</section>
+
+<!-- 24 -->
+<section class="slide">
+  <p class="kicker">Píldora · Repetir</p>
+  <h2>La tercera vez, una skill</h2>
+  <pre>Lo que hemos hecho en esta sesión lo voy a repetir.
+Conviértelo en una skill del proyecto: pasos,
+comprobaciones y qué preguntar antes de empezar.</pre>
+  <p class="big" style="margin-top:20px;font-size:40px">Si escribes la misma petición por <span style="color:var(--accent)">tercera vez</span>, merece ser una skill.</p>
+</section>
+
+<!-- 25 -->
+<section class="slide">
+  <p class="kicker">Píldora · Registro de cambios</p>
+  <h2>El resumen para vuestro registro</h2>
+  <pre>Resume los cambios de esta sesión para nuestro
+registro de cambios: qué se ha cambiado, por qué,
+cómo se ha probado y cómo se deshace.</pre>
+  <div class="note"><b>Lo escribe Claude, lo firma una persona.</b> Léelo antes: lo que no entiendas, pregúntalo.</div>
+</section>
+
+<!-- 26 -->
+<section class="slide">
+  <p class="kicker">Píldora · Cómo lo usas</p>
+  <h2><code>/insights</code>: tu informe</h2>
+  <ul class="b" style="margin-top:10px">
+    <li>Analiza tus sesiones recientes en este ordenador</li>
+    <li>En qué proyectos trabajas y <b>dónde se tuerce</b></li>
+    <li>Qué funciones probar</li>
+  </ul>
+  <div class="card" style="margin-top:20px"><h3>Cuándo</h3>
+    <p>Dentro de un mes. Comparad los de varias personas del equipo: qué hace distinto quien más le saca</p>
+  </div>
+</section>
+
+<!-- 27 -->
+<section class="slide">
+  <p class="kicker">Trucos rápidos</p>
+  <h2 style="margin-bottom:24px">Treinta segundos cada uno</h2>
+  <table class="t">
+    <tr><td><code>!dir</code></td><td>Ejecuta un comando y la salida queda en la conversación</td></tr>
+    <tr><td><code>@docs/plan.md</code></td><td>Señala un fichero concreto</td></tr>
+    <tr><td><kbd>Alt</kbd> + <kbd>P</kbd></td><td>Cambia de modelo sin perder lo que escribías</td></tr>
+    <tr><td><kbd>Shift</kbd> + <kbd>Tab</kbd></td><td>Cambia de modo: manual, editar sin preguntar, plan</td></tr>
+    <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>Redibuja la pantalla si se ve rara</td></tr>
+    <tr><td><code>/btw</code></td><td>Una pregunta al margen, sin ensuciar la conversación</td></tr>
+  </table>
+</section>
+
+<!-- 28 -->
+<section class="slide section">
+  <div class="num">CIERRE</div>
+  <h2>Lo que os lleváis</h2>
+  <p>Seis sesiones en una diapositiva, y lo que hacer el lunes</p>
+</section>
+
+<!-- 29 -->
+<section class="slide">
+  <p class="kicker">El curso, en una diapositiva</p>
+  <h2 style="margin-bottom:8px">El arnés alrededor de Claude</h2>
+  <div class="harness" style="width:760px;height:600px">
+    <div class="ring"></div>
+    <div class="core">Vuestro<br>Claude</div>
+    <div class="pill" style="left:50%;top:5%">1 · Memoria: <code>CLAUDE.md</code></div>
+    <div class="pill" style="left:96%;top:28%">2 · Permisos y hooks</div>
+    <div class="pill" style="left:96%;top:72%">3 · Skills y subagentes</div>
+    <div class="pill" style="left:50%;top:95%">4 · Vuestro entorno</div>
+    <div class="pill" style="left:4%;top:72%">5 · Especificación y plan</div>
+    <div class="pill" style="left:4%;top:28%">6 · Revisión humana</div>
+  </div>
+</section>
+
+<!-- 30 -->
+<section class="slide">
+  <p class="kicker">El lunes</p>
+  <h2>Tres hábitos</h2>
+  <div class="grid3">
+    <div class="card"><h3>1 · Antes de pedir</h3><p>Qué quieres, dónde y <b>cómo se comprueba</b>. Si no lo sabes, que te entreviste</p></div>
+    <div class="card"><h3>2 · Al corregir</h3><p>Dos veces lo mismo: <b>una línea</b> en el <code>CLAUDE.md</code>. Tres veces la misma petición: una skill</p></div>
+    <div class="card good"><h3>3 · Antes de integrar</h3><p>Pruebas a la vista, revisor con ojos limpios y <b>decide una persona</b></p></div>
+  </div>
+</section>
+
+<!-- 31 -->
+<section class="slide">
+  <p class="kicker">Para seguir</p>
+  <h2>Dónde está todo</h2>
+  <ul class="b">
+    <li>La web del curso: guías, vuestro entorno, construir vuestra app y todas las diapositivas</li>
+    <li>La documentación oficial: <code>code.claude.com/docs</code></li>
+    <li>Dentro de Claude Code: <code>/powerup</code> y <code>/release-notes</code></li>
+  </ul>
+  <p class="guia"><a href="https://kibomcg.github.io/aprende-claude-code/" target="guia">📖 La web del curso</a><span class="url">kibomcg.github.io/aprende-claude-code</span></p>
+</section>
+
+<!-- 32 -->
+<section class="slide activity">
+  <div class="actbar"><span>⚡ Antes de irte</span><span class="dur">3 min</span></div>
+  <p class="big">En el chat, dos líneas:</p>
+  <ol class="steps">
+    <li><b>Lo que te llevas</b> y vas a usar la semana que viene</li>
+    <li><b>Lo que cambiarías</b> del curso</li>
+  </ol>
+</section>
+
+<!-- 33 -->
+<section class="slide cover">
+  <p class="kicker">Sesión 6 · Cierre</p>
+  <h1 style="font-size:84px">El arnés es vuestro.</h1>
+  <p>Claude cambiará cada semana. Lo que habéis escrito se queda.</p>
+  <p style="font-size:34px;margin-top:30px">Gracias.</p>
+</section>
+
+</div></div>
+
+<div id="hud">
+  <button id="prev" title="Anterior (←)">←</button>
+  <button id="next" title="Siguiente (→)">→</button>
+  <button id="fs" title="Pantalla completa (F)">Pantalla completa</button>
+  <a href="https://kibomcg.github.io/aprende-claude-code/diapositivas/" title="Todas las sesiones y la web del curso">Índice</a>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var bar = document.getElementById('progress');
+  var i = 0;
+  var total = slides.length;
+
+  slides.forEach(function (s, n) {
+    var f = document.createElement('div');
+    f.className = 'foot';
+    f.innerHTML = '<span>Claude Code · Sesión 6</span><span>' + (n + 1) + ' / ' + total + '</span>';
+    s.appendChild(f);
+  });
+
+  function fit() {
+    var k = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(total - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    bar.style.width = ((i + 1) / total * 100) + '%';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); show(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); show(i - 1); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(total - 1);
+    else if (k === 'f' || k === 'F') fullscreen();
+  });
+  document.getElementById('prev').onclick = function () { show(i - 1); };
+  document.getElementById('next').onclick = function () { show(i + 1); };
+  document.getElementById('fs').onclick = fullscreen;
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n && n - 1 !== i) show(n - 1);
+  });
+
+  fit();
+  var start = parseInt(location.hash.slice(1), 10);
+  show(start ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>
